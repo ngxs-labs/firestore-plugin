@@ -16,13 +16,13 @@ export abstract class FirestoreService<T> {
 
 
   public createId() {
-    return this.firestore.createId()
+    return this.firestore.createId();
   }
 
   public doc$(id: string): Observable<T> {
     return this.firestore.doc<T>(`${this.path}/${id}`).snapshotChanges().pipe(
       tap(_ => {
-        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'reads' }))
+        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'reads' }));
       }),
       map(_ => _.payload.data())
     );
@@ -48,7 +48,7 @@ export abstract class FirestoreService<T> {
     );
   }
 
-  public update$(id: string, value: T) {
+  public update$(id: string, value: Partial<T>) {
     return from(this.firestore.doc(`${this.path}/${id}`).update(value)).pipe(
       tap(_ => {
         this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'updates' }));
@@ -64,7 +64,7 @@ export abstract class FirestoreService<T> {
     );
   }
 
-  public create$(id: string, value: T) {
+  public create$(id: string, value: Partial<T>) {
     return from(this.firestore.doc(`${this.path}/${id}`).set(value)).pipe(
       tap(_ => {
         this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'creates' }));

@@ -9,12 +9,12 @@
 <div class="container">
   <div class="row">
     <div class="col-8">
-      <router-outlet></router-outlet>
+      <app-list></app-list>
     </div>
 
     <div class="col-4">
-      <h2>Store:</h2>
-      <pre>{{ store$ | async | json }}</pre>
+      <h2>NGXS Firestore:</h2>
+      <pre>{{ ngxsFirestore$ | async | json }}</pre>
     </div>
   </div>
 </div>

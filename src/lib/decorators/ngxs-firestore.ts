@@ -10,14 +10,14 @@ export function NgxsFirestore(
 ): MethodDecorator {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
 
-        const originalMethod = descriptor.value
+        const originalMethod = descriptor.value;
         let sub: Subscription;
         const action = getActionTypeFromInstance(actionType);
         const emitActionType = emitAction({ type: action })
         const emitType = getActionTypeFromInstance(emitActionType);
         const meta = ensureStoreMetadata(target.constructor);
         class NgxsFirestoreEmitAction {
-            static readonly type = emitType;
+            public static readonly type = emitType;
             constructor(public payload: any) { }
         }
 
@@ -38,31 +38,32 @@ export function NgxsFirestore(
         }
 
         descriptor.value = function () {
-            if (sub)
-                return
+            if (sub) {
+                return;
+            }
 
-            const { dispatch, patchState } = arguments[0]
+            const { dispatch } = arguments[0]
             sub = originalMethod.apply(this, arguments).pipe(
                 takeUntil(
                     race(
                         this.actions.pipe(ofActionCompleted(disconnectAction({ type: action }))),
                         this.actions.pipe(ofActionCompleted(Disconnect), filter((actionCtx: any) => {
-                            return actionCtx.action.payload.type === action
+                            return actionCtx.action.payload.type === action;
                         }))
                     )
                 ),
                 tap(payload => {
-                    dispatch(new NgxsFirestoreEmitAction(payload))
+                    dispatch(new NgxsFirestoreEmitAction(payload));
                 }),
                 finalize(() => {
-                    sub = null
+                    sub = null;
                 })
             ).subscribe();
 
             return this.actions.pipe(
                 ofActionCompleted({ type: emitType }),
                 take(1)
-            )
-        }
+            );
+        };
     };
 }

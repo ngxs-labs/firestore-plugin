@@ -1,0 +1,8 @@
+<div *ngFor="let race of races$ | async"
+     class="card mr-1 mb-1 d-inline-flex"
+     style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">{{race.name}}</h5>
+        <p class="card-text">{{race.description}}</p>
+    </div>
+</div>

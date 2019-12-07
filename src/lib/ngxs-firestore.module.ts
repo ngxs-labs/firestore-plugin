@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgxsFirestorePipe } from './pipes/ngxs-firestore.pipe';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreState } from './states/ngxs-firestore.state';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 const PIPES = [
   NgxsFirestorePipe
@@ -13,7 +14,8 @@ const PIPES = [
     CommonModule,
     NgxsModule.forFeature([
       NgxsFirestoreState
-    ])
+    ]),
+    AngularFirestoreModule,
   ],
   declarations: [
     ...PIPES

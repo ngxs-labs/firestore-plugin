@@ -8,18 +8,24 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ListComponent } from './components/list/list.component';
+import { RacesState } from './states/races/races.state';
+import { AngularFireModule } from '@angular/fire';
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [AppComponent, ListComponent],
     imports: [
         BrowserModule,
         FormsModule,
         RouterModule.forRoot([]),
-        NgxsModule.forRoot([], {
+        AngularFireModule.initializeApp(environment.firebase),
+        NgxsModule.forRoot([
+            RacesState
+        ], {
             developmentMode: !environment.production
         }),
         NgxsLoggerPluginModule.forRoot(),
-        NgxsFirestoreModule,
+        NgxsFirestoreModule.forRoot(),
     ],
     providers: [],
     bootstrap: [AppComponent]

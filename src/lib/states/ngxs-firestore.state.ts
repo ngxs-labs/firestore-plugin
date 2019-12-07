@@ -1,4 +1,4 @@
-import { State, Action, StateContext, NgxsOnInit } from '@ngxs/store';
+import { State, StateContext, NgxsOnInit, Action } from '@ngxs/store';
 import { NgxsFirestoreActions } from './ngxs-firestore.actions';
 
 export interface NgxsFirestoreStateModel {
@@ -20,11 +20,6 @@ export interface NgxsFirestoreStateModel {
   }
 })
 export class NgxsFirestoreState implements NgxsOnInit {
-
-  constructor(
-  ) {
-
-  }
 
   ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {
 

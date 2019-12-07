@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent {
 
-    public store$: Observable<unknown> = this.store.select((state) => state);
+    public ngxsFirestore$: Observable<unknown> = this.store.select((state) => state.ngxs_firestore);
 
     constructor(
         private store: Store
