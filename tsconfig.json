@@ -16,7 +16,7 @@
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
     "paths": {
-      "@ngxs-labs/actions-executing": ["src/public-api.ts"]
+      "@ngxs-labs/firestore": ["src/public-api.ts"]
     }
   }
 }

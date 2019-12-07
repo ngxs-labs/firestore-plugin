@@ -8,21 +8,18 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ZooState } from './examples/states/zoo/zoo.state';
 
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BrowserModule,
         FormsModule,
-        RouterModule.forRoot(
-            
-        ),
-        NgxsModule.forRoot([ZooState], {
+        RouterModule.forRoot([]),
+        NgxsModule.forRoot([], {
             developmentMode: !environment.production
         }),
         NgxsLoggerPluginModule.forRoot(),
-        NgxsFirestoreModule.forRoot(),
+        NgxsFirestoreModule,
     ],
     providers: [],
     bootstrap: [AppComponent]
