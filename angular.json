@@ -65,7 +65,7 @@
         }
       }
     },
-    "ngxs-actions-executing": {
+    "ngxs-firestore": {
       "root": "src",
       "sourceRoot": "src",
       "projectType": "library",

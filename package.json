@@ -1,8 +1,8 @@
 {
-  "name": "ngxs-actions-executing",
+  "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve",
-    "build": "ng build ngxs-actions-executing && ts-node --project tsconfig.tools.json ./tools/copy-readme",
+    "build": "ng build ngxs-firestore && ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "build-integration": "ng build integration",
     "test": "jest --config ./jest.app.config.js",
     "test:ci": "jest --config ./jest.app.config.js --coverage",
