@@ -1,7 +1,7 @@
 import { NgxsModule } from '@ngxs/store';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';

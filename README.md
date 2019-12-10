@@ -20,11 +20,11 @@ Install the plugin:
 * npm
 
 ```console
-npm install --save @ngxs-labs/firestore
+npm install --save @ngxs-labs/firestore-plugin-plugin
 ```
 
 * yarn
 
 ```console
-yarn add @ngxs-labs/firestore
+yarn add @ngxs-labs/firestore-plugin
 ```

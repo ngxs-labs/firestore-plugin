@@ -1,5 +1,5 @@
 {
-  "name": "@ngxs-labs/firestore",
+  "name": "@ngxs-labs/firestore-plugin",
   "version": "0.0.1",
   "peerDependencies": {
     "@ngxs/store": ">=3.4.0 <4.0.0",

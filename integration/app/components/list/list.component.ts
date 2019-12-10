@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RacesActions } from './../../states/races/races.actions';
 import { RacesState } from './../../states/races/races.state';
-import { Disconnect } from '@ngxs-labs/firestore';
+import { Disconnect } from '@ngxs-labs/firestore-plugin';
 
 @Component({
   selector: 'app-list',

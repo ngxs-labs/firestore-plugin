@@ -1,7 +1,7 @@
 import { State, Action, StateContext, NgxsOnInit, Selector, Store, Actions } from '@ngxs/store';
 import { RacesActions } from './races.actions';
 import { take, tap } from 'rxjs/operators';
-import { NgxsFirestore } from '@ngxs-labs/firestore';
+import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
 

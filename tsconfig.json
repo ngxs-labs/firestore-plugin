@@ -16,7 +16,7 @@
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
     "paths": {
-      "@ngxs-labs/firestore": ["src/public-api.ts"]
+      "@ngxs-labs/firestore-plugin": ["src/public-api.ts"]
     }
   }
 }

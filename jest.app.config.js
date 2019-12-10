@@ -9,7 +9,7 @@ module.exports = {
   cache: false,
   preset: 'jest-preset-angular',
   rootDir: path.resolve('.'),
-  testMatch: ['<rootDir>/src/tests/**/*.spec.ts'],
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts'],
   collectCoverageFrom: ['<rootDir>/src/lib/**/*.ts'],
   setupFilesAfterEnv: ['<rootDir>/setupJest.ts'],
   coverageReporters: ['json', 'lcovonly', 'lcov', 'text', 'html'],
