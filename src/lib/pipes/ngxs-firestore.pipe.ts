@@ -16,9 +16,9 @@ export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
   }
 
   transform(value: string, actionName: string) {
-    const actionType = { type: actionName }
+    const actionType = { type: actionName };
     if (!this._connected.includes(actionName)) {
-      this.store.dispatch(actionType)
+      this.store.dispatch(actionType);
       this._connected.push(actionName);
     }
 
@@ -27,8 +27,8 @@ export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
 
   ngOnDestroy() {
     this._connected.map(actionName => {
-      this.store.dispatch(disconnectAction({ type: actionName }))
-    })
+      this.store.dispatch(disconnectAction({ type: actionName }));
+    });
 
     this._connected = [];
   }
