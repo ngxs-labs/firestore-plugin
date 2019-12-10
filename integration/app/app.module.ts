@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { ListComponent } from './components/list/list.component';
 import { RacesState } from './states/races/races.state';
 import { AngularFireModule } from '@angular/fire';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 @NgModule({
     declarations: [AppComponent, ListComponent],
@@ -24,7 +25,8 @@ import { AngularFireModule } from '@angular/fire';
         ], {
             developmentMode: !environment.production
         }),
-        NgxsLoggerPluginModule.forRoot(),
+        NgxsLoggerPluginModule.forRoot({ disabled: environment.production }),
+        NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
         NgxsFirestoreModule.forRoot(),
     ],
     providers: [],
