@@ -143,7 +143,6 @@
     "no-unnecessary-initializer": false,
     "no-inferrable-types": false,
     "no-any": true,
-    "no-duplicate-variable": true,
-    "member-access": true
+    "no-duplicate-variable": true
   }
 }
