@@ -28,7 +28,7 @@ export abstract class FirestoreService<T> {
     );
   }
 
-  public docOnce(id: string): Observable<T> {
+  public docOnce$(id: string): Observable<T> {
     return this.doc$(id).pipe(
       take(1)
     );
@@ -51,6 +51,12 @@ export abstract class FirestoreService<T> {
         return items;
       }, []),
       map(items => items.map(item => item.payload.doc.data()))
+    );
+  }
+
+  public collectionOnce$(queryFn?: QueryFn): Observable<T[]> {
+    return this.collection$(queryFn).pipe(
+      take(1)
     );
   }
 

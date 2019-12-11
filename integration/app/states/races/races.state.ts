@@ -33,7 +33,7 @@ export class RacesState implements NgxsOnInit {
 
   @Action([RacesActions.GetAllOnce])
   getAllOnce({ patchState }: StateContext<RacesStateModel>) {
-    return this.racesFS.collection$().pipe(
+    return this.racesFS.collectionOnce$().pipe(
       tap(races => {
         patchState({ races });
       })
@@ -42,7 +42,7 @@ export class RacesState implements NgxsOnInit {
 
   @Action([RacesActions.GetOnce])
   getOnce({ setState }: StateContext<RacesStateModel>, { payload }: RacesActions.GetOnce) {
-    return this.racesFS.docOnce(payload).pipe(
+    return this.racesFS.docOnce$(payload).pipe(
       tap(race => {
         setState(patch({ races: updateItem(x => x.id === payload, race) }));
       })
@@ -69,13 +69,12 @@ export class RacesState implements NgxsOnInit {
   }
 
   @Action(RacesActions.Create)
-  create({ patchState }: StateContext<RacesStateModel>, { payload }: RacesActions.Create) {
-    const id = this.racesFS.createId();
-    return this.racesFS.create$(id, {
-      id,
-      title: 'test 1',
-      description: 'description 1'
-    });
+  create({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Create) {
+    return this.racesFS.create$(payload.id, payload).pipe(
+      finalize(() => {
+        dispatch(new RacesActions.GetAllOnce());
+      })
+    );
   }
 
   @Action(RacesActions.Update)
@@ -90,7 +89,11 @@ export class RacesState implements NgxsOnInit {
   }
 
   @Action(RacesActions.Delete)
-  delete({ patchState }: StateContext<RacesStateModel>, { payload }: RacesActions.Delete) {
-    return this.racesFS.delete$(payload);
+  delete({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Delete) {
+    return this.racesFS.delete$(payload).pipe(
+      finalize(() => {
+        dispatch(new RacesActions.GetAllOnce());
+      })
+    );
   }
 }

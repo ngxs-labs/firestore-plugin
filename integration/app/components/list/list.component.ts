@@ -25,9 +25,9 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new RacesActions.GetAll());
-    setTimeout(() => {
-      this.store.dispatch(new Disconnect(RacesActions.GetAll));
-    }, 5000);
+    // setTimeout(() => {
+    //   this.store.dispatch(new Disconnect(RacesActions.GetAll));
+    // }, 5000);
   }
 
   create() {
@@ -35,6 +35,7 @@ export class ListComponent implements OnInit, OnDestroy {
     const race: Partial<Race> = {};
     race.id = chance.string({ length: 20 });
     race.name = chance.string();
+    race.title = chance.string();
     race.description = chance.word();
     this.store.dispatch(new RacesActions.Create(race));
   }
