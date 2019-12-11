@@ -1,7 +1,7 @@
 import { AngularFirestore, QueryFn } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
 import { Inject } from '@angular/core';
-import { tap, map, scan } from 'rxjs/operators';
+import { tap, map, scan, take } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { NgxsFirestoreActions } from './../states/ngxs-firestore.actions';
 
@@ -25,6 +25,12 @@ export abstract class FirestoreService<T> {
         this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'reads' }));
       }),
       map(_ => _.payload.data())
+    );
+  }
+
+  public docOnce(id: string): Observable<T> {
+    return this.doc$(id).pipe(
+      take(1)
     );
   }
 

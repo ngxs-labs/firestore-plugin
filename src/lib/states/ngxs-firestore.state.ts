@@ -27,6 +27,14 @@ export class NgxsFirestoreState implements NgxsOnInit {
 
   }
 
+  @Action(NgxsFirestoreActions.SetCount)
+  setCount(
+    { getState, setState, patchState }: StateContext<NgxsFirestoreStateModel>,
+    { payload }: NgxsFirestoreActions.SetCount
+  ) {
+    patchState({ [payload.prop]: payload.quantity });
+  }
+
   @Action(NgxsFirestoreActions.IncrementCount)
   incrementCount(
     { getState, setState, patchState }: StateContext<NgxsFirestoreStateModel>,

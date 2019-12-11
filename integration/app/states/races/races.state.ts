@@ -1,6 +1,7 @@
-import { State, Action, StateContext, NgxsOnInit, Selector, Store, Actions } from '@ngxs/store';
+import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
+import { patch, updateItem } from '@ngxs/store/operators';
 import { RacesActions } from './races.actions';
-import { take, tap } from 'rxjs/operators';
+import { tap, finalize } from 'rxjs/operators';
 import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
@@ -23,32 +24,36 @@ export class RacesState implements NgxsOnInit {
   @Selector() public static bikes(state: RacesStateModel) { return state.bikes; }
 
   constructor(
-    private racesFS: RacesFirestore,
-    private store: Store,
-    private actions: Actions,
-  ) {
-    this.actions.pipe();
-  }
+    private racesFS: RacesFirestore
+  ) { }
 
   ngxsOnInit({ dispatch }: StateContext<RacesStateModel>) {
 
   }
 
-  @Action([RacesActions.GetAll])
-  getAll({ patchState }: StateContext<RacesStateModel>) {
+  @Action([RacesActions.GetAllOnce])
+  getAllOnce({ patchState }: StateContext<RacesStateModel>) {
     return this.racesFS.collection$().pipe(
-      take(1),
       tap(races => {
         patchState({ races });
       })
-    )
+    );
+  }
+
+  @Action([RacesActions.GetOnce])
+  getOnce({ setState }: StateContext<RacesStateModel>, { payload }: RacesActions.GetOnce) {
+    return this.racesFS.docOnce(payload).pipe(
+      tap(race => {
+        setState(patch({ races: updateItem(x => x.id === payload, race) }));
+      })
+    );
   }
 
   @NgxsFirestore(
-    RacesActions.GetAll$,
+    RacesActions.GetAll,
     (payload): Partial<RacesStateModel> => ({ races: payload })
   )
-  @Action(RacesActions.GetAll$)
+  @Action(RacesActions.GetAll)
   getAll$({ patchState }: StateContext<RacesStateModel>) {
     return this.racesFS.collection$().pipe();
   }
@@ -74,14 +79,14 @@ export class RacesState implements NgxsOnInit {
   }
 
   @Action(RacesActions.Update)
-  update({ patchState }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
-    const races = this.store.selectSnapshot(RacesState.races);
-    const id = races[Math.floor(Math.random() * races.length)].id;
-    return this.racesFS.create$(id, {
-      id,
-      title: 'test updated',
-      description: 'description updated'
-    });
+  update({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
+    return this.racesFS.update$(payload.id, {
+      ...payload
+    }).pipe(
+      finalize(() => {
+        dispatch(new RacesActions.GetOnce(payload.id));
+      })
+    );
   }
 
   @Action(RacesActions.Delete)
