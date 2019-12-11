@@ -14,7 +14,7 @@ export class NgxsActiveConnectionsService implements OnDestroy {
 
   add(token: string, sub: Subscription) {
     this.subs.token = sub;
-    this.store.dispatch(new NgxsFirestoreActions.SetCount({ prop: 'activeConnections', quantity: Object.keys(this.subs).length }));
+    this.store.dispatch(new NgxsFirestoreActions.AddConnection(token));
   }
 
   contains(token: string) {
@@ -24,7 +24,7 @@ export class NgxsActiveConnectionsService implements OnDestroy {
   remove(token: string) {
     this.subs.token.unsubscribe();
     delete this.subs.token;
-    this.store.dispatch(new NgxsFirestoreActions.SetCount({ prop: 'activeConnections', quantity: Object.keys(this.subs).length }));
+    this.store.dispatch(new NgxsFirestoreActions.RemoveConnection(token));
   }
 
   ngOnDestroy() {

@@ -24,4 +24,14 @@ export namespace NgxsFirestoreActions {
     public static readonly type = '[NgxsFirestore] SetCount';
     constructor(public payload: NgxsFirestorePayloads.SetCount) { }
   }
+
+  export class AddConnection {
+    public static readonly type = '[NgxsFirestore] AddConnection';
+    constructor(public payload: string) { }
+  }
+
+  export class RemoveConnection {
+    public static readonly type = '[NgxsFirestore] RemoveConnection';
+    constructor(public payload: string) { }
+  }
 }

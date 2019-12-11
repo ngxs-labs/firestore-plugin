@@ -46,6 +46,7 @@ export function NgxsFirestore(
                 return;
             }
             const { dispatch } = arguments[0];
+
             activeConns.add(action,
                 originalMethod.apply(this, arguments).pipe(
                     takeUntil(

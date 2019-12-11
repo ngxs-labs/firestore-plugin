@@ -15,8 +15,6 @@ import { map } from 'rxjs/operators';
 export class ListComponent implements OnInit, OnDestroy {
 
   public races$ = this.store.select(RacesState.races);
-  public bikes$ = this.store.select(RacesState.bikes);
-
   public total$ = this.races$.pipe(map(races => races.length));
 
   constructor(
@@ -25,9 +23,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new RacesActions.GetAll());
-    // setTimeout(() => {
-    //   this.store.dispatch(new Disconnect(RacesActions.GetAll));
-    // }, 5000);
+    this.store.dispatch(new RacesActions.GetActive());
   }
 
   create() {

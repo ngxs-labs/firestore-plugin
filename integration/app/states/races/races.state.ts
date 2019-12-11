@@ -8,20 +8,20 @@ import { RacesFirestore } from './../../services/races.firestore';
 
 export interface RacesStateModel {
   races: Race[];
-  bikes: Race[];
+  activeRaces: Race[];
 }
 
 @State<RacesStateModel>({
   name: 'races',
   defaults: {
     races: [],
-    bikes: []
+    activeRaces: []
   }
 })
 export class RacesState implements NgxsOnInit {
 
-  @Selector() public static races(state: RacesStateModel) { return state.races; }
-  @Selector() public static bikes(state: RacesStateModel) { return state.bikes; }
+  @Selector() static races(state: RacesStateModel) { return state.races; }
+  @Selector() static activeRaces(state: RacesStateModel) { return state.activeRaces; }
 
   constructor(
     private racesFS: RacesFirestore
@@ -60,12 +60,12 @@ export class RacesState implements NgxsOnInit {
 
 
   @NgxsFirestore(
-    RacesActions.GetBikes$,
-    (payload): Partial<RacesStateModel> => ({ bikes: payload })
+    RacesActions.GetActive,
+    (payload): Partial<RacesStateModel> => ({ activeRaces: payload })
   )
-  @Action(RacesActions.GetBikes$)
+  @Action(RacesActions.GetActive)
   getBikes$({ patchState }: StateContext<RacesStateModel>) {
-    return this.racesFS.collection$(ref => ref.limit(2)).pipe();
+    return this.racesFS.collection$(ref => ref.where('id', '>=', 'm')).pipe();
   }
 
   @Action(RacesActions.Create)

@@ -1,8 +1,9 @@
 import { State, StateContext, NgxsOnInit, Action, Selector } from '@ngxs/store';
 import { NgxsFirestoreActions } from './ngxs-firestore.actions';
+import { patch, insertItem, removeItem } from '@ngxs/store/operators';
 
 export interface NgxsFirestoreStateModel {
-  activeConnections: number;
+  connections: string[];
   reads: number;
   creates: number;
   updates: number;
@@ -12,7 +13,7 @@ export interface NgxsFirestoreStateModel {
 @State<NgxsFirestoreStateModel>({
   name: 'ngxs_firestore',
   defaults: {
-    activeConnections: 0,
+    connections: [],
     reads: 0,
     creates: 0,
     updates: 0,
@@ -21,10 +22,26 @@ export interface NgxsFirestoreStateModel {
 })
 export class NgxsFirestoreState implements NgxsOnInit {
 
-  @Selector() public static activeConnections(state: NgxsFirestoreStateModel) { return state.activeConnections; }
+  @Selector() public static connections(state: NgxsFirestoreStateModel) { return state.connections; }
 
   ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {
 
+  }
+
+  @Action(NgxsFirestoreActions.AddConnection)
+  addConnection(
+    { getState, setState, patchState }: StateContext<NgxsFirestoreStateModel>,
+    { payload }: NgxsFirestoreActions.AddConnection
+  ) {
+    setState(patch({ connections: insertItem(payload) }));
+  }
+
+  @Action(NgxsFirestoreActions.RemoveConnection)
+  removeConnection(
+    { getState, setState, patchState }: StateContext<NgxsFirestoreStateModel>,
+    { payload }: NgxsFirestoreActions.AddConnection
+  ) {
+    setState(patch({ connections: removeItem(x => x === payload) }));
   }
 
   @Action(NgxsFirestoreActions.SetCount)
@@ -48,7 +65,7 @@ export class NgxsFirestoreState implements NgxsOnInit {
     { getState, setState, patchState }: StateContext<NgxsFirestoreStateModel>,
     { payload }: NgxsFirestoreActions.DecrementCount
   ) {
-    patchState({ [payload]: getState()[payload] - 1 });
+    patchState({ [payload]: getState()[payload.toString()] - 1 });
   }
 
 }
