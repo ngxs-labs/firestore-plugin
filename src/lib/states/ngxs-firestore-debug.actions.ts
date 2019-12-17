@@ -1,8 +1,8 @@
-import { NgxsFirestoreStateModel } from './ngxs-firestore.state';
+import { NgxsFirestoreDebugStateModel } from './ngxs-firestore-debug.state';
 
 namespace NgxsFirestorePayloads {
-  export interface IncrementCount { prop: keyof NgxsFirestoreStateModel; quantity?: number; }
-  export interface SetCount { prop: keyof NgxsFirestoreStateModel; quantity?: number; }
+  export interface IncrementCount { prop: keyof NgxsFirestoreDebugStateModel; quantity?: number; }
+  export interface SetCount { prop: keyof NgxsFirestoreDebugStateModel; quantity?: number; }
 }
 
 export namespace NgxsFirestoreActions {
@@ -12,7 +12,7 @@ export namespace NgxsFirestoreActions {
   }
   export class DecrementCount {
     public static readonly type = '[NgxsFirestore] DecrementCount';
-    constructor(public payload: keyof NgxsFirestoreStateModel) { }
+    constructor(public payload: keyof NgxsFirestoreDebugStateModel) { }
   }
 
   export class AddSub {

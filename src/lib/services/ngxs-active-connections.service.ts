@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { NgxsFirestoreActions } from '../states/ngxs-firestore.actions';
+import { NgxsFirestoreActions } from '../states/ngxs-firestore-debug.actions';
 
 @Injectable()
 export class NgxsActiveConnectionsService implements OnDestroy {

@@ -3,7 +3,7 @@ import { Observable, from } from 'rxjs';
 import { Inject } from '@angular/core';
 import { tap, map, scan, take } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { NgxsFirestoreActions } from './../states/ngxs-firestore.actions';
+import { NgxsFirestoreActions } from '../states/ngxs-firestore-debug.actions';
 
 export abstract class FirestoreService<T> {
 

@@ -2,7 +2,7 @@ import { NgModule, ModuleWithProviders, Self } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxsFirestorePipe } from './pipes/ngxs-firestore.pipe';
 import { NgxsModule } from '@ngxs/store';
-import { NgxsFirestoreState } from './states/ngxs-firestore.state';
+import { NgxsFirestoreDebugState } from './states/ngxs-firestore-debug.state';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { NgxsInjector } from './services/ngxs-injector.service';
 import { NgxsActiveConnectionsService } from './services/ngxs-active-connections.service';
@@ -15,7 +15,7 @@ const PIPES = [
   imports: [
     CommonModule,
     NgxsModule.forFeature([
-      NgxsFirestoreState
+      NgxsFirestoreDebugState
     ]),
     AngularFirestoreModule,
   ],
