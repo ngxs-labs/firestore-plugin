@@ -16,7 +16,6 @@ import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { RacesState } from './states/races/races.state';
-import { RacesChildState } from './states/races-child/races-child.state';
 
 @NgModule({
     declarations: [AppComponent, ListComponent],
@@ -26,8 +25,7 @@ import { RacesChildState } from './states/races-child/races-child.state';
         RouterModule.forRoot([]),
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
-            RacesState,
-            RacesChildState
+            RacesState
         ], {
             developmentMode: !environment.production
         }),
