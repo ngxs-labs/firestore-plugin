@@ -5,11 +5,11 @@ export function disconnectAction(actionType: ActionType): ActionType {
 }
 
 export function disconnectActionName(actionType: ActionType): string {
-    return `${actionType.type}Disconnect`;
+    return `${actionType.type} Disconnect`;
 }
 
 export function emitActionName(actionType: ActionType): string {
-    return `${actionType.type}Emit`;
+    return `${actionType.type} Emit`;
 }
 
 export function emitAction(actionType: ActionType): ActionType {

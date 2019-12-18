@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { disconnectAction } from './../helpers/action-creator-helper';
+import { disconnectAction } from '../util/action-creator-helper';
 
 @Pipe({
   name: 'ngxsFirestore'
@@ -15,7 +15,7 @@ export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
 
   }
 
-  transform(value: string, actionName: string) {
+  transform(value, actionName: string) {
     const actionType = { type: actionName };
     if (!this._connected.includes(actionName)) {
       this.store.dispatch(actionType);

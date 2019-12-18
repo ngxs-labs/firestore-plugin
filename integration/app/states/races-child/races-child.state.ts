@@ -3,7 +3,6 @@ import { Race } from '../../models/race';
 import { NgxsFirestoreStateModel, NgxsFirestoreState } from 'src/lib/states/ngxs-firestore.state';
 import { RacesFirestore } from 'integration/app/services/races.firestore';
 import { attachAction } from '@ngxs-labs/attach-action';
-import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
 
 @State<NgxsFirestoreStateModel<Race>>({
   name: 'races_child',

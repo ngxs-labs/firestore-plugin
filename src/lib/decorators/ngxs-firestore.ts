@@ -1,7 +1,7 @@
 import { race } from 'rxjs';
 import { takeUntil, finalize, take, tap, filter, delay } from 'rxjs/operators';
 import { ofActionCompleted, ActionType, ensureStoreMetadata, getActionTypeFromInstance, Actions, ActionCompletion } from '@ngxs/store';
-import { emitAction, disconnectAction } from '../helpers/action-creator-helper';
+import { emitAction, disconnectAction } from '../util/action-creator-helper';
 import { Disconnect } from '../actions';
 import { StateClassInternal } from '@ngxs/store/src/internal/internals';
 import { NgxsInjector } from '../services/ngxs-injector.service';
@@ -30,7 +30,6 @@ export function NgxsFirestore(
             }
 
             target[emitType] = ({ patchState }, { payload }) => {
-                debugger
                 patchState(fn(payload));
             };
 

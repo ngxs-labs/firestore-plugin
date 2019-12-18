@@ -1,13 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RacesActions } from './../../states/races/races.actions';
-// import { RacesState } from './../../states/races/races.state';
-import { RacesChildState } from './../../states/races-child/races-child.state';
+import { RacesState } from './../../states/races/races.state';
 import { Disconnect } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { RacesChildActions } from 'integration/app/states/races-child/races-child.actions';
 
 @Component({
   selector: 'app-list',
@@ -16,7 +14,7 @@ import { RacesChildActions } from 'integration/app/states/races-child/races-chil
 })
 export class ListComponent implements OnInit, OnDestroy {
 
-  public races$ = this.store.select(RacesChildState.races);
+  public races$ = this.store.select(RacesState.races);
   public total$ = this.races$.pipe(map(races => races.length));
 
   constructor(
@@ -24,7 +22,7 @@ export class ListComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.store.dispatch(new RacesChildActions.GetAll());
+    this.store.dispatch(new RacesActions.GetAll());
     this.store.dispatch(new RacesActions.GetActive());
   }
 
