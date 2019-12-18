@@ -1,14 +1,14 @@
 import { NgxsFirestoreDebugStateModel } from './ngxs-firestore-debug.state';
 
-namespace NgxsFirestorePayloads {
+namespace NgxsFirestoreDebugPayloads {
   export interface IncrementCount { prop: keyof NgxsFirestoreDebugStateModel; quantity?: number; }
   export interface SetCount { prop: keyof NgxsFirestoreDebugStateModel; quantity?: number; }
 }
 
-export namespace NgxsFirestoreActions {
+export namespace NgxsFirestoreDebugActions {
   export class IncrementCount {
     public static readonly type = '[NgxsFirestore] IncrementCount';
-    constructor(public payload: NgxsFirestorePayloads.IncrementCount) { }
+    constructor(public payload: NgxsFirestoreDebugPayloads.IncrementCount) { }
   }
   export class DecrementCount {
     public static readonly type = '[NgxsFirestore] DecrementCount';
@@ -22,7 +22,7 @@ export namespace NgxsFirestoreActions {
 
   export class SetCount {
     public static readonly type = '[NgxsFirestore] SetCount';
-    constructor(public payload: NgxsFirestorePayloads.SetCount) { }
+    constructor(public payload: NgxsFirestoreDebugPayloads.SetCount) { }
   }
 
   export class AddConnection {

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { NgxsFirestoreActions } from '../states/ngxs-firestore-debug.actions';
+import { NgxsFirestoreDebugActions } from '../states/ngxs-firestore-debug.actions';
 
 @Injectable()
 export class NgxsActiveConnectionsService implements OnDestroy {
@@ -14,7 +14,7 @@ export class NgxsActiveConnectionsService implements OnDestroy {
 
   add(token: string, sub: Subscription) {
     this.subs.token = sub;
-    this.store.dispatch(new NgxsFirestoreActions.AddConnection(token));
+    this.store.dispatch(new NgxsFirestoreDebugActions.AddConnection(token));
   }
 
   contains(token: string) {
@@ -24,7 +24,7 @@ export class NgxsActiveConnectionsService implements OnDestroy {
   remove(token: string) {
     this.subs.token.unsubscribe();
     delete this.subs.token;
-    this.store.dispatch(new NgxsFirestoreActions.RemoveConnection(token));
+    this.store.dispatch(new NgxsFirestoreDebugActions.RemoveConnection(token));
   }
 
   ngOnDestroy() {

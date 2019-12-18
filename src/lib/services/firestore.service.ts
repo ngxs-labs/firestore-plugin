@@ -3,7 +3,7 @@ import { Observable, from } from 'rxjs';
 import { Inject } from '@angular/core';
 import { tap, map, scan, take } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { NgxsFirestoreActions } from '../states/ngxs-firestore-debug.actions';
+import { NgxsFirestoreDebugActions } from '../states/ngxs-firestore-debug.actions';
 
 export abstract class FirestoreService<T> {
 
@@ -22,7 +22,7 @@ export abstract class FirestoreService<T> {
   public doc$(id: string): Observable<T> {
     return this.firestore.doc<T>(`${this.path}/${id}`).snapshotChanges().pipe(
       tap(_ => {
-        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'reads' }));
+        this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'reads' }));
       }),
       map(_ => _.payload.data())
     );
@@ -45,7 +45,7 @@ export abstract class FirestoreService<T> {
           // const accModified = acc.filter(item => item.type === 'modified').length;
 
           const reads = (itemsAdded - accAdded > 0 ? itemsAdded - accAdded : 0) + itemsModified;
-          this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'reads', quantity: reads }));
+          this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'reads', quantity: reads }));
         }
 
         return items;
@@ -63,7 +63,7 @@ export abstract class FirestoreService<T> {
   public update$(id: string, value: Partial<T>) {
     return from(this.firestore.doc(`${this.path}/${id}`).update(value)).pipe(
       tap(_ => {
-        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'updates' }));
+        this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'updates' }));
       })
     );
   }
@@ -71,7 +71,7 @@ export abstract class FirestoreService<T> {
   public delete$(id: string) {
     return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe(
       tap(_ => {
-        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'deletes' }));
+        this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'deletes' }));
       })
     );
   }
@@ -79,7 +79,7 @@ export abstract class FirestoreService<T> {
   public create$(id: string, value: Partial<T>) {
     return from(this.firestore.doc(`${this.path}/${id}`).set(value)).pipe(
       tap(_ => {
-        this.store.dispatch(new NgxsFirestoreActions.IncrementCount({ prop: 'creates' }));
+        this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'creates' }));
       })
     );
   }

@@ -30,6 +30,7 @@ export function NgxsFirestore(
             }
 
             target[emitType] = ({ patchState }, { payload }) => {
+                debugger
                 patchState(fn(payload));
             };
 

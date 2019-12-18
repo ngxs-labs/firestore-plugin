@@ -1,17 +1,22 @@
-import { NgxsModule } from '@ngxs/store';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
-import { NgModule } from '@angular/core';
-
-import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
+
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+
+import { AppComponent } from './app.component';
 import { ListComponent } from './components/list/list.component';
-import { RacesState } from './states/races/races.state';
+
 import { AngularFireModule } from '@angular/fire';
+
+import { NgxsModule } from '@ngxs/store';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+
+import { RacesState } from './states/races/races.state';
+import { RacesChildState } from './states/races-child/races-child.state';
 
 @NgModule({
     declarations: [AppComponent, ListComponent],
@@ -21,7 +26,8 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
         RouterModule.forRoot([]),
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
-            RacesState
+            RacesState,
+            RacesChildState
         ], {
             developmentMode: !environment.production
         }),

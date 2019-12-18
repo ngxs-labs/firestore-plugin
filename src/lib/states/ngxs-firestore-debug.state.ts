@@ -1,5 +1,5 @@
 import { State, StateContext, NgxsOnInit, Action, Selector } from '@ngxs/store';
-import { NgxsFirestoreActions } from './ngxs-firestore-debug.actions';
+import { NgxsFirestoreDebugActions } from './ngxs-firestore-debug.actions';
 import { patch, insertItem, removeItem } from '@ngxs/store/operators';
 
 export interface NgxsFirestoreDebugStateModel {
@@ -28,42 +28,42 @@ export class NgxsFirestoreDebugState implements NgxsOnInit {
 
   }
 
-  @Action(NgxsFirestoreActions.AddConnection)
+  @Action(NgxsFirestoreDebugActions.AddConnection)
   addConnection(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreActions.AddConnection
+    { payload }: NgxsFirestoreDebugActions.AddConnection
   ) {
     setState(patch({ connections: insertItem(payload) }));
   }
 
-  @Action(NgxsFirestoreActions.RemoveConnection)
+  @Action(NgxsFirestoreDebugActions.RemoveConnection)
   removeConnection(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreActions.AddConnection
+    { payload }: NgxsFirestoreDebugActions.AddConnection
   ) {
     setState(patch({ connections: removeItem(x => x === payload) }));
   }
 
-  @Action(NgxsFirestoreActions.SetCount)
+  @Action(NgxsFirestoreDebugActions.SetCount)
   setCount(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreActions.SetCount
+    { payload }: NgxsFirestoreDebugActions.SetCount
   ) {
     patchState({ [payload.prop]: payload.quantity });
   }
 
-  @Action(NgxsFirestoreActions.IncrementCount)
+  @Action(NgxsFirestoreDebugActions.IncrementCount)
   incrementCount(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreActions.IncrementCount
+    { payload }: NgxsFirestoreDebugActions.IncrementCount
   ) {
     patchState({ [payload.prop]: getState()[payload.prop.toString()] + (payload.quantity || 1) });
   }
 
-  @Action(NgxsFirestoreActions.DecrementCount)
+  @Action(NgxsFirestoreDebugActions.DecrementCount)
   decrementCount(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreActions.DecrementCount
+    { payload }: NgxsFirestoreDebugActions.DecrementCount
   ) {
     patchState({ [payload]: getState()[payload.toString()] - 1 });
   }
