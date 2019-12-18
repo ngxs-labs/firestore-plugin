@@ -44,28 +44,12 @@ export class NgxsFirestoreDebugState implements NgxsOnInit {
     setState(patch({ connections: removeItem(x => x === payload) }));
   }
 
-  @Action(NgxsFirestoreDebugActions.SetCount)
-  setCount(
-    { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreDebugActions.SetCount
-  ) {
-    patchState({ [payload.prop]: payload.quantity });
-  }
-
   @Action(NgxsFirestoreDebugActions.IncrementCount)
   incrementCount(
     { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
     { payload }: NgxsFirestoreDebugActions.IncrementCount
   ) {
     patchState({ [payload.prop]: getState()[payload.prop.toString()] + (payload.quantity || 1) });
-  }
-
-  @Action(NgxsFirestoreDebugActions.DecrementCount)
-  decrementCount(
-    { getState, setState, patchState }: StateContext<NgxsFirestoreDebugStateModel>,
-    { payload }: NgxsFirestoreDebugActions.DecrementCount
-  ) {
-    patchState({ [payload]: getState()[payload.toString()] - 1 });
   }
 
 }
