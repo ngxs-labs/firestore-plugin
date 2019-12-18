@@ -77,6 +77,15 @@ export class RacesState implements NgxsOnInit {
     );
   }
 
+  @Action(RacesActions.Upsert)
+  upsert({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Upsert) {
+    return this.racesFS.upsert$(payload).pipe(
+      finalize(() => {
+        dispatch(new RacesActions.GetOnce(payload.id));
+      })
+    );
+  }
+
   @Action(RacesActions.Update)
   update({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
     return this.racesFS.update$(payload.id, {
