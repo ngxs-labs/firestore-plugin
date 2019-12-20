@@ -7,9 +7,9 @@ import { StateClassInternal } from '@ngxs/store/src/internal/internals';
 import { NgxsInjector } from '../services/ngxs-injector.service';
 import { NgxsActiveConnectionsService } from '../services/ngxs-active-connections.service';
 
-export function NgxsFirestore(
+export function NgxsFirestoreConnect(
     actionType: ActionType,
-    fn?: (payload) => {}
+    emitPatchFn: (payload) => {}
 ): MethodDecorator {
     return (target, propertyKey: string | Symbol, descriptor: PropertyDescriptor) => {
 
@@ -24,13 +24,13 @@ export function NgxsFirestore(
             constructor(public payload: unknown) { }
         }
 
-        if (fn) {
+        if (emitPatchFn) {
             if (!meta.actions[emitType]) {
                 meta.actions[emitType] = [];
             }
 
             target[emitType] = ({ patchState }, { payload }) => {
-                patchState(fn(payload));
+                patchState(emitPatchFn(payload));
             };
 
             meta.actions[emitType].push({
@@ -42,7 +42,7 @@ export function NgxsFirestore(
 
         descriptor.value = function () {
             const activeConns = NgxsInjector.injector.get(NgxsActiveConnectionsService);
-            if (activeConns.contains('')) {
+            if (activeConns.contains(action)) {
                 return;
             }
             const { dispatch } = arguments[0];

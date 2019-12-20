@@ -1,8 +1,7 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
-import { patch, updateItem } from '@ngxs/store/operators';
 import { RacesActions } from './races.actions';
 import { tap, finalize } from 'rxjs/operators';
-import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreConnect } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
 
@@ -41,30 +40,30 @@ export class RacesState implements NgxsOnInit {
   }
 
   @Action([RacesActions.GetOnce])
-  getOnce({ setState }: StateContext<RacesStateModel>, { payload }: RacesActions.GetOnce) {
+  getOnce({ setState, getState, patchState }: StateContext<RacesStateModel>, { payload }: RacesActions.GetOnce) {
     return this.racesFS.docOnce$(payload).pipe(
       tap(race => {
-        setState(patch({ races: updateItem(x => x.id === payload, race) }));
+        const races = getState().races;
+        const exists = races.findIndex(r => r.id === payload);
+        if (exists > -1) {
+          patchState({ races: [...races.splice(exists, 1, race)] });
+        } else {
+          patchState({ races: races.concat(race) });
+        }
       })
     );
   }
 
-  @NgxsFirestore(
-    RacesActions.GetAll,
-    (payload): Partial<RacesStateModel> => ({ races: payload })
-  )
+  @NgxsFirestoreConnect(RacesActions.GetAll, (payload): Partial<RacesStateModel> => ({ races: payload }))
   @Action(RacesActions.GetAll)
-  getAll$({ patchState }: StateContext<RacesStateModel>) {
+  getAll({ patchState }: StateContext<RacesStateModel>) {
     return this.racesFS.collection$().pipe();
   }
 
 
-  @NgxsFirestore(
-    RacesActions.GetActive,
-    (payload): Partial<RacesStateModel> => ({ activeRaces: payload })
-  )
+  @NgxsFirestoreConnect(RacesActions.GetActive, (payload): Partial<RacesStateModel> => ({ activeRaces: payload }))
   @Action(RacesActions.GetActive)
-  getBikes$({ patchState }: StateContext<RacesStateModel>) {
+  getBikes({ patchState }: StateContext<RacesStateModel>) {
     return this.racesFS.collection$(ref => ref.where('id', '>=', 'm')).pipe();
   }
 
