@@ -5,26 +5,26 @@ import { NgxsFirestoreDebugActions } from '../states/ngxs-firestore-debug.action
 
 @Injectable()
 export class NgxsActiveConnectionsService implements OnDestroy {
-  private subs: { [id: string]: Subscription } = {};
+  private subs: { [actionName: string]: Subscription } = {};
 
   constructor(
     private store: Store
   ) {
   }
 
-  add(token: string, sub: Subscription) {
-    this.subs.token = sub;
-    this.store.dispatch(new NgxsFirestoreDebugActions.AddConnection(token));
+  add(actionName: string, sub: Subscription) {
+    this.subs[actionName] = sub;
+    this.store.dispatch(new NgxsFirestoreDebugActions.AddConnection(actionName));
   }
 
-  contains(token: string) {
-    return Object.keys(this.subs).includes(token);
+  contains(actionName: string) {
+    return Object.keys(this.subs).includes(actionName);
   }
 
-  remove(token: string) {
-    this.subs.token.unsubscribe();
-    delete this.subs.token;
-    this.store.dispatch(new NgxsFirestoreDebugActions.RemoveConnection(token));
+  remove(actionName: string) {
+    this.subs[actionName].unsubscribe();
+    delete this.subs[actionName];
+    this.store.dispatch(new NgxsFirestoreDebugActions.RemoveConnection(actionName));
   }
 
   ngOnDestroy() {
