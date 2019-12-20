@@ -5,6 +5,7 @@
     "build": "ng build ngxs-firestore && ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "build-integration": "ng build integration",
     "test": "jest --config ./jest.app.config.js",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.app.config.js",
     "test:ci": "jest --config ./jest.app.config.js --coverage",
     "format": "prettier --write \"{src,integration}/**/*.{ts,json,html}\"",
     "lint": "tslint '{src,integration}/**/*.ts' --project tsconfig.json"
