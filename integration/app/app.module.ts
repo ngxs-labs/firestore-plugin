@@ -16,13 +16,22 @@ import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { RacesState } from './states/races/races.state';
+import { OtherComponent } from './components/other/other.component';
 
 @NgModule({
-    declarations: [AppComponent, ListComponent],
+    declarations: [
+        AppComponent,
+        ListComponent,
+        OtherComponent
+    ],
     imports: [
         BrowserModule,
         FormsModule,
-        RouterModule.forRoot([]),
+        RouterModule.forRoot([
+            { path: 'list', component: ListComponent },
+            { path: 'other', component: OtherComponent },
+            { path: '', redirectTo: '/list', pathMatch: 'full' }
+        ]),
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
             RacesState
