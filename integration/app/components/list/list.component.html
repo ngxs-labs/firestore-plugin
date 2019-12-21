@@ -3,7 +3,7 @@
 </div>
 
 <div>
-    <h5>Total: {{ total$ | async }}</h5>
+    <h5>Total: {{ total$ | async | ngxsFirestoreConnect:'[Races] GetAll' }}</h5>
 </div>
 
 <div *ngFor="let race of races$ | async"

@@ -1,9 +1,11 @@
 import { Pipe, PipeTransform, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { disconnectAction } from '../util/action-creator-helper';
+import { of } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 
 @Pipe({
-  name: 'ngxsFirestore'
+  name: 'ngxsFirestoreConnect'
 })
 export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
 
@@ -18,7 +20,7 @@ export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
   transform(value, actionName: string) {
     const actionType = { type: actionName };
     if (!this._connected.includes(actionName)) {
-      this.store.dispatch(actionType);
+      of({}).pipe(delay(0), tap(_ => this.store.dispatch(actionType))).subscribe();
       this._connected.push(actionName);
     }
 

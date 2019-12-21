@@ -43,10 +43,11 @@ export class RacesState implements NgxsOnInit {
   getOnce({ setState, getState, patchState }: StateContext<RacesStateModel>, { payload }: RacesActions.GetOnce) {
     return this.racesFS.docOnce$(payload).pipe(
       tap(race => {
-        const races = getState().races;
+        const races = [...getState().races];
         const exists = races.findIndex(r => r.id === payload);
         if (exists > -1) {
-          patchState({ races: [...races.splice(exists, 1, race)] });
+          races.splice(exists, 1, race);
+          patchState({ races });
         } else {
           patchState({ races: races.concat(race) });
         }
