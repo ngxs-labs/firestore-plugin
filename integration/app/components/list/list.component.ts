@@ -14,8 +14,8 @@ import { map } from 'rxjs/operators';
 })
 export class ListComponent implements OnInit, OnDestroy {
 
-  public races$ = this.store.select(RacesState.races);
-  public total$ = this.races$.pipe(map(races => races.length));
+  races$ = this.store.select(RacesState.races);
+  total$ = this.races$.pipe(map(races => races.length));
 
   constructor(
     private store: Store
