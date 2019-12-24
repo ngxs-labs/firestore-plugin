@@ -17,7 +17,13 @@ module.exports = {
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.json',
-      allowSyntheticDefaultImports: true
+      allowSyntheticDefaultImports: true,
+      diagnostics: true,
+      stringifyContentPathRegex: '\\.html$',
+      astTransformers: [
+        'jest-preset-angular/build/InlineFilesTransformer',
+        'jest-preset-angular/build/StripStylesTransformer'
+      ]
     }
   },
   bail: true,
