@@ -1,22 +1,18 @@
 <div class="my-3">
-    <button (click)="create()">Create </button>
+    <button (click)="create()">Create</button>
 </div>
 
 <div>
-    <h5>Total: {{ total$ | async | ngxsFirestoreConnect:'[Races] GetAll' }}</h5>
+    <h5>Total: {{ total$ | async | ngxsFirestoreConnect: '[Races] GetAll' }}</h5>
 </div>
 
-<div *ngFor="let race of races$ | async"
-     class="card mr-1 mb-1 d-inline-flex"
-     style="width: 12rem;">
+<div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
     <div class="card-body">
+        <h5 class="card-title">{{ race.name }}</h5>
+        <p class="card-text">{{ race.id }}</p>
+        <p class="card-text">{{ race.description }}</p>
 
-        <h5 class="card-title">{{race.name}}</h5>
-        <p class="card-text">{{race.id}}</p>
-        <p class="card-text">{{race.description}}</p>
-
-        <button (click)="update(race)"
-                class="mr-1"> Update </button>
-        <button (click)="delete(race.id)"> Delete </button>
+        <button (click)="update(race)" class="mr-1">Update</button>
+        <button (click)="delete(race.id)">Delete</button>
     </div>
 </div>

@@ -5,34 +5,33 @@ import { of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 
 @Pipe({
-  name: 'ngxsFirestoreConnect'
+    name: 'ngxsFirestoreConnect'
 })
 export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
+    private _connected: string[] = [];
 
-  private _connected: string[] = [];
+    constructor(private store: Store) {}
 
-  constructor(
-    private store: Store
-  ) {
+    transform(value, actionName: string) {
+        const actionType = { type: actionName };
+        if (!this._connected.includes(actionName)) {
+            of({})
+                .pipe(
+                    delay(0),
+                    tap((_) => this.store.dispatch(actionType))
+                )
+                .subscribe();
+            this._connected.push(actionName);
+        }
 
-  }
-
-  transform(value, actionName: string) {
-    const actionType = { type: actionName };
-    if (!this._connected.includes(actionName)) {
-      of({}).pipe(delay(0), tap(_ => this.store.dispatch(actionType))).subscribe();
-      this._connected.push(actionName);
+        return value;
     }
 
-    return value;
-  }
+    ngOnDestroy() {
+        this._connected.map((actionName) => {
+            this.store.dispatch(disconnectAction({ type: actionName }));
+        });
 
-  ngOnDestroy() {
-    this._connected.map(actionName => {
-      this.store.dispatch(disconnectAction({ type: actionName }));
-    });
-
-    this._connected = [];
-  }
-
+        this._connected = [];
+    }
 }

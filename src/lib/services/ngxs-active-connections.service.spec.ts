@@ -1,14 +1,14 @@
 import { NgxsActiveConnectionsService } from './ngxs-active-connections.service';
 
 describe('NgxsActiveConnectionsService', () => {
-  let store;
+    let store;
 
-  beforeEach(() => {
-    store = jest.fn();
-  });
+    beforeEach(() => {
+        store = jest.fn();
+    });
 
-  it('should be created', () => {
-    const service: NgxsActiveConnectionsService = new NgxsActiveConnectionsService(store);
-    expect(service).toBeTruthy();
-  });
+    it('should be created', () => {
+        const service: NgxsActiveConnectionsService = new NgxsActiveConnectionsService(store);
+        expect(service).toBeTruthy();
+    });
 });

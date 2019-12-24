@@ -7,38 +7,20 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { NgxsInjector } from './services/ngxs-injector.service';
 import { NgxsActiveConnectionsService } from './services/ngxs-active-connections.service';
 
-const PIPES = [
-  NgxsFirestorePipe
-];
+const PIPES = [NgxsFirestorePipe];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    NgxsModule.forFeature([
-      NgxsFirestoreDebugState
-    ]),
-    AngularFirestoreModule,
-  ],
-  declarations: [
-    ...PIPES
-  ],
-  exports: [
-    ...PIPES
-  ]
+    imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreDebugState]), AngularFirestoreModule],
+    declarations: [...PIPES],
+    exports: [...PIPES]
 })
 export class NgxsFirestoreModule {
-  constructor(
-    @Self() public injector: NgxsInjector,
-    @Self() public ac: NgxsActiveConnectionsService
-  ) { }
+    constructor(@Self() public injector: NgxsInjector, @Self() public ac: NgxsActiveConnectionsService) {}
 
-  public static forRoot(): ModuleWithProviders {
-    return {
-      ngModule: NgxsFirestoreModule,
-      providers: [
-        NgxsInjector,
-        NgxsActiveConnectionsService
-      ]
-    };
-  }
+    public static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: NgxsFirestoreModule,
+            providers: [NgxsInjector, NgxsActiveConnectionsService]
+        };
+    }
 }

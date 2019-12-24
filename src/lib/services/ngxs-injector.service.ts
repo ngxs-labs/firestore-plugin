@@ -4,9 +4,7 @@ import { Injectable, Injector } from '@angular/core';
 export class NgxsInjector {
     public static injector: Injector = null;
 
-    constructor(
-        injector: Injector
-    ) {
+    constructor(injector: Injector) {
         NgxsInjector.injector = injector;
     }
 }

@@ -19,11 +19,7 @@ import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        ListComponent,
-        OtherComponent
-    ],
+    declarations: [AppComponent, ListComponent, OtherComponent],
     imports: [
         BrowserModule,
         FormsModule,
@@ -33,16 +29,14 @@ import { OtherComponent } from './components/other/other.component';
             { path: '', redirectTo: '/list', pathMatch: 'full' }
         ]),
         AngularFireModule.initializeApp(environment.firebase),
-        NgxsModule.forRoot([
-            RacesState
-        ], {
+        NgxsModule.forRoot([RacesState], {
             developmentMode: !environment.production
         }),
         NgxsLoggerPluginModule.forRoot({ disabled: environment.production }),
         NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
-        NgxsFirestoreModule.forRoot(),
+        NgxsFirestoreModule.forRoot()
     ],
     providers: [],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
