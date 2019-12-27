@@ -25,9 +25,11 @@ export class RacesState implements NgxsOnInit {
         return state.activeRaces;
     }
 
-    constructor(private racesFS: RacesFirestore) {}
+    constructor(
+        private racesFS: RacesFirestore
+    ) { }
 
-    ngxsOnInit({ dispatch }: StateContext<RacesStateModel>) {}
+    ngxsOnInit({ dispatch }: StateContext<RacesStateModel>) { }
 
     @Action([RacesActions.GetAllOnce])
     getAllOnce({ patchState }: StateContext<RacesStateModel>) {
@@ -54,7 +56,10 @@ export class RacesState implements NgxsOnInit {
         );
     }
 
-    @NgxsFirestoreConnect(RacesActions.GetAll, (payload): Partial<RacesStateModel> => ({ races: payload }))
+    @NgxsFirestoreConnect(
+        RacesActions.GetAll,
+        (payload): Partial<RacesStateModel> => ({ races: payload })
+    )
     @Action(RacesActions.GetAll)
     getAll({ patchState }: StateContext<RacesStateModel>) {
         return this.racesFS.collection$().pipe();
@@ -78,9 +83,9 @@ export class RacesState implements NgxsOnInit {
     @Action(RacesActions.Upsert)
     upsert({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Upsert) {
         return this.racesFS.upsert$(payload).pipe(
-            finalize(() => {
-                dispatch(new RacesActions.GetOnce(payload.id));
-            })
+            // finalize(() => {
+            //     dispatch(new RacesActions.GetOnce(payload.id));
+            // })
         );
     }
 
@@ -91,9 +96,9 @@ export class RacesState implements NgxsOnInit {
                 ...payload
             })
             .pipe(
-                finalize(() => {
-                    dispatch(new RacesActions.GetOnce(payload.id));
-                })
+                // finalize(() => {
+                //     dispatch(new RacesActions.GetOnce(payload.id));
+                // })
             );
     }
 
