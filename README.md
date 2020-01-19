@@ -10,7 +10,7 @@
 
 ## Description
 
-NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a wrapper service with some handful methods for the basic CRUD operations and easy integration with NGXS actions. In addition it provides useful data for debugging purposes, such as Active Connections, Reads, Updates, Creates and Deletes.
+NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition it provides useful data for debugging purposes, such as Active Connections, Reads, Updates, Creates and Deletes.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_debug_data.png)
 
@@ -86,11 +86,11 @@ import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
 })
 export class RacesState {
 
-  @Action(RacesActions.GetOnce)
-  getOnce({ getState, patchState }: StateContext<RacesStateModel>) {
-    return this.racesFS.docOnce$(payload).pipe(
-      tap(race => {        
-        patchState({ race: race });      
+  @Action(RacesActions.GetAllOnce)
+  getAllOnce({ getState, patchState }: StateContext<RacesStateModel>) {
+    return this.racesFS.collectionOnce$().pipe(
+      tap(races => {        
+        patchState({ races: races });      
       })
     );
   }
@@ -102,6 +102,8 @@ export class RacesState {
 
 In the second scenario, the plugin provides the `@NgxsFirestoreConnect` decorator, which will connect to Firestore and emit every new change as a separate `Emit` action.
 
+The decorator takes the Action that will trigger the connection and a function that receives the Action result and return the patched state value.
+
 ```
 //...
 import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
@@ -111,18 +113,18 @@ export class RacesState {
   //...
 
   @NgxsFirestore(
-    RacesActions.Get,
-    (payload): Partial<RacesStateModel> => ({ race: payload })
+    RacesActions.GetAll,
+    (payload): Partial<RacesStateModel> => ({ races: payload })
   )
-  @Action(RacesActions.Get)
-  getRaces({ patchState }: StateContext<RacesStateModel>) {
-    return this.racesFS.docOnce$(payload);
+  @Action(RacesActions.GetAll)
+  getAll({ patchState }: StateContext<RacesStateModel>) {
+    return this.racesFS.collectionOnce$();
   }
 
 }
 ```
 
 Once you connect to the Firestore stream you'll keep receiving every server update on a new `Emit` action, making it easier to debug.
-The decorator takes the Action that will trigger the connection and a function that receives the Action result and return the patched state value.
+
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_actions_emit.gif)
