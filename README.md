@@ -8,6 +8,8 @@
 
 ## Demo
 
+[Demo](https://ngxs-firebase-plugin.netlify.com/)
+
 ## Description
 
 NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition it provides useful data for debugging purposes, such as Active Connections, Reads, Updates, Creates and Deletes.
