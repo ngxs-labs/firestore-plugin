@@ -11,5 +11,6 @@
     "url": "git+https://github.com/ngxs-labs/firebase.git"
   },
   "license": "MIT",
-  "private": false
+  "private": false,
+  "keywords": ["firestore", "ngxs", "ngxs-labs"]
 }
