@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RacesActions } from './../../states/races/races.actions';
 import { RacesState } from './../../states/races/races.state';
-import { Disconnect } from '@ngxs-labs/firestore-plugin';
+// import { Disconnect } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
@@ -19,7 +19,7 @@ export class ListComponent implements OnInit, OnDestroy {
     constructor(private store: Store) {}
 
     ngOnInit() {
-        //this.store.dispatch(new RacesActions.GetAll());
+        // this.store.dispatch(new RacesActions.GetAll());
         // this.store.dispatch(new RacesActions.GetActive());
     }
 
@@ -50,6 +50,6 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.store.dispatch(new Disconnect(RacesActions.GetAll));
+        // this.store.dispatch(new Disconnect(RacesActions.GetAll));
     }
 }
