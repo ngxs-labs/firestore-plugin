@@ -1,6 +1,6 @@
 {
   "name": "@ngxs-labs/firestore-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "peerDependencies": {
     "@ngxs/store": ">=3.4.0 <4.0.0",
     "@angular/fire": ">=5.0.0 <6.0.0"
@@ -12,5 +12,9 @@
   },
   "license": "MIT",
   "private": false,
-  "keywords": ["firestore", "ngxs", "ngxs-labs"]
+  "keywords": [
+    "firestore",
+    "ngxs",
+    "ngxs-labs"
+  ]
 }
