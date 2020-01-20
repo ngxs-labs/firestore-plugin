@@ -2,7 +2,7 @@
   "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve --port=4251",
-    "build": "ng build ngxs-firestore && yarn copy-readme",
+    "build": "ng build ngxs-firestore && yarn bump --release patch && yarn copy-readme",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "bump": "ts-node --project tsconfig.tools.json ./tools/bump",
     "build-integration": "ng build integration",    
