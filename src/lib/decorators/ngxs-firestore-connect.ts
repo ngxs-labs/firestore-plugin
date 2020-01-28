@@ -32,8 +32,8 @@ export function NgxsFirestoreConnect(actionType: ActionType, emitPatchFn: (paylo
                 meta.actions[emitType] = [];
             }
 
-            target[emitType] = ({ patchState }, { payload }) => {
-                patchState(emitPatchFn(payload));
+            target[emitType] = ({ setState }, { payload }) => {
+                setState(emitPatchFn(payload));
             };
 
             meta.actions[emitType].push({
