@@ -1,10 +1,6 @@
 import { Race } from './../../models/race';
 
 namespace RacesActionsPayloads {
-    export interface Login {
-        email: string;
-        password: string;
-    }
     export type Update = Partial<Race>;
     export type Upsert = Partial<Race>;
     export type Create = Partial<Race>;
@@ -16,6 +12,10 @@ export namespace RacesActions {
     }
     export class GetOnce {
         public static readonly type = '[Races] GetOnce';
+        constructor(public payload: string) {}
+    }
+    export class Get {
+        public static readonly type = '[Races] Get';
         constructor(public payload: string) {}
     }
     export class GetAll {

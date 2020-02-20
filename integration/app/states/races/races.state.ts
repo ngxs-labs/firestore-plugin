@@ -1,9 +1,19 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { RacesActions } from './races.actions';
 import { tap, finalize } from 'rxjs/operators';
-import { NgxsFirestoreConnect } from '@ngxs-labs/firestore-plugin';
+import {
+    NgxsFirestoreConnect,
+    NgxsFirestore,
+    Connected,
+    Emitted,
+    Disconnected,
+    StreamConnectedOf,
+    StreamEmittedOf,
+    StreamDisconnectedOf
+} from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
+import { patch, insertItem } from '@ngxs/store/operators';
 
 export interface RacesStateModel {
     races: Race[];
@@ -25,11 +35,30 @@ export class RacesState implements NgxsOnInit {
         return state.activeRaces;
     }
 
-    constructor(
-        private racesFS: RacesFirestore
-    ) { }
+    constructor(private racesFS: RacesFirestore, private ngxsFirestore: NgxsFirestore) {}
 
-    ngxsOnInit({ dispatch }: StateContext<RacesStateModel>) { }
+    ngxsOnInit(ctx: StateContext<RacesStateModel>) {
+        this.ngxsFirestore.connect<RacesActions.Get, Race>(RacesActions.Get, {
+            to: (id: string) => this.racesFS.doc$(id),
+            trackBy: (id: string) => id // connection identifier
+        });
+    }
+
+    @Action(StreamConnectedOf(RacesActions.Get))
+    getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
+        debugger;
+    }
+
+    @Action(StreamEmittedOf(RacesActions.Get))
+    getEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race>) {
+        debugger;
+        ctx.setState(patch({ races: insertItem(payload) }));
+    }
+
+    @Action(StreamDisconnectedOf(RacesActions.Get))
+    getDisconnected(ctx: StateContext<RacesStateModel>, { action }: Disconnected<RacesActions.Get>) {
+        debugger;
+    }
 
     @Action([RacesActions.GetAllOnce])
     getAllOnce({ patchState }: StateContext<RacesStateModel>) {
@@ -56,10 +85,7 @@ export class RacesState implements NgxsOnInit {
         );
     }
 
-    @NgxsFirestoreConnect(
-        RacesActions.GetAll,
-        (payload): Partial<RacesStateModel> => ({ races: payload })
-    )
+    @NgxsFirestoreConnect(RacesActions.GetAll, (payload): Partial<RacesStateModel> => ({ races: payload }))
     @Action(RacesActions.GetAll)
     getAll({ patchState }: StateContext<RacesStateModel>) {
         return this.racesFS.collection$().pipe();
@@ -82,11 +108,13 @@ export class RacesState implements NgxsOnInit {
 
     @Action(RacesActions.Upsert)
     upsert({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Upsert) {
-        return this.racesFS.upsert$(payload).pipe(
+        return this.racesFS
+            .upsert$(payload)
+            .pipe
             // finalize(() => {
             //     dispatch(new RacesActions.GetOnce(payload.id));
             // })
-        );
+            ();
     }
 
     @Action(RacesActions.Update)
@@ -95,11 +123,11 @@ export class RacesState implements NgxsOnInit {
             .update$(payload.id, {
                 ...payload
             })
-            .pipe(
-                // finalize(() => {
-                //     dispatch(new RacesActions.GetOnce(payload.id));
-                // })
-            );
+            .pipe
+            // finalize(() => {
+            //     dispatch(new RacesActions.GetOnce(payload.id));
+            // })
+            ();
     }
 
     @Action(RacesActions.Delete)

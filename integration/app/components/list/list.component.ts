@@ -21,6 +21,7 @@ export class ListComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // this.store.dispatch(new RacesActions.GetAll());
         // this.store.dispatch(new RacesActions.GetActive());
+        this.store.dispatch(new RacesActions.Get('$!304Wwx1vkSwjqGDmDt'));
     }
 
     create() {

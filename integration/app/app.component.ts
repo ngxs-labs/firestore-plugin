@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-    public ngxsFirestoreDebug$: Observable<unknown> = this.store.select((state) => state.ngxs_firestore_debug);
+    public ngxsFirestoreState$: Observable<unknown> = this.store.select((state) => state.ngxs_firestore);
 
     constructor(private store: Store) {}
 }

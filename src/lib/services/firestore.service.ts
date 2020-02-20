@@ -3,8 +3,8 @@ import { Observable, from } from 'rxjs';
 import { Inject } from '@angular/core';
 import { tap, map, scan, take } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { NgxsFirestoreDebugActions } from '../states/ngxs-firestore-debug.actions';
-import { NgxsFirestoreDebugStateModel } from '../states/ngxs-firestore-debug.state';
+import { NgxsFirestoreDebugActions } from '../states/ngxs-firestore.actions';
+import { NgxsFirestoreStateModel } from '../states/ngxs-firestore.state';
 
 export abstract class FirestoreService<T> {
     protected abstract path: string;
@@ -80,7 +80,7 @@ export abstract class FirestoreService<T> {
     }
 
     public create$(id: string, value: Partial<T>) {
-        return from(this.firestore.doc(`${this.path}/${id}`).set(value)).pipe(
+        return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe(
             tap((_) => {
                 this.store.dispatch(new NgxsFirestoreDebugActions.IncrementCount({ prop: 'creates' }));
             })
@@ -90,7 +90,7 @@ export abstract class FirestoreService<T> {
     public upsert$(value: Partial<T>) {
         let id;
         let newValue;
-        let prop: keyof NgxsFirestoreDebugStateModel;
+        let prop: keyof NgxsFirestoreStateModel;
 
         if (Object.keys(value).includes('id') && !!value['id']) {
             id = value['id'];

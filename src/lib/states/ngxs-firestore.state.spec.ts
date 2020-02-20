@@ -1,17 +1,17 @@
 import { TestBed, async } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
-import { NgxsFirestoreDebugState } from './ngxs-firestore-debug.state';
-import { NgxsFirestoreDebugActions } from './ngxs-firestore-debug.actions';
+import { NgxsFirestoreState } from './ngxs-firestore.state';
+import { NgxsFirestoreDebugActions } from './ngxs-firestore.actions';
 
 describe('NGXS Firestore State', () => {
     let store: Store;
     const connections = () => {
-        return store.selectSnapshot(NgxsFirestoreDebugState).connections;
+        return store.selectSnapshot(NgxsFirestoreState).connections;
     };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [NgxsModule.forRoot([NgxsFirestoreDebugState])]
+            imports: [NgxsModule.forRoot([NgxsFirestoreState])]
         }).compileComponents();
 
         store = TestBed.get(Store);
