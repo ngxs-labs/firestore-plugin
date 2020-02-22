@@ -16,39 +16,24 @@ namespace NgxsFirestoreDebugPayloads {
     }
 }
 
-export namespace NgxsFirestoreDebugActions {
-    export class IncrementCount {
-        public static readonly type = '[NgxsFirestore] IncrementCount';
-        constructor(public payload: NgxsFirestoreDebugPayloads.IncrementCount) {}
-    }
-
-    export class AddConnection {
-        public static readonly type = '[NgxsFirestore] AddConnection';
-        constructor(public payload: string) {}
-    }
-
-    export class RemoveConnection {
-        public static readonly type = '[NgxsFirestore] RemoveConnection';
-        constructor(public payload: string) {}
-    }
-
+export namespace NgxsFirestoreActions {
     export class StreamConnected {
-        static readonly type = '[StreamPlugin] Connected';
+        static readonly type = '[NgxsFirestore] Connected';
         constructor(public payload: string) {}
     }
 
     export class StreamEmitted {
-        static readonly type = '[StreamPlugin] Emitted';
+        static readonly type = '[NgxsFirestore] Emitted';
         constructor(public payload: NgxsFirestoreDebugPayloads.StreamEmitted) {}
     }
 
     export class StreamDisconnected {
-        static readonly type = '[StreamPlugin] Disconnected';
+        static readonly type = '[NgxsFirestore] Disconnected';
         constructor(public payload: string) {}
     }
 
     export class Disconnect {
-        static readonly type = '[StreamPlugin] Disconnect';
+        static readonly type = '[NgxsFirestore] Disconnect';
         constructor(public payload: ActionType) {}
     }
 }

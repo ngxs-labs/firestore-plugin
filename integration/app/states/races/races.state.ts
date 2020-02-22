@@ -1,8 +1,7 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { RacesActions } from './races.actions';
-import { tap, finalize } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import {
-    NgxsFirestoreConnect,
     NgxsFirestore,
     Connected,
     Emitted,
@@ -13,7 +12,7 @@ import {
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
-import { patch, insertItem } from '@ngxs/store/operators';
+import { patch, insertItem, append } from '@ngxs/store/operators';
 
 export interface RacesStateModel {
     races: Race[];
@@ -38,26 +37,35 @@ export class RacesState implements NgxsOnInit {
     constructor(private racesFS: RacesFirestore, private ngxsFirestore: NgxsFirestore) {}
 
     ngxsOnInit(ctx: StateContext<RacesStateModel>) {
-        this.ngxsFirestore.connect<RacesActions.Get, Race>(RacesActions.Get, {
+        this.ngxsFirestore.connect(RacesActions.Get, {
             to: (id: string) => this.racesFS.doc$(id),
-            trackBy: (id: string) => id // connection identifier
+            trackBy: (id: string) => id
+        });
+
+        this.ngxsFirestore.connect(RacesActions.GetAll, {
+            to: (id: string) => this.racesFS.collection$(),
+            trackBy: (id: string) => id
         });
     }
 
     @Action(StreamConnectedOf(RacesActions.Get))
     getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
-        debugger;
+        console.log('[RacesActions.Get]  Connected');
     }
 
     @Action(StreamEmittedOf(RacesActions.Get))
     getEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race>) {
-        debugger;
         ctx.setState(patch({ races: insertItem(payload) }));
     }
 
     @Action(StreamDisconnectedOf(RacesActions.Get))
     getDisconnected(ctx: StateContext<RacesStateModel>, { action }: Disconnected<RacesActions.Get>) {
-        debugger;
+        console.log('[RacesActions.Get] Disconnected');
+    }
+
+    @Action(StreamEmittedOf(RacesActions.GetAll))
+    getAllEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race[]>) {
+        ctx.setState(patch({ races: payload }));
     }
 
     @Action([RacesActions.GetAllOnce])
@@ -85,57 +93,23 @@ export class RacesState implements NgxsOnInit {
         );
     }
 
-    @NgxsFirestoreConnect(RacesActions.GetAll, (payload): Partial<RacesStateModel> => ({ races: payload }))
-    @Action(RacesActions.GetAll)
-    getAll({ patchState }: StateContext<RacesStateModel>) {
-        return this.racesFS.collection$().pipe();
-    }
-
-    @NgxsFirestoreConnect(RacesActions.GetActive, (payload): Partial<RacesStateModel> => ({ activeRaces: payload }))
-    @Action(RacesActions.GetActive)
-    getBikes({ patchState }: StateContext<RacesStateModel>) {
-        return this.racesFS.collection$((ref) => ref.where('id', '>=', 'm')).pipe();
-    }
-
     @Action(RacesActions.Create)
     create({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Create) {
-        return this.racesFS.create$(payload.id, payload).pipe(
-            finalize(() => {
-                dispatch(new RacesActions.GetAllOnce());
-            })
-        );
+        return this.racesFS.create$(payload.id, payload);
     }
 
     @Action(RacesActions.Upsert)
     upsert({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Upsert) {
-        return this.racesFS
-            .upsert$(payload)
-            .pipe
-            // finalize(() => {
-            //     dispatch(new RacesActions.GetOnce(payload.id));
-            // })
-            ();
+        return this.racesFS.upsert$(payload);
     }
 
     @Action(RacesActions.Update)
     update({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
-        return this.racesFS
-            .update$(payload.id, {
-                ...payload
-            })
-            .pipe
-            // finalize(() => {
-            //     dispatch(new RacesActions.GetOnce(payload.id));
-            // })
-            ();
+        return this.racesFS.update$(payload.id, payload);
     }
 
     @Action(RacesActions.Delete)
     delete({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Delete) {
-        return this.racesFS.delete$(payload).pipe(
-            finalize(() => {
-                dispatch(new RacesActions.GetAllOnce());
-            })
-        );
+        return this.racesFS.delete$(payload);
     }
 }

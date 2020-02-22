@@ -1,11 +1,10 @@
 import { NgModule, ModuleWithProviders, Self } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxsFirestorePipe } from './pipes/ngxs-firestore.pipe';
+import { NgxsFirestorePipe } from './ngxs-firestore.pipe';
 import { NgxsModule } from '@ngxs/store';
-import { NgxsFirestoreState } from './states/ngxs-firestore.state';
+import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { NgxsInjector } from './services/ngxs-injector.service';
-import { NgxsActiveConnectionsService } from './services/ngxs-active-connections.service';
+import { NgxsInjector } from './ngxs-injector.service';
 
 const PIPES = [NgxsFirestorePipe];
 
@@ -15,12 +14,12 @@ const PIPES = [NgxsFirestorePipe];
     exports: [...PIPES]
 })
 export class NgxsFirestoreModule {
-    constructor(@Self() public injector: NgxsInjector, @Self() public ac: NgxsActiveConnectionsService) {}
+    constructor(@Self() public injector: NgxsInjector) {}
 
     public static forRoot(): ModuleWithProviders {
         return {
             ngModule: NgxsFirestoreModule,
-            providers: [NgxsInjector, NgxsActiveConnectionsService]
+            providers: [NgxsInjector]
         };
     }
 }

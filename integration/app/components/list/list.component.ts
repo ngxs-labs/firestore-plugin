@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RacesActions } from './../../states/races/races.actions';
 import { RacesState } from './../../states/races/races.state';
-// import { Disconnect } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
+import { StreamDisconnectOf } from 'src';
 
 @Component({
     selector: 'app-list',
@@ -21,7 +21,11 @@ export class ListComponent implements OnInit, OnDestroy {
     ngOnInit() {
         // this.store.dispatch(new RacesActions.GetAll());
         // this.store.dispatch(new RacesActions.GetActive());
-        this.store.dispatch(new RacesActions.Get('$!304Wwx1vkSwjqGDmDt'));
+        this.store.dispatch(new RacesActions.GetAll());
+    }
+
+    disconnect() {
+        this.store.dispatch(StreamDisconnectOf(RacesActions.GetAll));
     }
 
     create() {
