@@ -2,7 +2,7 @@ import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { RacesActions } from './races.actions';
 import { tap } from 'rxjs/operators';
 import {
-    NgxsFirestore,
+    NgxsFirestoreConnect,
     Connected,
     Emitted,
     Disconnected,
@@ -34,15 +34,15 @@ export class RacesState implements NgxsOnInit {
         return state.activeRaces;
     }
 
-    constructor(private racesFS: RacesFirestore, private ngxsFirestore: NgxsFirestore) {}
+    constructor(private racesFS: RacesFirestore, private ngxsFirestoreConnect: NgxsFirestoreConnect) {}
 
     ngxsOnInit(ctx: StateContext<RacesStateModel>) {
-        this.ngxsFirestore.connect(RacesActions.Get, {
+        this.ngxsFirestoreConnect.connect(RacesActions.Get, {
             to: (id: string) => this.racesFS.doc$(id),
             trackBy: (id: string) => id
         });
 
-        this.ngxsFirestore.connect(RacesActions.GetAll, {
+        this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
             to: () => this.racesFS.collection$()
         });
     }

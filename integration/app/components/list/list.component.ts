@@ -5,7 +5,7 @@ import { RacesState } from './../../states/races/races.state';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { NgxsFirestoreActions, StreamDisconnectOf } from '@ngxs-labs/firestore-plugin';
+import { StreamDisconnectOf } from '@ngxs-labs/firestore-plugin';
 
 @Component({
     selector: 'app-list',

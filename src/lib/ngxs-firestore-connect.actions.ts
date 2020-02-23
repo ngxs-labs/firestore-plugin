@@ -1,22 +1,12 @@
-import { NgxsFirestoreStateModel } from './ngxs-firestore.state';
 import { ActionType } from '@ngxs/store';
 namespace NgxsFirestoreDebugPayloads {
-    export interface IncrementCount {
-        prop: keyof NgxsFirestoreStateModel;
-        quantity?: number;
-    }
-    export interface SetCount {
-        prop: keyof NgxsFirestoreStateModel;
-        quantity?: number;
-    }
-
     export interface StreamEmitted {
         id: string;
         items: any;
     }
 }
 
-export namespace NgxsFirestoreActions {
+export namespace NgxsFirestoreConnectActions {
     export class StreamConnected {
         static readonly type = '[NgxsFirestore] Connected';
         constructor(public payload: string) {}

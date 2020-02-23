@@ -7,7 +7,7 @@ import { delay, tap } from 'rxjs/operators';
 @Pipe({
     name: 'ngxsFirestoreConnect'
 })
-export class NgxsFirestorePipe implements PipeTransform, OnDestroy {
+export class NgxsFirestoreConnectPipe implements PipeTransform, OnDestroy {
     private _connected: string[] = [];
 
     constructor(private store: Store) {}

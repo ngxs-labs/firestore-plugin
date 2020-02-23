@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { FirestoreService } from './firestore.service';
+import { NgxsFirestore } from './ngxs-firestore.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
@@ -16,13 +16,13 @@ describe('FirestoreService', () => {
 
     it('cant be directly instantiated', () => {
         expect(() => {
-            TestBed.get(FirestoreService);
+            TestBed.get(NgxsFirestore);
         }).toThrowError('No provider for FirestoreService!');
     });
 
     it('can be implemented and instantiated', () => {
         @Injectable({ providedIn: 'root' })
-        class TestFirestore extends FirestoreService<{}> {
+        class TestFirestore extends NgxsFirestore<{}> {
             protected path = 'test';
         }
 

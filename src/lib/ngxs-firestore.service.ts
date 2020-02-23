@@ -1,131 +1,63 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
-import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap } from 'rxjs/operators';
-import { Subject, Observable, race, Subscription, of } from 'rxjs';
-import { NgxsFirestoreState } from './ngxs-firestore.state';
-import { attachAction } from '@ngxs-labs/attach-action';
-import {
-    StreamConnectedOf,
-    StreamEmittedOf,
-    StreamDisconnectOf,
-    StreamDisconnectedOf
-} from './action-decorator-helpers';
-import { NgxsFirestoreActions } from './ngxs-firestore.actions';
+import { AngularFirestore, QueryFn } from '@angular/fire/firestore';
+import { Observable, from } from 'rxjs';
+import { Inject } from '@angular/core';
+import { map, take } from 'rxjs/operators';
 
-function streamId(action: ActionType, actionCtx: any) {
-    return `${action.type}${actionCtx.payload ? ` (${actionCtx.payload})` : ''}`;
-}
+export abstract class NgxsFirestore<T> {
+    protected abstract path: string;
 
-@Injectable({ providedIn: 'root' })
-export class NgxsFirestore implements OnDestroy {
-    firestoreConnectionsSub: Subscription;
+    constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
 
-    constructor(private store: Store, private actions: Actions) {}
-
-    connect(
-        action: ActionType,
-        opts: {
-            to: (payload: any) => Observable<any>;
-            trackBy?: (payload: any) => string;
-        }
-    ) {
-        const actionHandlerSubject = new Subject();
-        const actionConnectedHandlerSubject = new Subject();
-
-        attachAction(NgxsFirestoreState, action, () => {
-            return actionHandlerSubject.asObservable().pipe(
-                take(1),
-                switchMap((actionCtx) => {
-                    if (!!this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)))) {
-                        // NGXS doesnt complete the action returning EMPTY
-                        return of({});
-                    } else {
-                        return actionConnectedHandlerSubject.asObservable().pipe(
-                            take(1),
-                            tap((_) => {
-                                // call action stream connected
-                                const StreamConnectedClass = StreamConnectedOf(action);
-                                this.store.dispatch(new StreamConnectedClass(action));
-
-                                // internal stream logging
-                                this.store.dispatch(
-                                    new NgxsFirestoreActions.StreamConnected(streamId(action, actionCtx))
-                                );
-                            })
-                        );
-                    }
-                }),
-                catchError((_) => {
-                    // NGXS doesnt complete the action returning EMPTY
-                    return of({});
-                })
-            );
-        });
-
-        this.firestoreConnectionsSub = this.actions
-            .pipe(
-                ofActionDispatched(action),
-                tap((actionCtx) => actionHandlerSubject.next(actionCtx)),
-                filter((actionCtx) => {
-                    return !this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)));
-                }),
-                mergeMap((actionCtx) => {
-                    const streamFn = opts.to;
-                    return streamFn(actionCtx.payload).pipe(
-                        tap((_) => actionConnectedHandlerSubject.next(actionCtx)),
-                        tap((payload) => {
-                            const StreamEmittedClass = StreamEmittedOf(action);
-                            this.store.dispatch(new StreamEmittedClass(actionCtx, payload));
-                            this.store.dispatch(
-                                new NgxsFirestoreActions.StreamEmitted({
-                                    id: streamId(action, actionCtx),
-                                    items: payload
-                                })
-                            );
-                        }),
-                        takeUntil(
-                            race(
-                                this.actions.pipe(ofActionDispatched(StreamDisconnectOf(action))),
-                                this.actions.pipe(ofActionDispatched(NgxsFirestoreActions.DisconnectAll)),
-                                this.actions.pipe(ofActionDispatched(NgxsFirestoreActions.Disconnect)).pipe(
-                                    filter((disconnectActionCtx) => {
-                                        const { payload } = disconnectActionCtx;
-                                        if (!payload) {
-                                            return false;
-                                        }
-                                        const disconnectedStreamId = streamId(
-                                            payload.constructor || payload,
-                                            disconnectActionCtx.payload
-                                        );
-                                        if (disconnectedStreamId === streamId(action, actionCtx)) {
-                                            return true;
-                                        }
-
-                                        return false;
-                                    })
-                                )
-                            )
-                        ),
-                        finalize(() => {
-                            const StreamDisconnectedClass = StreamDisconnectedOf(action);
-                            this.store.dispatch(new StreamDisconnectedClass());
-                            this.store.dispatch(
-                                new NgxsFirestoreActions.StreamDisconnected(streamId(action, actionCtx))
-                            );
-                        }),
-                        catchError((err) => {
-                            actionHandlerSubject.error(err);
-                            return of({});
-                        })
-                    );
-                })
-            )
-            .subscribe();
+    public createId() {
+        return this.firestore.createId();
     }
 
-    ngOnDestroy() {
-        if (this.firestoreConnectionsSub) {
-            this.firestoreConnectionsSub.unsubscribe();
+    public doc$(id: string): Observable<T> {
+        return this.firestore
+            .doc<T>(`${this.path}/${id}`)
+            .snapshotChanges()
+            .pipe(map((_) => _.payload.data()));
+    }
+
+    public docOnce$(id: string): Observable<T> {
+        return this.doc$(id).pipe(take(1));
+    }
+
+    public collection$(queryFn?: QueryFn): Observable<T[]> {
+        return this.firestore
+            .collection<T>(this.path, queryFn)
+            .snapshotChanges()
+            .pipe(map((items) => items.map((item) => item.payload.doc.data())));
+    }
+
+    public collectionOnce$(queryFn?: QueryFn): Observable<T[]> {
+        return this.collection$(queryFn).pipe(take(1));
+    }
+
+    public update$(id: string, value: Partial<T>) {
+        return from(this.firestore.doc(`${this.path}/${id}`).update(value)).pipe();
+    }
+
+    public delete$(id: string) {
+        return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe();
+    }
+
+    public create$(id: string, value: Partial<T>) {
+        return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
+    }
+
+    public upsert$(value: Partial<T>) {
+        let id;
+        let newValue;
+
+        if (Object.keys(value).includes('id') && !!value['id']) {
+            id = value['id'];
+            newValue = Object.assign({}, value);
+        } else {
+            id = this.createId();
+            newValue = Object.assign({}, value, { id });
         }
+
+        return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe();
     }
 }

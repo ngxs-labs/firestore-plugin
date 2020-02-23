@@ -1,12 +1,10 @@
-import { NgModule, ModuleWithProviders, Self } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxsFirestorePipe } from './ngxs-firestore.pipe';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { NgxsInjector } from './ngxs-injector.service';
 
-const PIPES = [NgxsFirestorePipe];
+const PIPES = [];
 
 @NgModule({
     imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreState]), AngularFirestoreModule],
@@ -14,12 +12,9 @@ const PIPES = [NgxsFirestorePipe];
     exports: [...PIPES]
 })
 export class NgxsFirestoreModule {
-    constructor(@Self() public injector: NgxsInjector) {}
-
     public static forRoot(): ModuleWithProviders {
         return {
-            ngModule: NgxsFirestoreModule,
-            providers: [NgxsInjector]
+            ngModule: NgxsFirestoreModule
         };
     }
 }
