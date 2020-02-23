@@ -19,6 +19,7 @@ function streamId(action: ActionType, actionCtx: any) {
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestoreConnect implements OnDestroy {
     firestoreConnectionsSub: Subscription;
+    activeFirestoreConnections: string[] = [];
 
     constructor(private store: Store, private actions: Actions) {}
 
@@ -36,7 +37,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
             return actionHandlerSubject.asObservable().pipe(
                 take(1),
                 switchMap((actionCtx) => {
-                    if (!!this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)))) {
+                    if (!!this.activeFirestoreConnections.includes(streamId(action, actionCtx))) {
                         // NGXS doesnt complete the action returning EMPTY
                         return of({});
                     } else {
@@ -46,6 +47,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 // call action stream connected
                                 const StreamConnectedClass = StreamConnectedOf(action);
                                 this.store.dispatch(new StreamConnectedClass(action));
+
+                                this.activeFirestoreConnections.push(streamId(action, actionCtx));
 
                                 // internal stream logging
                                 this.store.dispatch(
@@ -67,7 +70,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 ofActionDispatched(action),
                 tap((actionCtx) => actionHandlerSubject.next(actionCtx)),
                 filter((actionCtx) => {
-                    return !this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)));
+                    return !this.activeFirestoreConnections.includes(streamId(action, actionCtx));
                 }),
                 mergeMap((actionCtx) => {
                     const streamFn = opts.to;
@@ -111,6 +114,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             this.store.dispatch(new StreamDisconnectedClass());
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamDisconnected(streamId(action, actionCtx))
+                            );
+                            this.activeFirestoreConnections.splice(
+                                this.activeFirestoreConnections.indexOf(streamId(action, actionCtx)),
+                                1
                             );
                         }),
                         catchError((err) => {
