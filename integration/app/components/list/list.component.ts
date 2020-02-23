@@ -5,7 +5,7 @@ import { RacesState } from './../../states/races/races.state';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { StreamDisconnectOf } from 'src';
+import { NgxsFirestoreActions } from '@ngxs-labs/firestore-plugin';
 
 @Component({
     selector: 'app-list',
@@ -20,12 +20,15 @@ export class ListComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // this.store.dispatch(new RacesActions.GetAll());
-        // this.store.dispatch(new RacesActions.GetActive());
-        this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
     }
 
     disconnect() {
-        this.store.dispatch(StreamDisconnectOf(RacesActions.GetAll));
+        this.store.dispatch(new NgxsFirestoreActions.Disconnect(new RacesActions.Get('^yGso$7at*#lA5xpFmz0')));
+    }
+
+    reconnect() {
+        this.store.dispatch(new RacesActions.GetAll());
     }
 
     create() {

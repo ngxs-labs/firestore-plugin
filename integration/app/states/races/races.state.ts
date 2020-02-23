@@ -12,7 +12,7 @@ import {
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
-import { patch, insertItem, append } from '@ngxs/store/operators';
+import { patch, insertItem } from '@ngxs/store/operators';
 
 export interface RacesStateModel {
     races: Race[];

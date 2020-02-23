@@ -1,4 +1,4 @@
-import { State, StateContext, NgxsOnInit, Action, Selector } from '@ngxs/store';
+import { State, StateContext, NgxsOnInit, Action, Selector, createSelector } from '@ngxs/store';
 import { NgxsFirestoreActions } from './ngxs-firestore.actions';
 import { patch, insertItem, removeItem, updateItem } from '@ngxs/store/operators';
 
@@ -26,6 +26,13 @@ export class NgxsFirestoreState implements NgxsOnInit {
     @Selector() public static connections(state: NgxsFirestoreStateModel) {
         return state.connections;
     }
+
+    public static isConnected(id: string) {
+        return createSelector([NgxsFirestoreState.connections], (connections: FirestoreConnection[]) => {
+            return connections.find((connection) => connection.id === id);
+        });
+    }
+
     ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {}
 
     @Action([NgxsFirestoreActions.StreamConnected])

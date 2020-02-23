@@ -34,6 +34,10 @@ export namespace NgxsFirestoreActions {
 
     export class Disconnect {
         static readonly type = '[NgxsFirestore] Disconnect';
-        constructor(public payload: ActionType) {}
+        constructor(public payload: ActionType | any) {}
+    }
+
+    export class DisconnectAll {
+        static readonly type = '[NgxsFirestore] DisconnectAll';
     }
 }

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
-import { tap, take, catchError, mergeMap, takeUntil, finalize } from 'rxjs/operators';
-import { Subject, EMPTY, Observable, race } from 'rxjs';
+import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap } from 'rxjs/operators';
+import { Subject, EMPTY, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
 import {
@@ -17,7 +17,9 @@ function streamId(action: ActionType, actionCtx: any) {
 }
 
 @Injectable({ providedIn: 'root' })
-export class NgxsFirestore {
+export class NgxsFirestore implements OnDestroy {
+    firestoreConnectionsSub: Subscription;
+
     constructor(private store: Store, private actions: Actions) {}
 
     connect(
@@ -28,37 +30,49 @@ export class NgxsFirestore {
         }
     ) {
         const actionHandlerSubject = new Subject();
+        const actionConnectedHandlerSubject = new Subject();
 
         attachAction(NgxsFirestoreState, action, () => {
             return actionHandlerSubject.asObservable().pipe(
                 take(1),
-                tap((actionCtx) => {
-                    //call action stream connected
-                    const StreamConnectedClass = StreamConnectedOf(action);
-                    this.store.dispatch(new StreamConnectedClass(action));
+                switchMap((actionCtx) => {
+                    if (!!this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)))) {
+                        // NGXS doesnt complete the action returning EMPTY
+                        return of({});
+                    } else {
+                        return actionConnectedHandlerSubject.asObservable().pipe(
+                            take(1),
+                            tap((_) => {
+                                // call action stream connected
+                                const StreamConnectedClass = StreamConnectedOf(action);
+                                this.store.dispatch(new StreamConnectedClass(action));
 
-                    // internal stream logging
-                    this.store.dispatch(new NgxsFirestoreActions.StreamConnected(streamId(action, actionCtx)));
+                                // internal stream logging
+                                this.store.dispatch(
+                                    new NgxsFirestoreActions.StreamConnected(streamId(action, actionCtx))
+                                );
+                            })
+                        );
+                    }
                 }),
                 catchError((_) => {
-                    return EMPTY;
+                    // NGXS doesnt complete the action returning EMPTY
+                    return of({});
                 })
             );
         });
 
-        this.actions
+        this.firestoreConnectionsSub = this.actions
             .pipe(
                 ofActionDispatched(action),
-                // TODO FILTER by track by id
-                // filter(actionCtx => {
-                //     debugger
-                //     const stream = this.store.selectSnapshot(streamConnected(streamId(action, actionCtx)));
-                //     return !stream;
-                // }),
+                tap((actionCtx) => actionHandlerSubject.next(actionCtx)),
+                filter((actionCtx) => {
+                    return !this.store.selectSnapshot(NgxsFirestoreState.isConnected(streamId(action, actionCtx)));
+                }),
                 mergeMap((actionCtx) => {
                     const streamFn = opts.to;
                     return streamFn(actionCtx.payload).pipe(
-                        tap((_) => actionHandlerSubject.next(actionCtx)),
+                        tap((_) => actionConnectedHandlerSubject.next(actionCtx)),
                         tap((payload) => {
                             const StreamEmittedClass = StreamEmittedOf(action);
                             this.store.dispatch(new StreamEmittedClass(actionCtx, payload));
@@ -72,8 +86,24 @@ export class NgxsFirestore {
                         takeUntil(
                             race(
                                 this.actions.pipe(ofActionDispatched(StreamDisconnectOf(action))),
-                                this.actions.pipe(ofActionDispatched(NgxsFirestoreActions.Disconnect))
-                                // TODO with matching type?
+                                this.actions.pipe(ofActionDispatched(NgxsFirestoreActions.DisconnectAll)),
+                                this.actions.pipe(ofActionDispatched(NgxsFirestoreActions.Disconnect)).pipe(
+                                    filter((disconnectActionCtx) => {
+                                        const { payload } = disconnectActionCtx;
+                                        if (!payload) {
+                                            return false;
+                                        }
+                                        const disconnectedStreamId = streamId(
+                                            payload.constructor || payload,
+                                            disconnectActionCtx.payload
+                                        );
+                                        if (disconnectedStreamId === streamId(action, actionCtx)) {
+                                            return true;
+                                        }
+
+                                        return false;
+                                    })
+                                )
                             )
                         ),
                         finalize(() => {
@@ -91,5 +121,11 @@ export class NgxsFirestore {
                 })
             )
             .subscribe();
+    }
+
+    ngOnDestroy() {
+        if (this.firestoreConnectionsSub) {
+            this.firestoreConnectionsSub.unsubscribe();
+        }
     }
 }
