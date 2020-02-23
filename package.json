@@ -2,9 +2,11 @@
   "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve --port=4251",
-    "build": "yarn bump --release patch && ng build ngxs-firestore && yarn copy-readme",
+    "build": "ng build ngxs-firestore && yarn copy-readme",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "bump": "ts-node --project tsconfig.tools.json ./tools/bump",
+    "prepublish": "yarn bump --release patch",
+    "publish": "",
     "build-integration": "ng build integration",
     "test": "jest --config ./jest.app.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.app.config.js",
