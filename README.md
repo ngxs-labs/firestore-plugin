@@ -55,16 +55,16 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 export class AppModule { }
 ```
 
-Next create a service (i.e `races.firestore.ts`) to execute Firestore operations. This service extends the plugin `FirestoreService`, which is generic service, and takes the type `<T>` of the Firestore document. We also need to provide the `path` of the collection.
+Next create a service (i.e `races.firestore.ts`) to execute Firestore operations. This service extends `NgxsFirestore`, a generic service that takes type `<T>` of the Firestore document. We also need to provide the `path` of the collection.
 
 ```ts
 //...
-import { FirestoreService } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
 
 @Injectable({
   providedIn: 'root'
 })
-export class RacesFirestore extends FirestoreService<Race> {
+export class RacesFirestore extends NgxsFirestore<Race> {
   protected path = 'races';
 }
 
@@ -77,7 +77,7 @@ Finally we create the `@State`. The state will contain actions to execute the Fi
 
 ### Connect and get data once
 
-For the first scenario, `FirestoreService` provides the methods `docOnce$()` and `collectionOnce$()`, which will get the first emission and unsubscribe immediately after. NGXS handles subscribing to the `Observable` and the action is done once the first data is emmited.
+For the first scenario, `NgxsFirestore` provides the methods `docOnce$()` and `collectionOnce$()`, which will get the first emission and unsubscribe immediately after. NGXS handles subscribing to the `Observable` and the action is done once the first data is emmited.
 
 ```ts
 export class GetAllOnce {
@@ -108,7 +108,7 @@ export class RacesState {
 
 ### Connect to stream and receive data changes until disconnected
 
-For the second scenario, the plugin provides the `NgxsFirestore` service, which let's you connect an `@Action` with a Firestore query and emit every new change as a separate `Emitted` action.
+For the second scenario, the plugin provides the `NgxsFirestoreConnect` service, which let's you connect an `@Action` with a Firestore query and emit every new change as a separate `Emitted` action.
 
 The service `connect` method takes as arguments the `Action` that will trigger subscribing to the Firestore query. In addition an `opts` object with `to` field, to pass the function that returns the Firestore query.
 
@@ -138,13 +138,13 @@ export class GetAll {
 export class RacesState implements NgxsOnInit {
   //...
   constructor(
-    private ngxsFirestore: NgxsFirestore
+    private ngxsFirestoreConnect: NgxsFirestoreConnect
   ){
 
   }
 
   ngxsOnInit(){
-    this.ngxsFirestore.connect(RacesActions.GetAll, {
+    this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
       to: () => this.racesFS.collection$()
     });
   }
