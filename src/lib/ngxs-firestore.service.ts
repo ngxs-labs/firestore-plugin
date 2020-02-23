@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
 import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap } from 'rxjs/operators';
-import { Subject, EMPTY, Observable, race, Subscription, of } from 'rxjs';
+import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
 import {
@@ -26,7 +26,7 @@ export class NgxsFirestore implements OnDestroy {
         action: ActionType,
         opts: {
             to: (payload: any) => Observable<any>;
-            trackBy: (payload: any) => string;
+            trackBy?: (payload: any) => string;
         }
     ) {
         const actionHandlerSubject = new Subject();
@@ -115,7 +115,7 @@ export class NgxsFirestore implements OnDestroy {
                         }),
                         catchError((err) => {
                             actionHandlerSubject.error(err);
-                            return EMPTY;
+                            return of({});
                         })
                     );
                 })

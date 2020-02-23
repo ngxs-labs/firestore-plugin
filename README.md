@@ -12,7 +12,7 @@
 
 ## Description
 
-NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition it provides useful data for debugging purposes, such as Active Connections, Reads, Updates, Creates and Deletes.
+NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition provides tracking of active connections.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_debug_data.png)
 
@@ -73,11 +73,11 @@ export class RacesFirestore extends FirestoreService<Race> {
 Finally we create the `@State`. The state will contain actions to execute the Firestore CRUD operations via the service created previously. When getting data from Firestore, we have two options:
 
 * Get data once
-* Connect to a document or collection and receive changes as they occur on the Firestore server.
+* Connect to a document or collection stream and receive changes as they occur on the Firestore server.
 
 ### Connect and get data once
 
-For the first scenario the plugin `FirestoreService` provides the methods `docOnce$()` and `collectionOnce$()`, which will get the first emission and unsubscribe immediately after. NGXS handles subscribing to the `Observable` and the action is done once the first data is emmited.
+For the first scenario, `FirestoreService` provides the methods `docOnce$()` and `collectionOnce$()`, which will get the first emission and unsubscribe immediately after. NGXS handles subscribing to the `Observable` and the action is done once the first data is emmited.
 
 ```ts
 export class GetAllOnce {
@@ -108,43 +108,87 @@ export class RacesState {
 
 ### Connect to stream and receive data changes until disconnected
 
-In the second scenario, the plugin provides the `@NgxsFirestoreConnect` decorator, which will connect to Firestore and emit every new change as a separate `Emit` action.
+For the second scenario, the plugin provides the `NgxsFirestore` service, which let's you connect an `@Action` with a Firestore query and emit every new change as a separate `Emitted` action.
 
-The decorator takes the Action that will trigger the connection and a function that receives the Action result and return the patched state value.
+The service `connect` method takes as arguments the `Action` that will trigger subscribing to the Firestore query. In addition an `opts` object with `to` field, to pass the function that returns the Firestore query.
+
+Once connection is setup, you can then create handlers for the specific events of the stream.
+
+You can add handlers for:
+* Connected event with `@Action(StreamConnectedOf(RacesActions.GetAll))`. 
+  
+  This event will be fired once on first emission.
+
+* Emmited event with `@Action(StreamEmittedOf(RacesActions.GetAll))`
+
+  This event will be fired each observable emission. This action will return `Emitted<Action, T>` where `Action` is the action bound, and `T` is the type of the returned results from the Firestore query. 
+
+* Disconnected event with `@Action(StreamDisconnectedOf(RacesActions.GetAll))`
+
+  This event will be fired on observable disconnect.
 
 ```ts
 //...
 import { NgxsFirestoreConnect } from '@ngxs-labs/firestore-plugin';
 
-
 export class GetAll {
     public static readonly type = '[Races] GetAll';
 }
 
-export class RacesState {
-
+export class RacesState implements NgxsOnInit {
   //...
+  constructor(
+    private ngxsFirestore: NgxsFirestore
+  ){
 
-  @NgxsFirestoreConnect(
-    GetAll,
-    (payload): Partial<RacesStateModel> => ({ races: payload })
-  )
-  @Action(GetAll)
-  getAll({ patchState }: StateContext<RacesStateModel>) {
-    return this.racesFS.collectionOnce$();
+  }
+
+  ngxsOnInit(){
+    this.ngxsFirestore.connect(RacesActions.GetAll, {
+      to: () => this.racesFS.collection$()
+    });
+  }
+
+  @Action(StreamConnectedOf(RacesActions.GetAll))
+  getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
+      // do something when connected
+  }
+
+  @Action(StreamEmittedOf(RacesActions.GetAll))
+  getEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race>) {      
+      ctx.setState(patch({ races: payload }));
+  }
+
+  @Action(StreamDisconnectedOf(RacesActions.GetAll))
+  getDisconnected(ctx: StateContext<RacesStateModel>, { action }: Disconnected<RacesActions.Get>) {
+      // do something when disconnected
   }
 
 }
 ```
 
-Once you connect to the Firestore stream you'll keep receiving every server update on a new `Emit` action, making it easier to debug.
-
+Once you connect to the Firestore stream you'll keep receiving every server update on a new `Emitted` action, making it easier to debug.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_actions_emit.gif)
 
-#### Dispatching connect action and disconnecting
+#### Getting data from Firestore and Disconnecting
 
-* Using `ngxsFirestoreConnect` pipe
+After all your Firestore queries are bind to its respective Actions, you can start getting data by dispatching the `Action` like this:
+
+```ts
+//...
+this.store.dispatch(new RacesActions.GetAll())
+```
+
+If you need to disconnect you can dispatch
+
+```ts
+
+//...
+this.store.dispatch(StreamDisconnectOf(RacesActions.GetAll));
+```
+
+<!-- * Using `ngxsFirestoreConnect` pipe
 
 ```html
 <h5>Total: {{ total$ | async | ngxsFirestoreConnect: '[Races] GetAll' }}</h5>
@@ -167,4 +211,4 @@ this.store.dispatch(new GetAll());
 //...
 this.store.dispatch(new Disconnect(GetAll));
 //...
-```
+``` -->
