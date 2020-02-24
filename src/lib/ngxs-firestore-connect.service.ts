@@ -36,8 +36,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
         attachAction(NgxsFirestoreState, actionType, () => {
             return actionHandlerSubject.asObservable().pipe(
                 take(1),
-                switchMap((actionCtx) => {
-                    if (!!this.activeFirestoreConnections.includes(streamId(actionType, actionCtx))) {
+                switchMap((action) => {
+                    if (!!this.activeFirestoreConnections.includes(streamId(actionType, action))) {
                         // NGXS doesnt complete the action returning EMPTY
                         return of({});
                     } else {
@@ -48,11 +48,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 const StreamConnectedClass = StreamConnectedOf(actionType);
                                 this.store.dispatch(new StreamConnectedClass(actionType));
 
-                                this.activeFirestoreConnections.push(streamId(actionType, actionCtx));
+                                this.activeFirestoreConnections.push(streamId(actionType, action));
 
                                 // internal stream logging
                                 this.store.dispatch(
-                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, actionCtx))
+                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
                                 );
                             })
                         );
@@ -68,20 +68,20 @@ export class NgxsFirestoreConnect implements OnDestroy {
         this.firestoreConnectionsSub = this.actions
             .pipe(
                 ofActionDispatched(actionType),
-                tap((actionCtx) => actionHandlerSubject.next(actionCtx)),
+                tap((action) => actionHandlerSubject.next(action)),
                 filter((actionCtx) => {
                     return !this.activeFirestoreConnections.includes(streamId(actionType, actionCtx));
                 }),
-                mergeMap((actionCtx) => {
+                mergeMap((action) => {
                     const streamFn = opts.to;
-                    return streamFn(actionCtx.payload).pipe(
-                        tap((_) => actionConnectedHandlerSubject.next(actionCtx)),
+                    return streamFn(action.payload).pipe(
+                        tap((_) => actionConnectedHandlerSubject.next(action)),
                         tap((payload) => {
                             const StreamEmittedClass = StreamEmittedOf(actionType);
-                            this.store.dispatch(new StreamEmittedClass(actionCtx, payload));
+                            this.store.dispatch(new StreamEmittedClass(action, payload));
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamEmitted({
-                                    id: streamId(actionType, actionCtx),
+                                    id: streamId(actionType, action),
                                     items: payload
                                 })
                             );
@@ -91,16 +91,16 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 this.actions.pipe(ofActionDispatched(StreamDisconnectOf(actionType))),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.DisconnectAll)),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.Disconnect)).pipe(
-                                    filter((disconnectActionCtx) => {
-                                        const { payload } = disconnectActionCtx;
+                                    filter((disconnectAction) => {
+                                        const { payload } = disconnectAction;
                                         if (!payload) {
                                             return false;
                                         }
                                         const disconnectedStreamId = streamId(
                                             payload.constructor || payload,
-                                            disconnectActionCtx.payload
+                                            disconnectAction.payload
                                         );
-                                        if (disconnectedStreamId === streamId(actionType, actionCtx)) {
+                                        if (disconnectedStreamId === streamId(actionType, action)) {
                                             return true;
                                         }
 
@@ -113,10 +113,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             const StreamDisconnectedClass = StreamDisconnectedOf(actionType);
                             this.store.dispatch(new StreamDisconnectedClass());
                             this.store.dispatch(
-                                new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, actionCtx))
+                                new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, action))
                             );
                             this.activeFirestoreConnections.splice(
-                                this.activeFirestoreConnections.indexOf(streamId(actionType, actionCtx)),
+                                this.activeFirestoreConnections.indexOf(streamId(actionType, action)),
                                 1
                             );
                         }),
