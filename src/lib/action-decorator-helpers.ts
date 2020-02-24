@@ -24,3 +24,9 @@ export function StreamDisconnectedOf(actionType: ActionType) {
 export function StreamDisconnectOf(actionType: ActionType): ActionType {
     return { type: `${actionType.type} Disconnect` };
 }
+
+export class DisconnectStream {
+    constructor(actionType) {
+        return StreamDisconnectOf(actionType);
+    }
+}

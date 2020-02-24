@@ -4,12 +4,7 @@ import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap
 import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
-import {
-    StreamConnectedOf,
-    StreamEmittedOf,
-    StreamDisconnectOf,
-    StreamDisconnectedOf
-} from './action-decorator-helpers';
+import { StreamConnectedOf, StreamEmittedOf, DisconnectStream, StreamDisconnectedOf } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 
 function streamId(actionType: ActionType, action: any) {
@@ -88,7 +83,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                         }),
                         takeUntil(
                             race(
-                                this.actions.pipe(ofActionDispatched(StreamDisconnectOf(actionType))),
+                                this.actions.pipe(ofActionDispatched(new DisconnectStream(actionType))),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.DisconnectAll)),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.Disconnect)).pipe(
                                     filter((disconnectAction) => {
