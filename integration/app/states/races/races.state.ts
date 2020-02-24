@@ -53,7 +53,7 @@ export class RacesState implements NgxsOnInit {
     }
 
     @Action(StreamEmittedOf(RacesActions.Get))
-    getEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race>) {
+    getEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race>) {
         ctx.setState(patch({ races: insertItem(payload) }));
     }
 
@@ -63,7 +63,7 @@ export class RacesState implements NgxsOnInit {
     }
 
     @Action(StreamEmittedOf(RacesActions.GetAll))
-    getAllEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race[]>) {
+    getAllEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
         ctx.setState(patch({ races: payload }));
     }
 

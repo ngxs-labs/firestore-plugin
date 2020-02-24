@@ -12,8 +12,8 @@ import {
 } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 
-function streamId(action: ActionType, actionCtx: any) {
-    return `${action.type}${actionCtx.payload ? ` (${actionCtx.payload})` : ''}`;
+function streamId(actionType: ActionType, action: any) {
+    return `${actionType.type}${action.payload ? ` (${action.payload})` : ''}`;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -69,8 +69,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
             .pipe(
                 ofActionDispatched(actionType),
                 tap((action) => actionHandlerSubject.next(action)),
-                filter((actionCtx) => {
-                    return !this.activeFirestoreConnections.includes(streamId(actionType, actionCtx));
+                filter((action) => {
+                    return !this.activeFirestoreConnections.includes(streamId(actionType, action));
                 }),
                 mergeMap((action) => {
                     const streamFn = opts.to;

@@ -155,7 +155,7 @@ export class RacesState implements NgxsOnInit {
   }
 
   @Action(StreamEmittedOf(RacesActions.GetAll))
-  getEmitted(ctx: StateContext<RacesStateModel>, { actionCtx, payload }: Emitted<RacesActions.Get, Race>) {      
+  getEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race>) {      
       ctx.setState(patch({ races: payload }));
   }
 

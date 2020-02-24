@@ -1,5 +1,4 @@
 import { ActionType } from '@ngxs/store';
-import { ActionContext } from '@ngxs/store/src/actions-stream';
 
 export function StreamConnectedOf(actionType: ActionType) {
     return class {
@@ -11,7 +10,7 @@ export function StreamConnectedOf(actionType: ActionType) {
 export function StreamEmittedOf(actionType: ActionType) {
     return class {
         static readonly type = `${actionType.type} Emitted`;
-        constructor(public actionCtx: ActionContext, public payload: any) {}
+        constructor(public action: ActionType, public payload: any) {}
     };
 }
 
