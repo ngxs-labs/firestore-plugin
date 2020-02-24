@@ -24,7 +24,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
     constructor(private store: Store, private actions: Actions) {}
 
     connect(
-        action: ActionType,
+        actionType: ActionType,
         opts: {
             to: (payload: any) => Observable<any>;
             trackBy?: (payload: any) => string;
@@ -33,11 +33,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
         const actionHandlerSubject = new Subject();
         const actionConnectedHandlerSubject = new Subject();
 
-        attachAction(NgxsFirestoreState, action, () => {
+        attachAction(NgxsFirestoreState, actionType, () => {
             return actionHandlerSubject.asObservable().pipe(
                 take(1),
                 switchMap((actionCtx) => {
-                    if (!!this.activeFirestoreConnections.includes(streamId(action, actionCtx))) {
+                    if (!!this.activeFirestoreConnections.includes(streamId(actionType, actionCtx))) {
                         // NGXS doesnt complete the action returning EMPTY
                         return of({});
                     } else {
@@ -45,14 +45,14 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             take(1),
                             tap((_) => {
                                 // call action stream connected
-                                const StreamConnectedClass = StreamConnectedOf(action);
-                                this.store.dispatch(new StreamConnectedClass(action));
+                                const StreamConnectedClass = StreamConnectedOf(actionType);
+                                this.store.dispatch(new StreamConnectedClass(actionType));
 
-                                this.activeFirestoreConnections.push(streamId(action, actionCtx));
+                                this.activeFirestoreConnections.push(streamId(actionType, actionCtx));
 
                                 // internal stream logging
                                 this.store.dispatch(
-                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(action, actionCtx))
+                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, actionCtx))
                                 );
                             })
                         );
@@ -67,28 +67,28 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
         this.firestoreConnectionsSub = this.actions
             .pipe(
-                ofActionDispatched(action),
+                ofActionDispatched(actionType),
                 tap((actionCtx) => actionHandlerSubject.next(actionCtx)),
                 filter((actionCtx) => {
-                    return !this.activeFirestoreConnections.includes(streamId(action, actionCtx));
+                    return !this.activeFirestoreConnections.includes(streamId(actionType, actionCtx));
                 }),
                 mergeMap((actionCtx) => {
                     const streamFn = opts.to;
                     return streamFn(actionCtx.payload).pipe(
                         tap((_) => actionConnectedHandlerSubject.next(actionCtx)),
                         tap((payload) => {
-                            const StreamEmittedClass = StreamEmittedOf(action);
+                            const StreamEmittedClass = StreamEmittedOf(actionType);
                             this.store.dispatch(new StreamEmittedClass(actionCtx, payload));
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamEmitted({
-                                    id: streamId(action, actionCtx),
+                                    id: streamId(actionType, actionCtx),
                                     items: payload
                                 })
                             );
                         }),
                         takeUntil(
                             race(
-                                this.actions.pipe(ofActionDispatched(StreamDisconnectOf(action))),
+                                this.actions.pipe(ofActionDispatched(StreamDisconnectOf(actionType))),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.DisconnectAll)),
                                 this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.Disconnect)).pipe(
                                     filter((disconnectActionCtx) => {
@@ -100,7 +100,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                             payload.constructor || payload,
                                             disconnectActionCtx.payload
                                         );
-                                        if (disconnectedStreamId === streamId(action, actionCtx)) {
+                                        if (disconnectedStreamId === streamId(actionType, actionCtx)) {
                                             return true;
                                         }
 
@@ -110,13 +110,13 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             )
                         ),
                         finalize(() => {
-                            const StreamDisconnectedClass = StreamDisconnectedOf(action);
+                            const StreamDisconnectedClass = StreamDisconnectedOf(actionType);
                             this.store.dispatch(new StreamDisconnectedClass());
                             this.store.dispatch(
-                                new NgxsFirestoreConnectActions.StreamDisconnected(streamId(action, actionCtx))
+                                new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, actionCtx))
                             );
                             this.activeFirestoreConnections.splice(
-                                this.activeFirestoreConnections.indexOf(streamId(action, actionCtx)),
+                                this.activeFirestoreConnections.indexOf(streamId(actionType, actionCtx)),
                                 1
                             );
                         }),

@@ -11,19 +11,14 @@ describe('ListComponent', () => {
     let storeMock;
 
     beforeEach(async(() => {
-
         storeMock = jest.fn().mockImplementation(() => ({
-            select: jest.fn().mockReturnValue(new Subject())
+            select: jest.fn().mockReturnValue(new Subject()),
+            dispatch: jest.fn().mockReturnValue(new Subject())
         }));
 
         TestBed.configureTestingModule({
-            imports: [
-                NgxsModule.forRoot(),
-                NgxsFirestoreModule.forRoot()
-            ],
-            declarations: [
-                ListComponent
-            ],
+            imports: [NgxsModule.forRoot(), NgxsFirestoreModule.forRoot()],
+            declarations: [ListComponent],
             providers: [{ provide: Store, useValue: storeMock() }]
         }).compileComponents();
     }));

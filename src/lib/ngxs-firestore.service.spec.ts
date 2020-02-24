@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 
-describe('FirestoreService', () => {
+describe('NgxsFirestore', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
@@ -17,7 +17,7 @@ describe('FirestoreService', () => {
     it('cant be directly instantiated', () => {
         expect(() => {
             TestBed.get(NgxsFirestore);
-        }).toThrowError('No provider for FirestoreService!');
+        }).toThrowError('No provider for NgxsFirestore!');
     });
 
     it('can be implemented and instantiated', () => {
