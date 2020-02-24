@@ -1,23 +1,51 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync } from '@angular/core/testing';
 import { NgxsFirestoreConnect } from './ngxs-firestore-connect.service';
-import { Store, NgxsModule } from '@ngxs/store';
+import { Store, NgxsModule, State, NgxsOnInit, Action, StateContext } from '@ngxs/store';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
+import { from } from 'rxjs';
+import { Emitted } from './types';
+import { StreamEmittedOf } from './action-decorator-helpers';
 
 describe('NgxsFirestoreConnect', () => {
-    let store;
-    let ngxsFirestoreConnect;
+    let store: Store;
+
+    const mockFirestoreStream = from([1]);
+    class TestAction {
+        static type = 'TEST ACTION';
+    }
+
+    @State({
+        name: 'test'
+    })
+    class TestState implements NgxsOnInit {
+        constructor(private ngxsFirestoreConnect: NgxsFirestoreConnect) {}
+
+        ngxsOnInit() {
+            this.ngxsFirestoreConnect.connect(TestAction, {
+                to: () => mockFirestoreStream
+            });
+        }
+
+        @Action(StreamEmittedOf(TestAction))
+        testAction(ctx: StateContext<any>, { payload }: Emitted<TestAction, number>) {
+            ctx.patchState({ number: payload });
+        }
+    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [NgxsModule.forRoot([]), NgxsFirestoreModule.forRoot()]
+            imports: [NgxsModule.forRoot([TestState]), NgxsFirestoreModule.forRoot()]
         });
-
         store = TestBed.get(Store);
-        ngxsFirestoreConnect = TestBed.get(NgxsFirestoreConnect);
     });
 
     test('should be provided by module', () => {
-        expect(store).toBeTruthy();
-        expect(ngxsFirestoreConnect).toBeTruthy();
+        expect(TestBed.get(Store)).toBeTruthy();
+        expect(TestBed.get(NgxsFirestoreConnect)).toBeTruthy();
     });
+
+    test('', fakeAsync(() => {
+        store.dispatch(TestAction);
+        expect(store.selectSnapshot(TestState).number).toBe(1);
+    }));
 });
