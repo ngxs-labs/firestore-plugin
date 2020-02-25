@@ -115,15 +115,15 @@ The service `connect` method takes as arguments the `Action` that will trigger s
 Once connection is setup, you can then create handlers for the specific events of the stream.
 
 You can add handlers for:
-* Connected event with `@Action(StreamConnectedOf(RacesActions.GetAll))`. 
+* Connected event with `@Action(StreamConnected(RacesActions.GetAll))`. 
   
   This event will be fired once on first emission.
 
-* Emmited event with `@Action(StreamEmittedOf(RacesActions.GetAll))`
+* Emmited event with `@Action(StreamEmitted(RacesActions.GetAll))`
 
   This event will be fired each observable emission. This action will return `Emitted<Action, T>` where `Action` is the action bound, and `T` is the type of the returned results from the Firestore query. 
 
-* Disconnected event with `@Action(StreamDisconnectedOf(RacesActions.GetAll))`
+* Disconnected event with `@Action(StreamDisconnected(RacesActions.GetAll))`
 
   This event will be fired on observable disconnect.
 
@@ -149,17 +149,17 @@ export class RacesState implements NgxsOnInit {
     });
   }
 
-  @Action(StreamConnectedOf(RacesActions.GetAll))
+  @Action(StreamConnected(RacesActions.GetAll))
   getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
       // do something when connected
   }
 
-  @Action(StreamEmittedOf(RacesActions.GetAll))
+  @Action(StreamEmitted(RacesActions.GetAll))
   getEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race>) {      
       ctx.setState(patch({ races: payload }));
   }
 
-  @Action(StreamDisconnectedOf(RacesActions.GetAll))
+  @Action(StreamDisconnected(RacesActions.GetAll))
   getDisconnected(ctx: StateContext<RacesStateModel>, { action }: Disconnected<RacesActions.Get>) {
       // do something when disconnected
   }
@@ -185,7 +185,7 @@ If you need to disconnect you can dispatch
 ```ts
 
 //...
-this.store.dispatch(StreamDisconnectOf(RacesActions.GetAll));
+this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
 ```
 
 <!-- * Using `ngxsFirestoreConnect` pipe
