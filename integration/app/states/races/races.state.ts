@@ -6,9 +6,9 @@ import {
     Connected,
     Emitted,
     Disconnected,
-    StreamConnectedOf,
-    StreamEmittedOf,
-    StreamDisconnectedOf
+    StreamConnected,
+    StreamEmitted,
+    StreamDisconnected
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
@@ -47,22 +47,22 @@ export class RacesState implements NgxsOnInit {
         });
     }
 
-    @Action(StreamConnectedOf(RacesActions.Get))
+    @Action(StreamConnected(RacesActions.Get))
     getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
         console.log('[RacesActions.Get]  Connected');
     }
 
-    @Action(StreamEmittedOf(RacesActions.Get))
+    @Action(StreamEmitted(RacesActions.Get))
     getEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race>) {
         ctx.setState(patch({ races: insertItem(payload) }));
     }
 
-    @Action(StreamDisconnectedOf(RacesActions.Get))
+    @Action(StreamDisconnected(RacesActions.Get))
     getDisconnected(ctx: StateContext<RacesStateModel>, { action }: Disconnected<RacesActions.Get>) {
         console.log('[RacesActions.Get] Disconnected');
     }
 
-    @Action(StreamEmittedOf(RacesActions.GetAll))
+    @Action(StreamEmitted(RacesActions.GetAll))
     getAllEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
         ctx.setState(patch({ races: payload }));
     }

@@ -4,7 +4,7 @@ import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap
 import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
-import { StreamConnectedOf, StreamEmittedOf, DisconnectStream, StreamDisconnectedOf } from './action-decorator-helpers';
+import { StreamConnected, StreamEmitted, DisconnectStream, StreamDisconnected } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 
 interface ActionTypeDef<T> {
@@ -45,7 +45,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             take(1),
                             tap((_) => {
                                 // call action stream connected
-                                const StreamConnectedClass = StreamConnectedOf(actionType);
+                                const StreamConnectedClass = StreamConnected(actionType);
                                 this.store.dispatch(new StreamConnectedClass(actionType));
 
                                 this.activeFirestoreConnections.push(streamId(actionType, action));
@@ -77,7 +77,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                     return streamFn(action).pipe(
                         tap((_) => actionConnectedHandlerSubject.next(action)),
                         tap((payload) => {
-                            const StreamEmittedClass = StreamEmittedOf(actionType);
+                            const StreamEmittedClass = StreamEmitted(actionType);
                             this.store.dispatch(new StreamEmittedClass(action, payload));
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamEmitted({
@@ -110,7 +110,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             )
                         ),
                         finalize(() => {
-                            const StreamDisconnectedClass = StreamDisconnectedOf(actionType);
+                            const StreamDisconnectedClass = StreamDisconnected(actionType);
                             this.store.dispatch(new StreamDisconnectedClass());
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, action))

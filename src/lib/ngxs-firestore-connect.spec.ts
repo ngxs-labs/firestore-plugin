@@ -4,7 +4,7 @@ import { Store, NgxsModule, State, NgxsOnInit, Action, StateContext } from '@ngx
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { from } from 'rxjs';
 import { Emitted } from './types';
-import { StreamEmittedOf } from './action-decorator-helpers';
+import { StreamEmitted } from './action-decorator-helpers';
 
 describe('NgxsFirestoreConnect', () => {
     let store: Store;
@@ -26,7 +26,7 @@ describe('NgxsFirestoreConnect', () => {
             });
         }
 
-        @Action(StreamEmittedOf(TestAction))
+        @Action(StreamEmitted(TestAction))
         testAction(ctx: StateContext<any>, { payload }: Emitted<TestAction, number>) {
             ctx.patchState({ number: payload });
         }
