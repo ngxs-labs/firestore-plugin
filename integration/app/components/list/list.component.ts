@@ -16,10 +16,7 @@ export class ListComponent implements OnInit, OnDestroy {
     races$ = this.store.select(RacesState.races);
     total$ = this.races$.pipe(map((races) => races.length));
 
-    constructor(
-        //
-        private store: Store
-    ) {}
+    constructor(private store: Store) {}
 
     ngOnInit() {
         // this.store.dispatch(new RacesActions.GetAll());
