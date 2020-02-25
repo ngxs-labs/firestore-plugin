@@ -38,8 +38,8 @@ export class RacesState implements NgxsOnInit {
 
     ngxsOnInit(ctx: StateContext<RacesStateModel>) {
         this.ngxsFirestoreConnect.connect(RacesActions.Get, {
-            to: (id: string) => this.racesFS.doc$(id),
-            trackBy: (id: string) => id
+            to: (action) => this.racesFS.doc$(action.payload),
+            trackBy: (action) => action.payload
         });
 
         this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {

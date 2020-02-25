@@ -7,6 +7,11 @@ import { attachAction } from '@ngxs-labs/attach-action';
 import { StreamConnectedOf, StreamEmittedOf, DisconnectStream, StreamDisconnectedOf } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 
+interface ActionTypeDef<T> {
+    type: string;
+    new (...args: any): T;
+}
+
 function streamId(actionType: ActionType, action: any) {
     return `${actionType.type}${action.payload ? ` (${action.payload})` : ''}`;
 }
@@ -18,11 +23,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
     constructor(private store: Store, private actions: Actions) {}
 
-    connect(
-        actionType: ActionType,
+    connect<T>(
+        actionType: ActionTypeDef<T>,
         opts: {
-            to: (payload: any) => Observable<any>;
-            trackBy?: (payload: any) => string;
+            to: (payload: T) => Observable<any>;
+            trackBy?: (payload: T) => string;
         }
     ) {
         const actionHandlerSubject = new Subject();
@@ -69,7 +74,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 }),
                 mergeMap((action) => {
                     const streamFn = opts.to;
-                    return streamFn(action.payload).pipe(
+                    return streamFn(action).pipe(
                         tap((_) => actionConnectedHandlerSubject.next(action)),
                         tap((payload) => {
                             const StreamEmittedClass = StreamEmittedOf(actionType);
