@@ -67,7 +67,6 @@ describe('NgxsFirestoreConnect', () => {
             StreamEmitted(TestActionThatFinishesOnFirstEmit)
         ])
         testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<TestAction, number>) {
-            debugger;
             emittedFn(action);
             events.push('emmited');
         }
@@ -79,7 +78,6 @@ describe('NgxsFirestoreConnect', () => {
             StreamConnected(TestActionThatFinishesOnFirstEmit)
         ])
         testActionConnected(ctx: StateContext<any>, { action }: Connected<TestAction>) {
-            debugger;
             connectedFn(action);
             events.push('connected');
         }
@@ -91,7 +89,6 @@ describe('NgxsFirestoreConnect', () => {
             StreamDisconnected(TestActionThatFinishesOnFirstEmit)
         ])
         testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<TestAction>) {
-            debugger;
             disconnectedFn(action);
             events.push('disconnected');
         }
@@ -264,8 +261,10 @@ describe('NgxsFirestoreConnect', () => {
         });
 
         describe('ASYNC', () => {
-            const subject = new Subject();
+            let subject;
+
             beforeEach(() => {
+                subject = new Subject();
                 mockFirestoreStream.mockImplementation(() => subject.asObservable());
             });
 
