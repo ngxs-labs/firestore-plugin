@@ -1,4 +1,3 @@
-import { ActionType } from '@ngxs/store';
 namespace NgxsFirestoreDebugPayloads {
     export interface StreamEmitted {
         id: string;
@@ -24,7 +23,7 @@ export namespace NgxsFirestoreConnectActions {
 
     export class Disconnect {
         static readonly type = '[NgxsFirestore] Disconnect';
-        constructor(public payload: ActionType | any) {}
+        constructor(public payload: any) {}
     }
 
     export class DisconnectAll {
