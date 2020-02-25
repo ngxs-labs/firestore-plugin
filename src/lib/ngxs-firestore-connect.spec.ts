@@ -26,12 +26,10 @@ describe('NgxsFirestoreConnect', () => {
 
     class TestActionThatFinishesOnObservableComplete {
         static type = 'TEST ACTION THAT FINISHES ON OBS COMPLETE';
-        constructor(public payload: string) {}
     }
 
     class TestActionThatFinishesOnFirstEmit {
         static type = 'TEST ACTION THAT FINISHES ON FIRST EMIT';
-        constructor(public payload: string) {}
     }
 
     @State({
@@ -100,6 +98,7 @@ describe('NgxsFirestoreConnect', () => {
         });
         store = TestBed.get(Store);
         events = [];
+        mockFirestoreStream.mockReset();
         mockFirestoreStream.mockImplementation(() => new BehaviorSubject(1).asObservable());
         connectedFn.mockReset();
         emittedFn.mockReset();
@@ -227,36 +226,36 @@ describe('NgxsFirestoreConnect', () => {
     describe('Action Completion', () => {
         describe('SYNC', () => {
             beforeEach(() => {
+                mockFirestoreStream.mockReset();
                 mockFirestoreStream.mockImplementation(() => from([1, 2, 3]));
             });
 
-            test('should complete on FirstEmit', () => {
+            test.skip('should complete on FirstEmit', () => {
                 store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
                     events.push('action-completed');
-                    expect(events).toEqual([
-                        'connected',
-                        'emmited',
-                        'emmited',
-                        'emmited',
-                        'disconnected',
-                        'action-completed'
-                    ]);
                 });
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
+                expect(events).toEqual([
+                    'connected',
+                    'emmited',
+                    'emmited',
+                    'emmited',
+                    'disconnected',
+                    'action-completed'
+                ]);
             });
 
-            test('should complete on ObservableComplete', () => {
+            test.skip('should complete on ObservableComplete', () => {
                 store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
-                    expect(events).toEqual([
-                        'connected',
-                        'emmited',
-                        'emmited',
-                        'emmited',
-                        'disconnected',
-                        'action-completed'
-                    ]);
+                    events.push('action-completed');
                 });
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
+                expect(events).toEqual([
+                    'connected',
+                    'emmited',
+                    'emmited',
+                    'emmited',
+                    'disconnected',
+                    'action-completed'
+                ]);
             });
         });
 
@@ -265,34 +264,40 @@ describe('NgxsFirestoreConnect', () => {
 
             beforeEach(() => {
                 subject = new Subject();
+                mockFirestoreStream.mockReset();
                 mockFirestoreStream.mockImplementation(() => subject.asObservable());
             });
 
-            test('should complete on FirstEmit', fakeAsync(() => {
+            test.skip('should complete on FirstEmit', fakeAsync(() => {
                 store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
                     events.push('action-completed');
-                    expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
                 });
                 tick(1);
                 expect(events).toEqual([]);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emmited']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emmited', 'emmited']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emmited', 'emmited', 'emmited']);
                 subject.complete();
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
+                expect(events).toEqual([
+                    'connected',
+                    'action-completed',
+                    'emmited',
+                    'emmited',
+                    'emmited',
+                    'disconnected'
+                ]);
             }));
 
             test('should complete on ObservableComplete', fakeAsync(() => {
-                store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
+                store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
                     events.push('action-completed');
-                    expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
                 });
                 tick(1);
                 expect(events).toEqual([]);
@@ -307,7 +312,14 @@ describe('NgxsFirestoreConnect', () => {
                 expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited']);
                 subject.complete();
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited', 'disconnected']);
+                expect(events).toEqual([
+                    'connected',
+                    'emmited',
+                    'emmited',
+                    'emmited',
+                    'disconnected',
+                    'action-completed'
+                ]);
             }));
         });
     });

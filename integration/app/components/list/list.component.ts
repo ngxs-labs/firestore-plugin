@@ -5,7 +5,7 @@ import { RacesState } from './../../states/races/races.state';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { DisconnectStream } from '@ngxs-labs/firestore-plugin';
+import { Disconnect } from '@ngxs-labs/firestore-plugin';
 
 @Component({
     selector: 'app-list',
@@ -20,16 +20,17 @@ export class ListComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // this.store.dispatch(new RacesActions.GetAll());
-        this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
     }
 
     disconnect() {
-        // this.store.dispatch(new NgxsFirestoreActions.Disconnect(new RacesActions.Get('^yGso$7at*#lA5xpFmz0')));
-        this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
+        // this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
+        this.store.dispatch(new Disconnect(new RacesActions.Get('^yGso$7at*#lA5xpFmz0')));
     }
 
     reconnect() {
-        this.store.dispatch(new RacesActions.GetAll());
+        // this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
     }
 
     create() {

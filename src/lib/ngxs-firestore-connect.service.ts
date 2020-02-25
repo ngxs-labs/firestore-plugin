@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
-import { tap, catchError, mergeMap, takeUntil, finalize, filter, switchMap, take } from 'rxjs/operators';
+import { tap, catchError, mergeMap, switchMap, takeUntil, finalize, filter, take } from 'rxjs/operators';
 import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
