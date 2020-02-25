@@ -4,8 +4,9 @@ import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap
 import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
-import { StreamConnected, StreamEmitted, DisconnectStream, StreamDisconnected } from './action-decorator-helpers';
+import { StreamConnected, StreamEmitted, StreamDisconnected } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
+import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
 
 interface ActionTypeDef<T> {
     type: string;
@@ -30,11 +31,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
             trackBy?: (payload: T) => string;
         }
     ) {
-        const actionHandlerSubject = new Subject();
+        const actionDispatchedHandlerSubject = new Subject();
         const actionConnectedHandlerSubject = new Subject();
 
         attachAction(NgxsFirestoreState, actionType, () => {
-            return actionHandlerSubject.asObservable().pipe(
+            return actionDispatchedHandlerSubject.asObservable().pipe(
                 take(1),
                 switchMap((action) => {
                     if (!!this.activeFirestoreConnections.includes(streamId(actionType, action))) {
@@ -68,7 +69,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
         this.firestoreConnectionsSub = this.actions
             .pipe(
                 ofActionDispatched(actionType),
-                tap((action) => actionHandlerSubject.next(action)),
+                tap((action) => actionDispatchedHandlerSubject.next(action)),
                 filter((action) => {
                     return !this.activeFirestoreConnections.includes(streamId(actionType, action));
                 }),
@@ -89,8 +90,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
                         takeUntil(
                             race(
                                 this.actions.pipe(ofActionDispatched(new DisconnectStream(actionType))),
-                                this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.DisconnectAll)),
-                                this.actions.pipe(ofActionDispatched(NgxsFirestoreConnectActions.Disconnect)).pipe(
+                                this.actions.pipe(ofActionDispatched(DisconnectAll)),
+                                this.actions.pipe(ofActionDispatched(Disconnect)).pipe(
                                     filter((disconnectAction) => {
                                         const { payload } = disconnectAction;
                                         if (!payload) {
@@ -121,7 +122,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             );
                         }),
                         catchError((err) => {
-                            actionHandlerSubject.error(err);
+                            actionDispatchedHandlerSubject.error(err);
                             return of({});
                         })
                     );

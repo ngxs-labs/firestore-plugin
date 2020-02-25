@@ -20,9 +20,3 @@ export function StreamDisconnected(actionType: ActionType) {
         constructor() {}
     };
 }
-
-export class DisconnectStream {
-    constructor(actionType) {
-        return { type: `${actionType.type} Disconnect` };
-    }
-}

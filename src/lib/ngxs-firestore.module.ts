@@ -12,7 +12,7 @@ const PIPES = [];
     exports: [...PIPES]
 })
 export class NgxsFirestoreModule {
-    public static forRoot(): ModuleWithProviders {
+    public static forRoot(): ModuleWithProviders<NgxsFirestoreModule> {
         return {
             ngModule: NgxsFirestoreModule
         };
