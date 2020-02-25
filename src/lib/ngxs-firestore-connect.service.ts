@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
-import { tap, take, catchError, mergeMap, takeUntil, finalize, filter, switchMap } from 'rxjs/operators';
+import { tap, catchError, mergeMap, takeUntil, finalize, filter, switchMap, first, mapTo, take } from 'rxjs/operators';
 import { Subject, Observable, race, Subscription, of } from 'rxjs';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { attachAction } from '@ngxs-labs/attach-action';
@@ -11,6 +11,18 @@ import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
 interface ActionTypeDef<T> {
     type: string;
     new (...args: any): T;
+}
+
+function runOnce<T>(once: (arg) => void): (source: Observable<T>) => Observable<T> {
+    return function inner(source: Observable<T>): Observable<T> {
+        source
+            .pipe(
+                first(),
+                tap((t) => once(t))
+            )
+            .subscribe();
+        return source;
+    };
 }
 
 function streamId(actionType: ActionType, action: any) {
@@ -29,34 +41,46 @@ export class NgxsFirestoreConnect implements OnDestroy {
         opts: {
             to: (payload: T) => Observable<any>;
             trackBy?: (payload: T) => string;
+            connectedActionFinishesOn?: 'FirstEmit' | 'StreamCompleted';
         }
     ) {
+        opts.connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
+
         const actionDispatchedHandlerSubject = new Subject();
         const actionConnectedHandlerSubject = new Subject();
+        const actionCompletedHandlerSubject = new Subject();
 
         attachAction(NgxsFirestoreState, actionType, () => {
             return actionDispatchedHandlerSubject.asObservable().pipe(
                 take(1),
                 switchMap((action) => {
+                    // skip actions already connected
                     if (!!this.activeFirestoreConnections.includes(streamId(actionType, action))) {
                         // NGXS doesnt complete the action returning EMPTY
                         return of({});
                     } else {
-                        return actionConnectedHandlerSubject.asObservable().pipe(
-                            take(1),
-                            tap((_) => {
-                                // call action stream connected
-                                const StreamConnectedClass = StreamConnected(actionType);
-                                this.store.dispatch(new StreamConnectedClass(actionType));
+                        actionConnectedHandlerSubject
+                            .asObservable()
+                            .pipe(
+                                tap((_) => {
+                                    // call action stream connected
+                                    const StreamConnectedClass = StreamConnected(actionType);
+                                    this.store.dispatch(new StreamConnectedClass(actionType));
 
-                                this.activeFirestoreConnections.push(streamId(actionType, action));
+                                    this.activeFirestoreConnections.push(streamId(actionType, action));
 
-                                // internal stream logging
-                                this.store.dispatch(
-                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
-                                );
-                            })
-                        );
+                                    // internal stream logging
+                                    this.store.dispatch(
+                                        new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
+                                    );
+                                })
+                            )
+                            .subscribe();
+                        if (opts.connectedActionFinishesOn === 'FirstEmit') {
+                            return actionCompletedHandlerSubject.asObservable().pipe(take(1), mapTo({}));
+                        } else {
+                            return actionCompletedHandlerSubject.asObservable().pipe(take(1), mapTo({}));
+                        }
                     }
                 }),
                 catchError((_) => {
@@ -69,14 +93,25 @@ export class NgxsFirestoreConnect implements OnDestroy {
         this.firestoreConnectionsSub = this.actions
             .pipe(
                 ofActionDispatched(actionType),
-                tap((action) => actionDispatchedHandlerSubject.next(action)),
+                runOnce((action) => {
+                    actionDispatchedHandlerSubject.next(action);
+                    actionDispatchedHandlerSubject.complete();
+                }),
                 filter((action) => {
                     return !this.activeFirestoreConnections.includes(streamId(actionType, action));
                 }),
                 mergeMap((action) => {
                     const streamFn = opts.to;
                     return streamFn(action).pipe(
-                        tap((_) => actionConnectedHandlerSubject.next(action)),
+                        runOnce(() => {
+                            actionConnectedHandlerSubject.next(action);
+                            actionConnectedHandlerSubject.complete();
+
+                            if (opts.connectedActionFinishesOn === 'FirstEmit') {
+                                actionCompletedHandlerSubject.next();
+                                actionCompletedHandlerSubject.complete();
+                            }
+                        }),
                         tap((payload) => {
                             const StreamEmittedClass = StreamEmitted(actionType);
                             this.store.dispatch(new StreamEmittedClass(action, payload));
@@ -120,6 +155,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 this.activeFirestoreConnections.indexOf(streamId(actionType, action)),
                                 1
                             );
+                            if (opts.connectedActionFinishesOn === 'StreamCompleted') {
+                                actionCompletedHandlerSubject.next();
+                                actionCompletedHandlerSubject.complete();
+                            }
                         }),
                         catchError((err) => {
                             actionDispatchedHandlerSubject.error(err);
