@@ -1,15 +1,27 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NgxsFirestoreConnect } from './ngxs-firestore-connect.service';
-import { Store, NgxsModule, State, NgxsOnInit, Action, StateContext, getActionTypeFromInstance } from '@ngxs/store';
+import {
+    Store,
+    NgxsModule,
+    State,
+    NgxsOnInit,
+    Action,
+    StateContext,
+    getActionTypeFromInstance,
+    Actions,
+    ofActionCompleted
+} from '@ngxs/store';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { BehaviorSubject, from, Subject } from 'rxjs';
 import { Emitted, Connected, Disconnected } from './types';
 import { StreamEmitted, StreamConnected, StreamDisconnected } from './action-decorator-helpers';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
+import { tap } from 'rxjs/operators';
 
 describe('NgxsFirestoreConnect', () => {
     let store: Store;
-    let events: ('emmited' | 'connected' | 'disconnected' | 'action-completed')[];
+    let actions: Actions;
+    let events: ('emmited' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed')[];
 
     const mockFirestoreStream = jest.fn();
     const emittedFn = jest.fn();
@@ -97,6 +109,7 @@ describe('NgxsFirestoreConnect', () => {
             imports: [NgxsModule.forRoot([TestState]), NgxsFirestoreModule.forRoot()]
         });
         store = TestBed.get(Store);
+        actions = TestBed.get(Actions);
         events = [];
         mockFirestoreStream.mockReset();
         mockFirestoreStream.mockImplementation(() => new BehaviorSubject(1).asObservable());
@@ -295,7 +308,13 @@ describe('NgxsFirestoreConnect', () => {
                 ]);
             }));
 
-            test('should complete on ObservableComplete', fakeAsync(() => {
+            test.only('should complete on ObservableComplete', fakeAsync(() => {
+                actions
+                    .pipe(
+                        ofActionCompleted(TestActionThatFinishesOnObservableComplete),
+                        tap((_) => events.push('action-completed'))
+                    )
+                    .subscribe();
                 store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
                     events.push('action-completed');
                 });
