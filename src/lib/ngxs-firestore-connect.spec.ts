@@ -228,7 +228,7 @@ describe('NgxsFirestoreConnect', () => {
                 mockFirestoreStream.mockImplementation(() => from([1, 2, 3]));
             });
 
-            test.skip('should complete on FirstEmit', () => {
+            test('should complete on FirstEmit', () => {
                 store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
                     events.push('action-completed');
                 });
@@ -242,7 +242,7 @@ describe('NgxsFirestoreConnect', () => {
                 ]);
             });
 
-            test.skip('should complete on ObservableComplete', () => {
+            test('should complete on ObservableComplete', () => {
                 store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
                     events.push('action-completed');
                 });
@@ -265,7 +265,7 @@ describe('NgxsFirestoreConnect', () => {
                 mockFirestoreStream.mockImplementation(() => subject.asObservable());
             });
 
-            test.skip('should complete on FirstEmit', fakeAsync(() => {
+            test('should complete on FirstEmit', fakeAsync(() => {
                 store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
                     events.push('action-completed');
                 });
@@ -292,7 +292,7 @@ describe('NgxsFirestoreConnect', () => {
                 ]);
             }));
 
-            test.skip('should complete on ObservableComplete', fakeAsync(() => {
+            test('should complete on ObservableComplete', fakeAsync(() => {
                 store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
                     events.push('action-completed');
                 });
