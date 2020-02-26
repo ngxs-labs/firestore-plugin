@@ -40,35 +40,31 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
         attachAction(NgxsFirestoreState, actionType, () => {
             return actionDispatchedHandlerSubject.asObservable().pipe(
-                take(1),
-                switchMap((action) => {
+                filter((action) => {
                     // skip actions already connected
-                    if (!!this.activeFirestoreConnections.includes(streamId(actionType, action))) {
-                        // NGXS doesnt complete the action returning EMPTY
-                        return of({});
-                    } else {
-                        actionConnectedHandlerSubject
-                            .asObservable()
-                            .pipe(
-                                take(1),
-                                tap((_) => {
-                                    // call action stream connected
-                                    const StreamConnectedClass = StreamConnected(actionType);
-                                    this.store.dispatch(new StreamConnectedClass(actionType));
-
-                                    this.activeFirestoreConnections.push(streamId(actionType, action));
-
-                                    // internal stream logging
-                                    this.store.dispatch(
-                                        new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
-                                    );
-                                })
-                            )
-                            .subscribe();
-
-                        return actionCompletedHandlerSubject.asObservable().pipe(take(1));
-                    }
+                    return !this.activeFirestoreConnections.includes(streamId(actionType, action));
                 }),
+                switchMap((action) => {
+                    return actionConnectedHandlerSubject.asObservable().pipe(
+                        take(1),
+                        tap((_) => {
+                            // call action stream connected
+                            const StreamConnectedClass = StreamConnected(actionType);
+                            this.store.dispatch(new StreamConnectedClass(actionType));
+
+                            this.activeFirestoreConnections.push(streamId(actionType, action));
+
+                            // internal stream logging
+                            this.store.dispatch(
+                                new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
+                            );
+                        })
+                    );
+                }),
+                switchMap((action) => {
+                    return actionCompletedHandlerSubject.asObservable().pipe(take(1));
+                }),
+                take(1),
                 catchError((_) => {
                     // NGXS doesnt complete the action returning EMPTY
                     return of({});
@@ -92,7 +88,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             actionConnectedHandlerSubject.next(action);
 
                             if (opts.connectedActionFinishesOn === 'FirstEmit') {
-                                actionCompletedHandlerSubject.next({});
+                                actionCompletedHandlerSubject.next(action);
                             }
                         }),
                         tap((payload) => {
@@ -140,7 +136,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             );
 
                             if (opts.connectedActionFinishesOn === 'StreamCompleted') {
-                                actionCompletedHandlerSubject.next({});
+                                actionCompletedHandlerSubject.next(action);
                             }
                         }),
                         catchError((err) => {
