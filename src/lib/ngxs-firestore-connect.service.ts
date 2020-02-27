@@ -128,7 +128,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                         ),
                         finalize(() => {
                             const StreamDisconnectedClass = StreamDisconnected(actionType);
-                            this.store.dispatch(new StreamDisconnectedClass());
+                            this.store.dispatch(new StreamDisconnectedClass(action));
                             this.store.dispatch(
                                 new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, action))
                             );

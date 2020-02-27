@@ -17,6 +17,6 @@ export function StreamEmitted(actionType: ActionType) {
 export function StreamDisconnected(actionType: ActionType) {
     return class {
         static readonly type = `${actionType.type} Disconnected`;
-        constructor() {}
+        constructor(public action: ActionType) {}
     };
 }
