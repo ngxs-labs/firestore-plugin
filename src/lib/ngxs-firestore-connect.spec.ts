@@ -110,6 +110,12 @@ describe('NgxsFirestoreConnect', () => {
     });
 
     describe('Action', () => {
+        let actionReceived;
+
+        beforeEach(() => {
+            actionReceived = '';
+        });
+
         describe('Dispatched as Type', () => {
             test('should connect and emit', () => {
                 store.dispatch(TestAction);
@@ -118,16 +124,18 @@ describe('NgxsFirestoreConnect', () => {
 
             test('should receive action on connected', () => {
                 connectedFn.mockImplementation((action) => {
-                    expect(getActionTypeFromInstance(action)).toBe(TestAction.type);
+                    actionReceived = getActionTypeFromInstance(action);
                 });
                 store.dispatch(TestAction);
+                expect(actionReceived).toBe(TestAction.type);
             });
 
             test('should receive action on emitted', () => {
                 emittedFn.mockImplementation((action) => {
-                    expect(getActionTypeFromInstance(action)).toBe(TestAction.type);
+                    actionReceived = getActionTypeFromInstance(action);
                 });
                 store.dispatch(TestAction);
+                expect(actionReceived).toBe(TestAction.type);
             });
 
             test('should disconnect', () => {
@@ -146,33 +154,35 @@ describe('NgxsFirestoreConnect', () => {
         });
         describe('Dispatched as instance', () => {
             test('should connect and emit', () => {
-                store.dispatch(TestAction);
+                store.dispatch(new TestAction());
                 expect(events).toEqual(['connected', 'emmited']);
             });
 
             test('should receive action on connected', () => {
                 connectedFn.mockImplementation((action) => {
-                    expect(getActionTypeFromInstance(action)).toBe(TestAction.type);
+                    actionReceived = getActionTypeFromInstance(action);
                 });
-                store.dispatch(TestAction);
+                store.dispatch(new TestAction());
+                expect(actionReceived).toBe(TestAction.type);
             });
 
             test('should receive action on emitted', () => {
                 emittedFn.mockImplementation((action) => {
-                    expect(getActionTypeFromInstance(action)).toBe(TestAction.type);
+                    actionReceived = getActionTypeFromInstance(action);
                 });
-                store.dispatch(TestAction);
+                store.dispatch(new TestAction());
+                expect(actionReceived).toBe(TestAction.type);
             });
 
             test('should disconnect', () => {
-                store.dispatch(TestAction);
+                store.dispatch(new TestAction());
                 expect(events).toEqual(['connected', 'emmited']);
                 store.dispatch(new DisconnectStream(TestAction));
                 expect(events).toEqual(['connected', 'emmited', 'disconnected']);
             });
 
             test('should disconnect with DisconnectAll', () => {
-                store.dispatch(TestAction);
+                store.dispatch(new TestAction());
                 expect(events).toEqual(['connected', 'emmited']);
                 store.dispatch(new DisconnectAll());
                 expect(events).toEqual(['connected', 'emmited', 'disconnected']);
