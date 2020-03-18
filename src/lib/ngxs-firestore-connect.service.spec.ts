@@ -330,4 +330,6 @@ describe('NgxsFirestoreConnect', () => {
             }));
         });
     });
+
+    describe('Dispatching Action Multiple Times', () => {});
 });
