@@ -19,8 +19,10 @@ export class ListComponent implements OnInit, OnDestroy {
     constructor(private store: Store) {}
 
     ngOnInit() {
-        // this.store.dispatch(new RacesActions.GetAll());
-        this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
+        this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.GetAll());
+        // this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
     }
 
     disconnect() {
