@@ -32,8 +32,13 @@ import { OtherComponent } from './components/other/other.component';
         NgxsModule.forRoot([RacesState], {
             developmentMode: !environment.production
         }),
-        NgxsLoggerPluginModule.forRoot({ disabled: environment.production }),
-        NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
+        NgxsLoggerPluginModule.forRoot({
+            disabled: environment.production
+        }),
+        NgxsReduxDevtoolsPluginModule.forRoot({
+            name: 'Ngxs Firestore',
+            disabled: environment.production
+        }),
         NgxsFirestoreModule.forRoot()
     ],
     providers: [],
