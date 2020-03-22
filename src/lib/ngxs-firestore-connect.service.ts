@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Store, ActionType, Actions, ofActionDispatched, State } from '@ngxs/store';
+import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take } from 'rxjs/operators';
 import { Observable, race, Subscription, of, Subject } from 'rxjs';
 import { StreamConnected, StreamEmitted, StreamDisconnected } from './action-decorator-helpers';
