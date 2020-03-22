@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
+import { Store, ActionType, Actions, ofActionDispatched, State } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take } from 'rxjs/operators';
 import { Observable, race, Subscription, of, Subject } from 'rxjs';
-import { NgxsFirestoreState } from './ngxs-firestore.state';
-import { attachAction } from '@ngxs-labs/attach-action';
 import { StreamConnected, StreamEmitted, StreamDisconnected } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
+import { attachAction } from './attach-action';
+import { NgxsFirestoreState } from './ngxs-firestore.state';
 
 interface ActionTypeDef<T> {
     type: string;
@@ -47,7 +47,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
     ) {
         opts.connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
 
-        type CompletedHandler = { actionCompletedHandlerSubject: Subject<unknown> };
+        interface CompletedHandler {
+            actionCompletedHandlerSubject: Subject<unknown>;
+        }
+
         const subjects: { [key: string]: CompletedHandler } = {};
         function getSubjects(id: string): CompletedHandler {
             if (!subjects[id]) {

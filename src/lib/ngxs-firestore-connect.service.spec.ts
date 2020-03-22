@@ -94,7 +94,11 @@ describe('NgxsFirestoreConnect', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [NgxsModule.forRoot([TestState]), NgxsFirestoreModule.forRoot()]
+            imports: [
+                //
+                NgxsModule.forRoot([TestState]),
+                NgxsFirestoreModule.forRoot()
+            ]
         });
         store = TestBed.get(Store);
         events = [];
