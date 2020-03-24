@@ -6,6 +6,7 @@ import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
 import { Disconnect } from '@ngxs-labs/firestore-plugin';
+import { actionsExecuting } from '@ngxs-labs/actions-executing';
 
 @Component({
     selector: 'app-list',
@@ -15,6 +16,8 @@ import { Disconnect } from '@ngxs-labs/firestore-plugin';
 export class ListComponent implements OnInit, OnDestroy {
     races$ = this.store.select(RacesState.races);
     total$ = this.races$.pipe(map((races) => races.length));
+
+    getAllExecuting$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
 
     constructor(private store: Store) {}
 
@@ -33,6 +36,10 @@ export class ListComponent implements OnInit, OnDestroy {
     reconnect() {
         // this.store.dispatch(new RacesActions.GetAll());
         this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
+    }
+
+    getAll() {
+        this.store.dispatch(new RacesActions.GetAll());
     }
 
     create() {

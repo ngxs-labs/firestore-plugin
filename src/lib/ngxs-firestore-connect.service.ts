@@ -69,6 +69,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 return;
             }
 
+            if (this.activeFirestoreConnections.includes(streamId(actionType, action))) {
+                return;
+            }
+
             return actionCompletedHandlerSubject.asObservable().pipe(
                 take(1),
                 catchError((_) => {
