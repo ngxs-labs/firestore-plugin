@@ -13,8 +13,12 @@ interface ActionTypeDef<T> {
     new (...args: any): T;
 }
 
-function streamId(actionType: ActionType, action: any) {
-    return `${actionType.type}${action.payload ? ` (${action.payload})` : ''}`;
+function defaultTrackBy(action: any) {
+    return action.payload ? ` (${action.payload})` : '';
+}
+
+function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {
+    return `${opts.actionType.type}${opts.trackBy(opts.action)}`;
 }
 
 function tapOnce<T>(fn) {
@@ -40,12 +44,13 @@ export class NgxsFirestoreConnect implements OnDestroy {
     connect<T>(
         actionType: ActionTypeDef<T>,
         opts: {
-            to: (payload: T) => Observable<any>;
-            trackBy?: (payload: T) => string;
+            to: (action: T) => Observable<any>;
+            trackBy?: (action: T) => string;
             connectedActionFinishesOn?: 'FirstEmit' | 'StreamCompleted';
         }
     ) {
-        opts.connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
+        const connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
+        const trackBy = opts.trackBy || defaultTrackBy;
 
         interface CompletedHandler {
             actionCompletedHandlerSubject: Subject<unknown>;
@@ -64,12 +69,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
         }
 
         attachAction(NgxsFirestoreState, actionType, (_stateContext, action) => {
-            const { actionCompletedHandlerSubject } = getSubjects(streamId(actionType, action));
-            if (this.actionsPending.includes(streamId(actionType, action))) {
+            const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
+            if (this.actionsPending.includes(streamId({ actionType, action, trackBy }))) {
                 return;
             }
 
-            if (this.activeFirestoreConnections.includes(streamId(actionType, action))) {
+            if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
                 return;
             }
 
@@ -88,14 +93,14 @@ export class NgxsFirestoreConnect implements OnDestroy {
                     ofActionDispatched(actionType),
                     // filter actions dispatched on same tick
                     filter((action) => {
-                        return !this.actionsPending.includes(streamId(actionType, action));
+                        return !this.actionsPending.includes(streamId({ actionType, action, trackBy }));
                     }),
                     tap((action) => {
-                        this.actionsPending.push(streamId(actionType, action));
+                        this.actionsPending.push(streamId({ actionType, action, trackBy }));
                     }),
                     // skip actions already connected
                     filter((action) => {
-                        return !this.activeFirestoreConnections.includes(streamId(actionType, action));
+                        return !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
                     }),
                     // we use mergeMap to support a same action being called with different payloads.
                     mergeMap((action) => {
@@ -105,21 +110,25 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             tapOnce((_) => {
                                 const StreamConnectedClass = StreamConnected(actionType);
                                 this.store.dispatch(new StreamConnectedClass(actionType));
-                                this.activeFirestoreConnections.push(streamId(actionType, action));
+                                this.activeFirestoreConnections.push(streamId({ actionType, action, trackBy }));
                                 // remove from actionsPending once connected
                                 this.actionsPending.splice(
-                                    this.actionsPending.indexOf(streamId(actionType, action)),
+                                    this.actionsPending.indexOf(streamId({ actionType, action, trackBy })),
                                     1
                                 );
 
                                 this.store.dispatch(
-                                    new NgxsFirestoreConnectActions.StreamConnected(streamId(actionType, action))
+                                    new NgxsFirestoreConnectActions.StreamConnected(
+                                        streamId({ actionType, action, trackBy })
+                                    )
                                 );
                             }),
                             //completed if FirstEmit
                             tapOnce(() => {
-                                if (opts.connectedActionFinishesOn === 'FirstEmit') {
-                                    const { actionCompletedHandlerSubject } = getSubjects(streamId(actionType, action));
+                                if (connectedActionFinishesOn === 'FirstEmit') {
+                                    const { actionCompletedHandlerSubject } = getSubjects(
+                                        streamId({ actionType, action, trackBy })
+                                    );
                                     actionCompletedHandlerSubject.next(action);
                                 }
                             }),
@@ -129,7 +138,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 this.store.dispatch(new StreamEmittedClass(action, payload));
                                 this.store.dispatch(
                                     new NgxsFirestoreConnectActions.StreamEmitted({
-                                        id: streamId(actionType, action),
+                                        id: streamId({ actionType, action, trackBy }),
                                         items: payload
                                     })
                                 );
@@ -144,11 +153,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                             if (!payload) {
                                                 return false;
                                             }
-                                            const disconnectedStreamId = streamId(
-                                                payload.constructor || payload,
-                                                disconnectAction.payload
-                                            );
-                                            if (disconnectedStreamId === streamId(actionType, action)) {
+                                            const disconnectedStreamId = streamId({
+                                                actionType: payload.constructor || payload,
+                                                action: disconnectAction.payload,
+                                                trackBy
+                                            });
+                                            if (disconnectedStreamId === streamId({ actionType, action, trackBy })) {
                                                 return true;
                                             }
 
@@ -161,21 +171,27 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                 const StreamDisconnectedClass = StreamDisconnected(actionType);
                                 this.store.dispatch(new StreamDisconnectedClass(action));
                                 this.store.dispatch(
-                                    new NgxsFirestoreConnectActions.StreamDisconnected(streamId(actionType, action))
+                                    new NgxsFirestoreConnectActions.StreamDisconnected(
+                                        streamId({ actionType, action, trackBy })
+                                    )
                                 );
                                 this.activeFirestoreConnections.splice(
-                                    this.activeFirestoreConnections.indexOf(streamId(actionType, action)),
+                                    this.activeFirestoreConnections.indexOf(streamId({ actionType, action, trackBy })),
                                     1
                                 );
 
                                 //completed if StreamCompleted
-                                if (opts.connectedActionFinishesOn === 'StreamCompleted') {
-                                    const { actionCompletedHandlerSubject } = getSubjects(streamId(actionType, action));
+                                if (connectedActionFinishesOn === 'StreamCompleted') {
+                                    const { actionCompletedHandlerSubject } = getSubjects(
+                                        streamId({ actionType, action, trackBy })
+                                    );
                                     actionCompletedHandlerSubject.next(action);
                                 }
                             }),
                             catchError((err) => {
-                                const { actionCompletedHandlerSubject } = getSubjects(streamId(actionType, action));
+                                const { actionCompletedHandlerSubject } = getSubjects(
+                                    streamId({ actionType, action, trackBy })
+                                );
                                 actionCompletedHandlerSubject.error(err);
                                 return of({});
                             })
