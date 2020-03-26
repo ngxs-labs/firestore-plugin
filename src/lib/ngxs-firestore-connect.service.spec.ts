@@ -9,7 +9,12 @@ import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
 
 describe('NgxsFirestoreConnect', () => {
     let store: Store;
-    let events: ('emmited' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed')[];
+    let events: ('emitted' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed')[];
+    let actionEvents: {
+        actionType: string;
+        eventType: 'emitted' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed';
+        actionPayload?: any;
+    }[];
 
     const mockFirestoreStream = jest.fn();
     const emittedFn = jest.fn();
@@ -64,9 +69,14 @@ describe('NgxsFirestoreConnect', () => {
             StreamEmitted(TestActionThatFinishesOnObservableComplete),
             StreamEmitted(TestActionThatFinishesOnFirstEmit)
         ])
-        testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<TestAction, number>) {
+        testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<any, number>) {
             emittedFn(action);
-            events.push('emmited');
+            events.push('emitted');
+            actionEvents.push({
+                actionType: getActionTypeFromInstance(action),
+                eventType: 'emitted',
+                actionPayload: action && action.payload
+            });
         }
 
         @Action([
@@ -75,9 +85,15 @@ describe('NgxsFirestoreConnect', () => {
             StreamConnected(TestActionThatFinishesOnObservableComplete),
             StreamConnected(TestActionThatFinishesOnFirstEmit)
         ])
-        testActionConnected(ctx: StateContext<any>, { action }: Connected<TestAction>) {
+        testActionConnected(ctx: StateContext<any>, { action }: Connected<any>) {
+            debugger;
             connectedFn(action);
             events.push('connected');
+            actionEvents.push({
+                actionType: getActionTypeFromInstance(action),
+                eventType: 'connected',
+                actionPayload: action && action.payload
+            });
         }
 
         @Action([
@@ -86,9 +102,14 @@ describe('NgxsFirestoreConnect', () => {
             StreamDisconnected(TestActionThatFinishesOnObservableComplete),
             StreamDisconnected(TestActionThatFinishesOnFirstEmit)
         ])
-        testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<TestAction>) {
+        testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<any>) {
             disconnectedFn(action);
             events.push('disconnected');
+            actionEvents.push({
+                actionType: getActionTypeFromInstance(action),
+                eventType: 'disconnected',
+                actionPayload: action && action.payload
+            });
         }
     }
 
@@ -102,6 +123,7 @@ describe('NgxsFirestoreConnect', () => {
         });
         store = TestBed.get(Store);
         events = [];
+        actionEvents = [];
         mockFirestoreStream.mockImplementation(() => new BehaviorSubject(1).asObservable());
         connectedFn.mockReset();
         emittedFn.mockReset();
@@ -123,7 +145,7 @@ describe('NgxsFirestoreConnect', () => {
         describe('Dispatched as Type', () => {
             test('should connect and emit', () => {
                 store.dispatch(TestAction);
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
             });
 
             test('should receive action on connected', () => {
@@ -144,22 +166,22 @@ describe('NgxsFirestoreConnect', () => {
 
             test('should disconnect', () => {
                 store.dispatch(TestAction);
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
                 store.dispatch(new DisconnectStream(TestAction));
-                expect(events).toEqual(['connected', 'emmited', 'disconnected']);
+                expect(events).toEqual(['connected', 'emitted', 'disconnected']);
             });
 
             test('should disconnect with DisconnectAll', () => {
                 store.dispatch(TestAction);
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
                 store.dispatch(DisconnectAll);
-                expect(events).toEqual(['connected', 'emmited', 'disconnected']);
+                expect(events).toEqual(['connected', 'emitted', 'disconnected']);
             });
         });
         describe('Dispatched as instance', () => {
             test('should connect and emit', () => {
                 store.dispatch(new TestAction());
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
             });
 
             test('should receive action on connected', () => {
@@ -180,16 +202,16 @@ describe('NgxsFirestoreConnect', () => {
 
             test('should disconnect', () => {
                 store.dispatch(new TestAction());
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
                 store.dispatch(new DisconnectStream(TestAction));
-                expect(events).toEqual(['connected', 'emmited', 'disconnected']);
+                expect(events).toEqual(['connected', 'emitted', 'disconnected']);
             });
 
             test('should disconnect with DisconnectAll', () => {
                 store.dispatch(new TestAction());
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
                 store.dispatch(new DisconnectAll());
-                expect(events).toEqual(['connected', 'emmited', 'disconnected']);
+                expect(events).toEqual(['connected', 'emitted', 'disconnected']);
             });
         });
     });
@@ -199,7 +221,7 @@ describe('NgxsFirestoreConnect', () => {
 
         test('should connect and emit', () => {
             store.dispatch(new TestActionWithPayload(payload));
-            expect(events).toEqual(['connected', 'emmited']);
+            expect(events).toEqual(['connected', 'emitted']);
         });
 
         test('should receive action on connected', () => {
@@ -222,16 +244,16 @@ describe('NgxsFirestoreConnect', () => {
 
         test('should disconnect with same payload', () => {
             store.dispatch(new TestActionWithPayload(payload));
-            expect(events).toEqual(['connected', 'emmited']);
+            expect(events).toEqual(['connected', 'emitted']);
             store.dispatch(new Disconnect(new TestActionWithPayload(payload)));
-            expect(events).toEqual(['connected', 'emmited', 'disconnected']);
+            expect(events).toEqual(['connected', 'emitted', 'disconnected']);
         });
 
         test('should NOT disconnect with other payload', () => {
             store.dispatch(new TestActionWithPayload(payload));
-            expect(events).toEqual(['connected', 'emmited']);
+            expect(events).toEqual(['connected', 'emitted']);
             store.dispatch(new Disconnect(new TestActionWithPayload('other')));
-            expect(events).toEqual(['connected', 'emmited']);
+            expect(events).toEqual(['connected', 'emitted']);
             expect(events).not.toContain('disconnected');
         });
     });
@@ -248,9 +270,9 @@ describe('NgxsFirestoreConnect', () => {
                 });
                 expect(events).toEqual([
                     'connected',
-                    'emmited',
-                    'emmited',
-                    'emmited',
+                    'emitted',
+                    'emitted',
+                    'emitted',
                     'disconnected',
                     'action-completed'
                 ]);
@@ -262,9 +284,9 @@ describe('NgxsFirestoreConnect', () => {
                 });
                 expect(events).toEqual([
                     'connected',
-                    'emmited',
-                    'emmited',
-                    'emmited',
+                    'emitted',
+                    'emitted',
+                    'emitted',
                     'disconnected',
                     'action-completed'
                 ]);
@@ -287,21 +309,21 @@ describe('NgxsFirestoreConnect', () => {
                 expect(events).toEqual([]);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emitted']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emitted', 'emitted']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emmited', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'action-completed', 'emitted', 'emitted', 'emitted']);
                 subject.complete();
                 tick(1);
                 expect(events).toEqual([
                     'connected',
                     'action-completed',
-                    'emmited',
-                    'emmited',
-                    'emmited',
+                    'emitted',
+                    'emitted',
+                    'emitted',
                     'disconnected'
                 ]);
             }));
@@ -314,20 +336,20 @@ describe('NgxsFirestoreConnect', () => {
                 expect(events).toEqual([]);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted', 'emitted']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'emmited', 'emmited', 'emmited']);
+                expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted']);
                 subject.complete();
                 tick(1);
                 expect(events).toEqual([
                     'connected',
-                    'emmited',
-                    'emmited',
-                    'emmited',
+                    'emitted',
+                    'emitted',
+                    'emitted',
                     'disconnected',
                     'action-completed'
                 ]);
@@ -335,5 +357,43 @@ describe('NgxsFirestoreConnect', () => {
         });
     });
 
-    describe('Dispatching Action Multiple Times', () => {});
+    describe('Dispatching Action Multiple Times', () => {
+        let subject;
+
+        beforeEach(() => {
+            subject = new Subject();
+            mockFirestoreStream.mockImplementation(() => subject.asObservable());
+        });
+
+        describe('Same Action with different payload', () => {
+            test('should keep both connections active', fakeAsync(() => {
+                store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
+                    actionEvents.push({
+                        actionType: TestActionWithPayload.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'first'
+                    });
+                });
+                store.dispatch(new TestActionWithPayload('second')).subscribe((_) => {
+                    actionEvents.push({
+                        actionType: TestActionWithPayload.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'second'
+                    });
+                });
+                tick(1);
+                expect(actionEvents).toEqual([]);
+                subject.next(1);
+                tick(1);
+                expect(actionEvents).toEqual([
+                    { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'first' },
+                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'first' },
+                    { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'first' },
+                    { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'second' },
+                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'second' },
+                    { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'second' }
+                ]);
+            }));
+        });
+    });
 });
