@@ -37,6 +37,11 @@ describe('NgxsFirestoreConnect', () => {
         static type = 'TEST ACTION THAT FINISHES ON FIRST EMIT';
     }
 
+    class TestActionThatKeepsLast {
+        static type = 'TEST ACTION THAT KEEPS LAST';
+        constructor(public payload: string) {}
+    }
+
     @State({
         name: 'test'
     })
@@ -61,13 +66,19 @@ describe('NgxsFirestoreConnect', () => {
                 to: mockFirestoreStream,
                 connectedActionFinishesOn: 'FirstEmit'
             });
+
+            this.ngxsFirestoreConnect.connect(TestActionThatKeepsLast, {
+                to: mockFirestoreStream,
+                dispatchMultipleSrategy: 'KeepLast'
+            });
         }
 
         @Action([
             StreamEmitted(TestAction),
             StreamEmitted(TestActionWithPayload),
             StreamEmitted(TestActionThatFinishesOnObservableComplete),
-            StreamEmitted(TestActionThatFinishesOnFirstEmit)
+            StreamEmitted(TestActionThatFinishesOnFirstEmit),
+            StreamEmitted(TestActionThatKeepsLast)
         ])
         testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<any, number>) {
             emittedFn(action);
@@ -83,10 +94,10 @@ describe('NgxsFirestoreConnect', () => {
             StreamConnected(TestAction),
             StreamConnected(TestActionWithPayload),
             StreamConnected(TestActionThatFinishesOnObservableComplete),
-            StreamConnected(TestActionThatFinishesOnFirstEmit)
+            StreamConnected(TestActionThatFinishesOnFirstEmit),
+            StreamConnected(TestActionThatKeepsLast)
         ])
         testActionConnected(ctx: StateContext<any>, { action }: Connected<any>) {
-            debugger;
             connectedFn(action);
             events.push('connected');
             actionEvents.push({
@@ -100,7 +111,8 @@ describe('NgxsFirestoreConnect', () => {
             StreamDisconnected(TestAction),
             StreamDisconnected(TestActionWithPayload),
             StreamDisconnected(TestActionThatFinishesOnObservableComplete),
-            StreamDisconnected(TestActionThatFinishesOnFirstEmit)
+            StreamDisconnected(TestActionThatFinishesOnFirstEmit),
+            StreamDisconnected(TestActionThatKeepsLast)
         ])
         testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<any>) {
             disconnectedFn(action);
@@ -365,7 +377,7 @@ describe('NgxsFirestoreConnect', () => {
             mockFirestoreStream.mockImplementation(() => subject.asObservable());
         });
 
-        describe('Same Action with different payload', () => {
+        describe('With Keep All strategy', () => {
             test('should keep both connections active', fakeAsync(() => {
                 store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
                     actionEvents.push({
@@ -392,6 +404,54 @@ describe('NgxsFirestoreConnect', () => {
                     { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'second' },
                     { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'second' },
                     { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'second' }
+                ]);
+            }));
+        });
+
+        describe('With Keep Latest strategy', () => {
+            test('should keep second connection active', fakeAsync(() => {
+                store.dispatch(new TestActionThatKeepsLast('first')).subscribe((_) => {
+                    actionEvents.push({
+                        actionType: TestActionThatKeepsLast.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'first'
+                    });
+                });
+                store.dispatch(new TestActionThatKeepsLast('second')).subscribe((_) => {
+                    actionEvents.push({
+                        actionType: TestActionThatKeepsLast.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'second'
+                    });
+                });
+                tick(1);
+                expect(actionEvents).toEqual([
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' }
+                ]);
+                subject.next(1);
+                tick(1);
+                expect(actionEvents).toEqual([
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
+                    {
+                        actionType: TestActionThatKeepsLast.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'second'
+                    },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' }
+                ]);
+                subject.next(2);
+                tick(1);
+                expect(actionEvents).toEqual([
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
+                    {
+                        actionType: TestActionThatKeepsLast.type,
+                        eventType: 'action-completed',
+                        actionPayload: 'second'
+                    },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' }
                 ]);
             }));
         });
