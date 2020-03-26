@@ -22,20 +22,21 @@ export class ListComponent implements OnInit, OnDestroy {
     constructor(private store: Store) {}
 
     ngOnInit() {
-        this.store.dispatch(new RacesActions.GetAll());
-        this.store.dispatch(new RacesActions.GetAll());
-        this.store.dispatch(new RacesActions.GetAll());
-        // this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
+        // this.store.dispatch(new RacesActions.GetAll());
+        // this.store.dispatch(new RacesActions.GetAll());
+        // this.store.dispatch(new RacesActions.GetAll());
+        this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
+        this.store.dispatch(new RacesActions.Get('AAAAAA'));
     }
 
     disconnect() {
         // this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
-        this.store.dispatch(new Disconnect(new RacesActions.Get('^yGso$7at*#lA5xpFmz0')));
+        this.store.dispatch(new Disconnect(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N')));
     }
 
     reconnect() {
         // this.store.dispatch(new RacesActions.GetAll());
-        this.store.dispatch(new RacesActions.Get('^yGso$7at*#lA5xpFmz0'));
+        this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
     }
 
     getAll() {
