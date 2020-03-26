@@ -14,11 +14,15 @@ interface ActionTypeDef<T> {
 }
 
 function defaultTrackBy(action: any) {
-    return action.payload ? ` (${action.payload})` : '';
+    return action.payload || '';
 }
 
 function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {
-    return `${opts.actionType.type}${opts.trackBy(opts.action)}`;
+    let id = `${opts.actionType.type}`;
+    if (opts.trackBy(opts.action)) {
+        id = id.concat(` (${opts.trackBy(opts.action)})`);
+    }
+    return id;
 }
 
 function tapOnce<T>(fn) {
