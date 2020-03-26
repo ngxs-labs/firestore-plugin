@@ -54,12 +54,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
             to: (action: T) => Observable<any>;
             trackBy?: (action: T) => string;
             connectedActionFinishesOn?: 'FirstEmit' | 'StreamCompleted';
-            dispatchMultipleSrategy?: 'KeepAll' | 'KeepLast';
+            dispatchMultipleStrategy?: 'KeepAll' | 'KeepLast';
         }
     ) {
         const connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
         const trackBy = opts.trackBy || defaultTrackBy;
-        const dispatchMultipleSrategy = opts.dispatchMultipleSrategy || 'KeepAll';
+        const dispatchMultipleSrategy = opts.dispatchMultipleStrategy || 'KeepAll';
 
         interface CompletedHandler {
             actionCompletedHandlerSubject: Subject<unknown>;
