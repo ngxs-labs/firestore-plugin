@@ -109,7 +109,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                             //connected
                             tapOnce((_) => {
                                 const StreamConnectedClass = StreamConnected(actionType);
-                                this.store.dispatch(new StreamConnectedClass(actionType));
+                                this.store.dispatch(new StreamConnectedClass(action));
                                 this.activeFirestoreConnections.push(streamId({ actionType, action, trackBy }));
                                 // remove from actionsPending once connected
                                 this.actionsPending.splice(
