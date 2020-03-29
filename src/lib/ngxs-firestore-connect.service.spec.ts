@@ -69,7 +69,7 @@ describe('NgxsFirestoreConnect', () => {
 
             this.ngxsFirestoreConnect.connect(TestActionThatKeepsLast, {
                 to: mockFirestoreStream,
-                dispatchMultipleStrategy: 'KeepLast'
+                cancelPrevious: true
             });
         }
 

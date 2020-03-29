@@ -54,12 +54,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
             to: (action: T) => Observable<any>;
             trackBy?: (action: T) => string;
             connectedActionFinishesOn?: 'FirstEmit' | 'StreamCompleted';
-            dispatchMultipleStrategy?: 'KeepAll' | 'KeepLast';
+            cancelPrevious?: boolean;
         }
     ) {
         const connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
         const trackBy = opts.trackBy || defaultTrackBy;
-        const dispatchMultipleSrategy = opts.dispatchMultipleStrategy || 'KeepAll';
+        const cancelPrevious = opts.cancelPrevious;
 
         interface CompletedHandler {
             actionCompletedHandlerSubject: Subject<unknown>;
@@ -97,7 +97,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
         });
 
         this.firestoreConnectionsSub.push(
-            dispatchMultipleSrategy === 'KeepAll'
+            cancelPrevious
                 ? this.actions
                       .pipe(
                           ofActionDispatched(actionType),
@@ -114,12 +114,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                   streamId({ actionType, action, trackBy })
                               );
                           }),
-                          // we use mergeMap to support a same action being called with different payloads.
-                          mergeMap((action) => {
+                          // we use switchMap to cancel when action is called more than once
+                          switchMap((action) => {
                               const streamFn = opts.to;
                               return streamFn(action).pipe(
                                   //connected
-                                  tapOnce(() => {
+                                  tapOnce((_) => {
                                       const StreamConnectedClass = StreamConnected(actionType);
                                       this.store.dispatch(new StreamConnectedClass(action));
                                       this.activeFirestoreConnections.push(streamId({ actionType, action, trackBy }));
@@ -231,8 +231,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                   streamId({ actionType, action, trackBy })
                               );
                           }),
-                          // we use switchMap to cancel when action is called more than once
-                          switchMap((action) => {
+                          // we use mergeMap to support a same action being called with different payloads.
+                          mergeMap((action) => {
                               const streamFn = opts.to;
                               return streamFn(action).pipe(
                                   //connected
