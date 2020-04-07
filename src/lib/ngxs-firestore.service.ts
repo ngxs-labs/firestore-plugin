@@ -1,8 +1,9 @@
 import { AngularFirestore, QueryFn } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
-import { Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { map, take } from 'rxjs/operators';
 
+@Injectable()
 export abstract class NgxsFirestore<T> {
     protected abstract path: string;
 
