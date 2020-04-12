@@ -1,4 +1,4 @@
-![master](https://github.com/ngxs-labs/firestore-plugin/workflows/master/badge.svg?branch=master)
+![master](https://github.com/ngxs-labs/firestore-plugin/workflows/master/badge.svg?branch=master) [![npm version](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin.svg)](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ngxs-labs/emitter/master/docs/assets/logo.png">
