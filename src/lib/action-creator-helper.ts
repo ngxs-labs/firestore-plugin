@@ -11,7 +11,3 @@ export function disconnectActionName(actionType: ActionType): string {
 export function emitActionName(actionType: ActionType): string {
     return `${actionType.type} Emit`;
 }
-
-export function emitAction(actionType: ActionType): ActionType {
-    return { type: emitActionName(actionType) };
-}
