@@ -30,7 +30,7 @@ function tapOnce<T>(fn) {
         defer(() => {
             let first = true;
             return source.pipe(
-                tap((payload) => {
+                tap<T>((payload) => {
                     if (first) {
                         fn(payload);
                     }
