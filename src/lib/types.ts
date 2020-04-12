@@ -1,3 +1,10 @@
-export type Connected<T> = { action: T };
-export type Emitted<T, U> = { action: T; payload: U };
-export type Disconnected<T> = { action: T };
+export interface Connected<T> {
+    action: T;
+}
+export interface Emitted<T, U> {
+    action: T;
+    payload: U;
+}
+export interface Disconnected<T> {
+    action: T;
+}
