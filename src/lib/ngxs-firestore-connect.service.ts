@@ -118,7 +118,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                           switchMap((action) => {
                               const streamFn = opts.to;
                               return streamFn(action).pipe(
-                                  //connected
+                                  // connected
                                   tapOnce((_) => {
                                       const StreamConnectedClass = StreamConnected(actionType);
                                       this.store.dispatch(new StreamConnectedClass(action));
@@ -135,7 +135,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           )
                                       );
                                   }),
-                                  //completed if FirstEmit
+                                  // completed if FirstEmit
                                   tapOnce(() => {
                                       if (connectedActionFinishesOn === 'FirstEmit') {
                                           const { actionCompletedHandlerSubject } = getSubjects(
@@ -144,7 +144,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           actionCompletedHandlerSubject.next(action);
                                       }
                                   }),
-                                  //emmited
+                                  // emmited
                                   tap((payload) => {
                                       const StreamEmittedClass = StreamEmitted(actionType);
                                       this.store.dispatch(new StreamEmittedClass(action, payload));
@@ -196,7 +196,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           1
                                       );
 
-                                      //completed if StreamCompleted
+                                      // completed if StreamCompleted
                                       if (connectedActionFinishesOn === 'StreamCompleted') {
                                           const { actionCompletedHandlerSubject } = getSubjects(
                                               streamId({ actionType, action, trackBy })
@@ -235,7 +235,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                           mergeMap((action) => {
                               const streamFn = opts.to;
                               return streamFn(action).pipe(
-                                  //connected
+                                  // connected
                                   tapOnce((_) => {
                                       const StreamConnectedClass = StreamConnected(actionType);
                                       this.store.dispatch(new StreamConnectedClass(action));
@@ -252,7 +252,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           )
                                       );
                                   }),
-                                  //completed if FirstEmit
+                                  // completed if FirstEmit
                                   tapOnce(() => {
                                       if (connectedActionFinishesOn === 'FirstEmit') {
                                           const { actionCompletedHandlerSubject } = getSubjects(
@@ -261,7 +261,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           actionCompletedHandlerSubject.next(action);
                                       }
                                   }),
-                                  //emmited
+                                  // emmited
                                   tap((payload) => {
                                       const StreamEmittedClass = StreamEmitted(actionType);
                                       this.store.dispatch(new StreamEmittedClass(action, payload));
@@ -313,7 +313,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                                           1
                                       );
 
-                                      //completed if StreamCompleted
+                                      // completed if StreamCompleted
                                       if (connectedActionFinishesOn === 'StreamCompleted') {
                                           const { actionCompletedHandlerSubject } = getSubjects(
                                               streamId({ actionType, action, trackBy })
