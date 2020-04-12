@@ -1,3 +1,5 @@
+![master](https://github.com/ngxs-labs/firestore-plugin/workflows/master/badge.svg?branch=master)
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/ngxs-labs/emitter/master/docs/assets/logo.png">
 </p>
