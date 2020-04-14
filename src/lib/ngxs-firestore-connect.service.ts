@@ -25,8 +25,8 @@ function streamId(opts: { actionType: ActionType; action: any; trackBy: (action:
     return id;
 }
 
-function tapOnce<T>(fn) {
-    return (source) =>
+function tapOnce<T>(fn: (value) => void) {
+    return (source: Observable<any>) =>
         defer(() => {
             let first = true;
             return source.pipe(
