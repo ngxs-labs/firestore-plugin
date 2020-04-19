@@ -321,19 +321,19 @@ describe('NgxsFirestoreConnect', () => {
                 expect(events).toEqual([]);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emitted']);
+                expect(events).toEqual(['connected', 'emitted', 'action-completed']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emitted', 'emitted']);
+                expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted']);
                 subject.next(1);
                 tick(1);
-                expect(events).toEqual(['connected', 'action-completed', 'emitted', 'emitted', 'emitted']);
+                expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted', 'emitted']);
                 subject.complete();
                 tick(1);
                 expect(events).toEqual([
                     'connected',
-                    'action-completed',
                     'emitted',
+                    'action-completed',
                     'emitted',
                     'emitted',
                     'disconnected'
@@ -399,11 +399,11 @@ describe('NgxsFirestoreConnect', () => {
                 tick(1);
                 expect(actionEvents).toEqual([
                     { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'first' },
-                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'first' },
                     { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'first' },
+                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'first' },
                     { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'second' },
-                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'second' },
-                    { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'second' }
+                    { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'second' },
+                    { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: 'second' }
                 ]);
             }));
         });
@@ -433,24 +433,24 @@ describe('NgxsFirestoreConnect', () => {
                 expect(actionEvents).toEqual([
                     { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
                     { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
                     {
                         actionType: TestActionThatKeepsLast.type,
                         eventType: 'action-completed',
                         actionPayload: 'second'
-                    },
-                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' }
+                    }
                 ]);
                 subject.next(2);
                 tick(1);
                 expect(actionEvents).toEqual([
                     { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
                     { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
+                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
                     {
                         actionType: TestActionThatKeepsLast.type,
                         eventType: 'action-completed',
                         actionPayload: 'second'
                     },
-                    { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
                     { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' }
                 ]);
             }));
