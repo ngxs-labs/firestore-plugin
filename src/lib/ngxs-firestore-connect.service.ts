@@ -42,9 +42,9 @@ function tapOnce<T>(fn: (value) => void) {
 
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestoreConnect implements OnDestroy {
-    firestoreConnectionsSub: Subscription[] = [];
-    activeFirestoreConnections: string[] = [];
-    actionsPending: string[] = [];
+    private firestoreConnectionsSub: Subscription[] = [];
+    private activeFirestoreConnections: string[] = [];
+    private actionsPending: string[] = [];
 
     constructor(private store: Store, private actions: Actions) {}
 
