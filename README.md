@@ -1,4 +1,4 @@
-![master](https://github.com/ngxs-labs/firestore-plugin/workflows/master/badge.svg?branch=master) [![npm version](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin.svg)](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin)
+![master](https://github.com/ngxs-labs/firestore-plugin/workflows/master/badge.svg?branch=master) [![npm version](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin.svg)](https://badge.fury.io/js/%40ngxs-labs%2Ffirestore-plugin) [![Coverage Status](https://coveralls.io/repos/github/ngxs-labs/firestore-plugin/badge.svg?branch=master)](https://coveralls.io/github/ngxs-labs/firestore-plugin?branch=master)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ngxs-labs/emitter/master/docs/assets/logo.png">
