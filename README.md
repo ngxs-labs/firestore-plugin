@@ -94,6 +94,10 @@ export class GetAllOnce {
 })
 export class RacesState {
 
+  constructor(
+    private racesFS: RacesFirestore
+  ) { }
+
   @Action(GetAllOnce)
   getAllOnce({ getState, patchState }: StateContext<RacesStateModel>) {
     return this.racesFS.collectionOnce$().pipe(
@@ -140,7 +144,8 @@ export class GetAll {
 export class RacesState implements NgxsOnInit {
   //...
   constructor(
-    private ngxsFirestoreConnect: NgxsFirestoreConnect
+    private racesFS: RacesFirestore,
+    private ngxsFirestoreConnect: NgxsFirestoreConnect    
   ){
 
   }
