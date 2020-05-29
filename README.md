@@ -203,7 +203,6 @@ this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
 
 We need to pass the action `type` you want to connect to, and the pipe will connect when the component initiates and will automatically disconnect when the component is destroyed.
 
-
 * Manually dispatching actions
 
 Alternatively, you can manually decide when to connect / disconnect to a stream, this becomes specially helpful if you need to listen for changes other than a component lifecylce.

@@ -20,3 +20,10 @@ export function StreamDisconnected(actionType: ActionType) {
         constructor(public action: any) {}
     };
 }
+
+export function Fetch(actionType: ActionType) {
+    return class {
+        static readonly type = `${actionType.type} by Page`;
+        constructor(public action: any, public payload: () => void) {}
+    };
+}

@@ -28,9 +28,7 @@ export class NgxsFirestoreState implements NgxsOnInit {
     @Selector() public static connections(state: NgxsFirestoreStateModel) {
         return state.connections;
     }
-
     ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {}
-
     @Action([NgxsFirestoreConnectActions.StreamConnected])
     streamConnected(
         { setState }: StateContext<NgxsFirestoreStateModel>,
@@ -42,7 +40,6 @@ export class NgxsFirestoreState implements NgxsOnInit {
         } as FirestoreConnection;
         setState(patch({ connections: insertItem(conn) }));
     }
-
     @Action([NgxsFirestoreConnectActions.StreamEmitted])
     streamEmitted(
         { setState }: StateContext<NgxsFirestoreStateModel>,
@@ -51,7 +48,6 @@ export class NgxsFirestoreState implements NgxsOnInit {
         const { id, items } = payload;
         setState(patch({ connections: updateItem((x) => x.id === id, patch({ reads: items && items.length })) }));
     }
-
     @Action([NgxsFirestoreConnectActions.StreamDisconnected])
     streamDisconnected(
         { setState, getState }: StateContext<NgxsFirestoreStateModel>,

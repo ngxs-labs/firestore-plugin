@@ -11,3 +11,7 @@ export function disconnectActionName(actionType: ActionType): string {
 export function emitActionName(actionType: ActionType): string {
     return `${actionType.type} Emit`;
 }
+
+export function fetchActionName(actionType: ActionType): string {
+    return `${actionType.type} Fetch`;
+}
