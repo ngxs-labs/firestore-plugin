@@ -13,16 +13,21 @@ class QueryPagination {
     private _query: QueryFn;
 
     get query(): QueryFn {
-        return (ref) => {
+        return this._query;
+    }
+
+    setQuery(query?: QueryFn) {
+        this._query = (ref) => {
             let temp = ref.orderBy(this.orderBy, this.orderByDirection).limit(this.limit);
             if (this.lastVisible) {
                 temp = temp.startAfter(this.lastVisible);
             }
+            if (query) {
+                temp = query(ref);
+            }
             return temp;
         };
     }
-
-    setQuery(query?: QueryFn) {}
 
     change(lastVisible) {
         this.lastVisible = lastVisible;
@@ -42,13 +47,9 @@ export abstract class NgxsFirestorePagination<T> extends NgxsFirestore<T> {
     private queryPagination: QueryPagination;
 
     collection$(query?: QueryFn): Observable<T[]> {
-        this.queryPagination = this.buildQuery(query);
+        this.queryPagination = new QueryPagination(query, this.orderBy as string, this.limit, this.orderByDirection);
         this.fetch();
         return this.behaviorSubject.asObservable();
-    }
-
-    protected buildQuery(query: QueryFn) {
-        return new QueryPagination(query, this.orderBy as string, this.limit, this.orderByDirection);
     }
 
     fetch(payload?: PayloadFetch) {
