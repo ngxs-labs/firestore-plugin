@@ -12,8 +12,3 @@ export class Disconnect {
     static readonly type = '[NgxsFirestore] Disconnect';
     constructor(public payload: any) {}
 }
-
-export class FetchStream {
-    static readonly type = '[NgxsFirestore] Fetch';
-    constructor(public payload: any) {}
-}

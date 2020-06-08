@@ -1,0 +1,10 @@
+<div class="my-3">
+    <button class="btn btn-primary mr-1" (click)="fetch()">More data</button>
+</div>
+<div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
+    <div class="card-body">
+        <h5 class="card-title">{{ race.id }}</h5>
+        <p class="card-text">{{ race.name }}</p>
+        <p class="card-text">{{ race.description }}</p>
+    </div>
+</div>

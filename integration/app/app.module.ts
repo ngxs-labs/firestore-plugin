@@ -26,7 +26,11 @@ import { OtherComponent } from './components/other/other.component';
         RouterModule.forRoot([
             { path: 'list', component: ListComponent },
             { path: 'other', component: OtherComponent },
-            { path: '', redirectTo: '/list', pathMatch: 'full' }
+            { path: '', redirectTo: '/list', pathMatch: 'full' },
+            {
+                path: 'pagination',
+                loadChildren: () => import('./pagination/pagination.module').then((m) => m.PaginationModule)
+            }
         ]),
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([RacesState], {

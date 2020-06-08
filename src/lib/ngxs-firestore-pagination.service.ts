@@ -1,7 +1,7 @@
-import { NgxsFirestore } from './ngxs-firestore.service';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { QueryFn } from '@angular/fire/firestore';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { NgxsFirestore } from './ngxs-firestore.service';
 
 class QueryPagination {
     private lastVisible: any = null;
@@ -13,41 +13,46 @@ class QueryPagination {
     private _query: QueryFn;
 
     get query(): QueryFn {
-        return this._query;
-    }
-
-    setQuery(query?: QueryFn) {
-        this._query = (ref) => {
+        return (ref) => {
             let temp = ref.orderBy(this.orderBy, this.orderByDirection).limit(this.limit);
             if (this.lastVisible) {
                 temp = temp.startAfter(this.lastVisible);
             }
-            temp = query(ref);
             return temp;
         };
     }
+
+    setQuery(query?: QueryFn) {}
 
     change(lastVisible) {
         this.lastVisible = lastVisible;
     }
 }
-
+type Readonly<T> = keyof T;
+export interface PayloadFetch {
+    complete: () => void;
+    error: (err) => void;
+}
 export abstract class NgxsFirestorePagination<T> extends NgxsFirestore<T> {
-    protected abstract limit = 5;
-    protected abstract orderBy: string;
+    protected abstract limit: number;
+    protected abstract orderBy: Readonly<T>;
     protected abstract orderByDirection: any;
     protected abstract format: (data: T) => T;
     private behaviorSubject: BehaviorSubject<T[]> = new BehaviorSubject([]);
     private queryPagination: QueryPagination;
 
     collection$(query?: QueryFn): Observable<T[]> {
-        this.queryPagination = new QueryPagination(query, this.orderBy, this.limit, this.orderByDirection);
+        this.queryPagination = this.buildQuery(query);
         this.fetch();
         return this.behaviorSubject.asObservable();
     }
 
-    fetch(complete?: () => void, error?: () => void) {
-        this.updateCollection$(this.snapshotChanges(), complete, error);
+    protected buildQuery(query: QueryFn) {
+        return new QueryPagination(query, this.orderBy as string, this.limit, this.orderByDirection);
+    }
+
+    fetch(payload?: PayloadFetch) {
+        this.updateCollection$(this.snapshotChanges(), payload);
     }
 
     private snapshotChanges() {
@@ -65,7 +70,15 @@ export abstract class NgxsFirestorePagination<T> extends NgxsFirestore<T> {
             );
     }
 
-    private updateCollection$(collection: Observable<T[]>, complete?: () => void, error?: () => void) {
-        collection.pipe(take(1)).subscribe((documents) => this.behaviorSubject.next(documents), error, complete);
+    private updateCollection$(
+        collection: Observable<T[]>,
+        payload: PayloadFetch = {
+            error: (err) => {},
+            complete: () => {}
+        }
+    ) {
+        collection
+            .pipe(take(1))
+            .subscribe((documents) => this.behaviorSubject.next(documents), payload.error, payload.complete);
     }
 }

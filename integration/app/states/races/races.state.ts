@@ -1,18 +1,18 @@
-import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
-import { RacesActions } from './races.actions';
-import { tap } from 'rxjs/operators';
 import {
-    NgxsFirestoreConnect,
     Connected,
-    Emitted,
     Disconnected,
+    Emitted,
+    NgxsFirestoreConnect,
     StreamConnected,
-    StreamEmitted,
-    StreamDisconnected
+    StreamDisconnected,
+    StreamEmitted
 } from '@ngxs-labs/firestore-plugin';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { insertItem, patch } from '@ngxs/store/operators';
+import { tap } from 'rxjs/operators';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
-import { patch, insertItem } from '@ngxs/store/operators';
+import { RacesActions } from './races.actions';
 
 export interface RacesStateModel {
     races: Race[];

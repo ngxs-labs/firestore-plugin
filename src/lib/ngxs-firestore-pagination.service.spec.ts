@@ -2,16 +2,19 @@ import { Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AngularFirestore, Query } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
-
-import { NgxsFirestorePagination } from './ngxs-firestore-pagination.service';
 import { of } from 'rxjs';
+import { NgxsFirestorePagination } from './ngxs-firestore-pagination.service';
+
+interface DocumentData {
+    name: string;
+}
 
 @Injectable({ providedIn: 'root' })
-class ClientMock extends NgxsFirestorePagination<{}> {
+class ClientMock extends NgxsFirestorePagination<DocumentData> {
     protected path = 'test';
-    protected format: (data: {}) => {};
+    protected format = (data: DocumentData) => data;
     protected limit: number = 5;
-    protected orderBy: string;
+    protected orderBy: 'name' = 'name';
     protected orderByDirection: any;
 }
 
