@@ -17,6 +17,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
+import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 
 @NgModule({
     declarations: [AppComponent, ListComponent, OtherComponent],
@@ -39,7 +40,8 @@ import { OtherComponent } from './components/other/other.component';
             name: 'Ngxs Firestore',
             disabled: environment.production
         }),
-        NgxsFirestoreModule.forRoot()
+        NgxsFirestoreModule.forRoot(),
+        NgxsActionsExecutingModule.forRoot()
     ],
     providers: [],
     bootstrap: [AppComponent]
