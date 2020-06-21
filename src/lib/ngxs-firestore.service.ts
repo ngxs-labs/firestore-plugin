@@ -1,13 +1,46 @@
-import { AngularFirestore, QueryFn } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
+import { AngularFirestore, QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap, finalize } from 'rxjs/operators';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
     protected abstract path: string;
+    private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
 
     constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
+
+    public page$(queryFn?: QueryFn): Observable<T[]> {
+        if (!!this.activePagedQuery && this.activePagedQuery.queryFn === queryFn + '') {
+            return throwError('ERROR');
+        }
+
+        this.activePagedQuery = {
+            queryFn: queryFn + ''
+        };
+
+        return this.firestore
+            .collection<T>(this.path, (ref) =>
+                queryFn(ref).startAfter((this.activePagedQuery && this.activePagedQuery.lastDoc) || null)
+            )
+            .snapshotChanges()
+            .pipe(
+                tap((items) => {
+                    const start = items.length;
+                    this.activePagedQuery = {
+                        ...this.activePagedQuery,
+                        lastDoc: items.length > 0 && items[items.length - 1].payload.doc,
+                        page: `${start} - ${start + 10}`
+                    };
+                }),
+                map((items) => items.map((item) => item.payload.doc.data())),
+                finalize(() => (this.activePagedQuery = null))
+            );
+    }
+
+    public pageOnce$(queryFn?: QueryFn): Observable<T[]> {
+        return this.page$(queryFn).pipe(take(1));
+    }
 
     public createId() {
         return this.firestore.createId();

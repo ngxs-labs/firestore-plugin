@@ -22,6 +22,10 @@ export namespace RacesActions {
         public static readonly type = '[Races] GetAll';
     }
 
+    export class NextPage {
+        public static readonly type = '[Races] NextPage';
+    }
+
     export class Create {
         public static readonly type = '[Races] Create';
         constructor(public payload: RacesActionsPayloads.Create) {}

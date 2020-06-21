@@ -14,6 +14,13 @@ export function StreamEmitted(actionType: ActionType) {
     };
 }
 
+export function Page(actionType: ActionType) {
+    return class {
+        static readonly type = `Page ${actionType.type}`;
+        constructor(public payload: string) {}
+    };
+}
+
 export function StreamDisconnected(actionType: ActionType) {
     return class {
         static readonly type = `${actionType.type} Disconnected`;

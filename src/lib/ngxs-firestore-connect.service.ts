@@ -193,6 +193,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
                     }
                 }),
                 catchError((err) => {
+                    debugger;
                     const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
                     actionCompletedHandlerSubject.error(err);
                     return of({});

@@ -3,4 +3,5 @@ export interface Race {
     title: string;
     description: string;
     name: string;
+    order: string;
 }

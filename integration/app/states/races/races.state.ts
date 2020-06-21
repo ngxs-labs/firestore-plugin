@@ -8,11 +8,12 @@ import {
     Disconnected,
     StreamConnected,
     StreamEmitted,
-    StreamDisconnected
+    StreamDisconnected,
+    Page
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
-import { patch, insertItem } from '@ngxs/store/operators';
+import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
 
 export interface RacesStateModel {
     races: Race[];
@@ -46,6 +47,44 @@ export class RacesState implements NgxsOnInit {
         this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
             to: () => this.racesFS.collection$()
         });
+
+        this.ngxsFirestoreConnect.connect(Page(RacesActions.NextPage), {
+            to: () => this.racesFS.page$((ref) => ref.limit(10).orderBy('order')),
+            trackBy: ({ payload }) => `Page ${payload}`
+        });
+    }
+
+    @Action(RacesActions.NextPage)
+    getPage(ctx: StateContext<RacesStateModel>) {
+        const start = ctx.getState().races.length;
+        return ctx.dispatch(new (Page(RacesActions.NextPage))(`${start} - ${start + 10}`));
+    }
+
+    @Action(StreamEmitted(Page(RacesActions.NextPage)))
+    getPageEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
+        // upsert items
+        payload.forEach((race) => {
+            ctx.setState(
+                patch<RacesStateModel>({
+                    races: iif(
+                        (s) => !!s.find((c) => c.id === race.id),
+                        updateItem((c) => c.id === race.id, patch({ ...race })),
+                        insertItem({ ...race })
+                    )
+                })
+            );
+        });
+        // sort
+        ctx.setState(
+            patch({
+                races: ctx
+                    .getState()
+                    .races.slice()
+                    .sort((a, b) => {
+                        return +a.order - +b.order;
+                    })
+            })
+        );
     }
 
     @Action(StreamConnected(RacesActions.Get))
