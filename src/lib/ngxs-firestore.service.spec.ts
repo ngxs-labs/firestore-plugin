@@ -5,27 +5,27 @@ import { Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 
 describe('NgxsFirestore', () => {
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: AngularFirestore, useValue: jest.fn() },
-                { provide: Store, useValue: jest.fn() }
-            ]
-        });
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AngularFirestore, useValue: jest.fn() },
+        { provide: Store, useValue: jest.fn() }
+      ]
     });
+  });
 
-    it('cant be directly instantiated', () => {
-        expect(() => {
-            TestBed.get(NgxsFirestore);
-        }).toThrowError('No provider for NgxsFirestore!');
-    });
+  it('cant be directly instantiated', () => {
+    expect(() => {
+      TestBed.get(NgxsFirestore);
+    }).toThrowError('No provider for NgxsFirestore!');
+  });
 
-    it('can be implemented and instantiated', () => {
-        @Injectable({ providedIn: 'root' })
-        class TestFirestore extends NgxsFirestore<{}> {
-            protected path = 'test';
-        }
+  it('can be implemented and instantiated', () => {
+    @Injectable({ providedIn: 'root' })
+    class TestFirestore extends NgxsFirestore<{}> {
+      protected path = 'test';
+    }
 
-        expect(TestBed.get(TestFirestore)).toBeTruthy();
-    });
+    expect(TestBed.get(TestFirestore)).toBeTruthy();
+  });
 });
