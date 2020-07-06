@@ -1,4 +1,4 @@
-import { State, StateContext, NgxsOnInit, Action, Selector } from '@ngxs/store';
+import { State, StateContext, NgxsOnInit, Action } from '@ngxs/store';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { patch, insertItem, removeItem, updateItem } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
@@ -7,10 +7,6 @@ export interface FirestoreConnection {
   id: string;
   connectedAt: Date;
   emmitedAt: Date[];
-  reads: number;
-  creates: number;
-  updates: number;
-  deletes: number;
 }
 
 export interface NgxsFirestoreStateModel {
@@ -25,10 +21,6 @@ export interface NgxsFirestoreStateModel {
 })
 @Injectable()
 export class NgxsFirestoreState implements NgxsOnInit {
-  @Selector() public static connections(state: NgxsFirestoreStateModel) {
-    return state.connections;
-  }
-
   ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {}
 
   @Action([NgxsFirestoreConnectActions.StreamConnected])
@@ -48,8 +40,12 @@ export class NgxsFirestoreState implements NgxsOnInit {
     { setState }: StateContext<NgxsFirestoreStateModel>,
     { payload }: NgxsFirestoreConnectActions.StreamEmitted
   ) {
-    const { id, items } = payload;
-    setState(patch({ connections: updateItem((x) => x.id === id, patch({ reads: items && items.length })) }));
+    const { id } = payload;
+    setState(
+      patch<NgxsFirestoreStateModel>({
+        connections: updateItem((x) => x.id === id, patch({ emmitedAt: insertItem(new Date()) }))
+      })
+    );
   }
 
   @Action([NgxsFirestoreConnectActions.StreamDisconnected])
@@ -57,6 +53,8 @@ export class NgxsFirestoreState implements NgxsOnInit {
     { setState, getState }: StateContext<NgxsFirestoreStateModel>,
     { payload }: NgxsFirestoreConnectActions.StreamDisconnected
   ) {
-    setState(patch({ connections: removeItem((x) => x.id === payload) }));
+    setState(
+      patch<NgxsFirestoreStateModel>({ connections: removeItem((x) => x.id === payload) })
+    );
   }
 }
