@@ -1,5 +1,5 @@
 import { AngularFirestore, QueryFn } from '@angular/fire/firestore';
-import { Observable, from } from 'rxjs';
+import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, take } from 'rxjs/operators';
 
@@ -44,6 +44,9 @@ export abstract class NgxsFirestore<T> {
   }
 
   public create$(id: string, value: Partial<T>) {
+    if (!id) {
+      return throwError('[NgxsFirestore] create$ failed, id is empty!');
+    }
     return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
   }
 
