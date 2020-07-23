@@ -427,5 +427,49 @@ describe('NgxsFirestoreConnect', () => {
         ]);
       }));
     });
+
+    describe('Same action same payload', () => {
+      test.only('all dispatched actions should complete once connected action completes (firstemit)', fakeAsync(() => {
+        store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionWithPayload.type,
+            eventType: 'action-completed',
+            actionPayload: '1'
+          });
+        });
+        expect(actionEvents).toEqual([]);
+        tick(1);
+        expect(actionEvents).toEqual([]);
+        store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionWithPayload.type,
+            eventType: 'action-completed',
+            actionPayload: '2'
+          });
+        });
+        expect(actionEvents).toEqual([]);
+        tick(1);
+        expect(actionEvents).toEqual([]);
+        store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionWithPayload.type,
+            eventType: 'action-completed',
+            actionPayload: '3'
+          });
+        });
+        expect(actionEvents).toEqual([]);
+        tick(1);
+        expect(actionEvents).toEqual([]);
+        subject.next(1);
+        tick(1);
+        expect(actionEvents).toEqual([
+          { actionType: TestActionWithPayload.type, eventType: 'connected', actionPayload: 'first' },
+          { actionType: TestActionWithPayload.type, eventType: 'emitted', actionPayload: 'first' },
+          { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '1' },
+          { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '2' },
+          { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '3' }
+        ]);
+      }));
+    });
   });
 });

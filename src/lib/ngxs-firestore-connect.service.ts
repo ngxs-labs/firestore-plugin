@@ -79,21 +79,24 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
     attachAction(NgxsFirestoreState, actionType, (_stateContext, action) => {
       const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
-      if (this.actionsPending.includes(streamId({ actionType, action, trackBy }))) {
-        return;
-      }
 
-      if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
-        return;
-      }
-
-      return actionCompletedHandlerSubject.asObservable().pipe(
+      const completed$ = actionCompletedHandlerSubject.asObservable().pipe(
         take(1),
         catchError((_) => {
           // NGXS doesnt complete the action returning EMPTY
           return of({});
         })
       );
+
+      if (this.actionsPending.includes(streamId({ actionType, action, trackBy }))) {
+        return completed$;
+      }
+
+      if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
+        return;
+      }
+
+      return completed$;
     });
 
     const actionDispatched$ = this.actions.pipe(
