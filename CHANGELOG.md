@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/ngxs-labs/firebase-plugin/compare/v0.1.0...v0.1.6) (2020-07-24)
+
+### Features
+
+- add connections selector
+  ([b5f52fa](https://github.com/ngxs-labs/firebase-plugin/commit/b5f52fa0a2c9456b1b485a73e93d5d9b941e54c2))
+- public ngxs-firestore state
+  ([a234fa8](https://github.com/ngxs-labs/firebase-plugin/commit/a234fa8dcc3accd40704947fd739d452086f84b9))
+- udpate connections state model
+  ([91d391d](https://github.com/ngxs-labs/firebase-plugin/commit/91d391d40493b2dd8798642f2be9dd1dab9962f7))
+
+### Bug Fixes
+
+- import NgxsActionsExecutingModule
+  ([342ae10](https://github.com/ngxs-labs/firebase-plugin/commit/342ae1074a9786e41eb1353c2aabacaa03308adc))
+- ngxs-firestore-connect make properties private
+  ([5306fb8](https://github.com/ngxs-labs/firebase-plugin/commit/5306fb86f1c959a716fa8efacf4ec06b53cc8bc0))
+- same action multi dispatch completion handle
+  ([8c3c883](https://github.com/ngxs-labs/firebase-plugin/commit/8c3c8835db80b56d861f688078658f6648723df6))
+- throw error when id is empty
+  ([ff8a7fa](https://github.com/ngxs-labs/firebase-plugin/commit/ff8a7fa24b699f98c217ca81ab357e553e23fd11))
+- when connected complete subsequent actions immediately
+  ([298530e](https://github.com/ngxs-labs/firebase-plugin/commit/298530e307107062227491ca6a5f603fab382975))
+
 ## 0.1.5 (2020-07-24)
 
 ### Features
