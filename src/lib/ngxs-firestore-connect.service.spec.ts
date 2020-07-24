@@ -429,7 +429,7 @@ describe('NgxsFirestoreConnect', () => {
     });
 
     describe('Same action same payload', () => {
-      test.only('all dispatched actions should complete once connected action completes (firstemit)', fakeAsync(() => {
+      test('all dispatched actions should complete once connected action completes (firstemit)', fakeAsync(() => {
         store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
           actionEvents.push({
             actionType: TestActionWithPayload.type,
@@ -468,6 +468,56 @@ describe('NgxsFirestoreConnect', () => {
           { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '1' },
           { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '2' },
           { actionType: TestActionWithPayload.type, eventType: 'action-completed', actionPayload: '3' }
+        ]);
+      }));
+    });
+
+    describe('Dispatch after action is connected', () => {
+      test('should complete immediately', fakeAsync(() => {
+        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionThatFinishesOnFirstEmit.type,
+            eventType: 'action-completed'
+          });
+        });
+        tick(1);
+        subject.next(1);
+        expect(actionEvents).toEqual([
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'connected' },
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'emitted' },
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'action-completed' }
+        ]);
+
+        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionThatFinishesOnFirstEmit.type,
+            eventType: 'action-completed',
+            actionPayload: '2nd dispatch'
+          });
+        });
+
+        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionThatFinishesOnFirstEmit.type,
+            eventType: 'action-completed',
+            actionPayload: '3rd dispatch'
+          });
+        });
+
+        expect(actionEvents).toEqual([
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'connected' },
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'emitted' },
+          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'action-completed' },
+          {
+            actionType: TestActionThatFinishesOnFirstEmit.type,
+            eventType: 'action-completed',
+            actionPayload: '2nd dispatch'
+          },
+          {
+            actionType: TestActionThatFinishesOnFirstEmit.type,
+            eventType: 'action-completed',
+            actionPayload: '3rd dispatch'
+          }
         ]);
       }));
     });

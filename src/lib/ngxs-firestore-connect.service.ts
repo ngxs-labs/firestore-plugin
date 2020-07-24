@@ -88,12 +88,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
         })
       );
 
-      if (this.actionsPending.includes(streamId({ actionType, action, trackBy }))) {
-        return completed$;
-      }
-
       if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
         return;
+      }
+
+      if (this.actionsPending.includes(streamId({ actionType, action, trackBy }))) {
+        return completed$;
       }
 
       return completed$;
@@ -101,16 +101,16 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
     const actionDispatched$ = this.actions.pipe(
       ofActionDispatched(actionType),
+      // skip actions already connected
+      filter((action) => {
+        return !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
+      }),
       // filter actions dispatched on same tick
       filter((action) => {
         return !this.actionsPending.includes(streamId({ actionType, action, trackBy }));
       }),
       tap((action) => {
         this.actionsPending.push(streamId({ actionType, action, trackBy }));
-      }),
-      // skip actions already connected
-      filter((action) => {
-        return !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
       })
     );
 
