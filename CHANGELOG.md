@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.6...v0.1.7) (2020-07-24)
+
 ### [0.1.6](https://github.com/ngxs-labs/firebase-plugin/compare/v0.1.0...v0.1.6) (2020-07-24)
 
 ### Features
