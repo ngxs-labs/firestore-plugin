@@ -1,22 +1,29 @@
 <div class="my-3">
-  <button class="btn btn-primary mr-1" (click)="create()">Create</button>
-  <button class="btn btn-primary" (click)="getAll()">Get All</button>
-  <pre>{{ getAllExecutng$ | async | json }}</pre>
-  <button class="btn btn-primary mr-1" (click)="disconnect()">Disconnect</button>
-  <button class="btn btn-primary" (click)="reconnect()">Reconnect</button>
+  <button [disabled]="creating$ | async" class="btn btn-primary mr-1" (click)="create()">Create</button>
+  <button [disabled]="gettingAll$ | async" class="btn btn-primary mr-1" (click)="getAll()">Get All</button>
+
+  <button [disabled]="gettingSingle$ | async" class="btn btn-primary" (click)="get()">Get Single</button>
 </div>
-
-<div>
-  <h5>Total: {{ total$ | async }}</h5>
+<div class="my-3">
+  <button class="btn btn-primary mr-1" [disabled]="disconnecting$ | async" (click)="disconnect()">Disconnect</button>
+  <button class="btn btn-primary" [disabled]="gettingSingle$ | async" (click)="reconnect()">Reconnect</button>
 </div>
-
-<div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
-  <div class="card-body">
-    <h5 class="card-title">{{ race.id }}</h5>
-    <p class="card-text">{{ race.name }}</p>
-    <p class="card-text">{{ race.description }}</p>
-
-    <button (click)="update(race)" class="mr-1">Update</button>
-    <button (click)="delete(race.id)">Delete</button>
+<ng-container *ngIf="loaded$ | async">
+  <div>
+    <h5>Total: {{ total$ | async }}</h5>
   </div>
+
+  <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{ race.id }}</h5>
+      <p class="card-text">{{ race.name }}</p>
+      <p class="card-text">{{ race.description }}</p>
+
+      <button (click)="update(race)" class="mr-1">Update</button>
+      <button (click)="delete(race.id)">Delete</button>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="loading$ | async">
+  Loading...
 </div>

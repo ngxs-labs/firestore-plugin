@@ -5,8 +5,8 @@ import { RacesState } from './../../states/races/races.state';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { Disconnect } from '@ngxs-labs/firestore-plugin';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
+import { Disconnect } from '@ngxs-labs/firestore-plugin';
 
 @Component({
   selector: 'app-list',
@@ -17,40 +17,61 @@ export class ListComponent implements OnInit, OnDestroy {
   races$ = this.store.select(RacesState.races);
   total$ = this.races$.pipe(map((races) => races.length));
 
-  getAllExecuting$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
+  gettingAll$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
+  gettingSingle$ = this.store.select(actionsExecuting([RacesActions.Get]));
+  creating$ = this.store.select(actionsExecuting([RacesActions.Create]));
+  loading$ = this.store.select(actionsExecuting([RacesActions.GetAll, RacesActions.Get]));
+  loaded$ = this.loading$.pipe(map((loading) => !loading));
+  disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
 
   constructor(private store: Store) {}
 
   ngOnInit() {
     // this.store.dispatch(new RacesActions.GetAll());
-    // this.store.dispatch(new RacesActions.GetAll());
-    // this.store.dispatch(new RacesActions.GetAll());
-    this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
-    this.store.dispatch(new RacesActions.Get('AAAAAA'));
+    // this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
+    // this.store.dispatch(new RacesActions.Get('AAAAAA'));
   }
 
   disconnect() {
     // this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
-    this.store.dispatch(new Disconnect(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N')));
+    this.store.dispatch(new Disconnect(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS')));
   }
 
   reconnect() {
     // this.store.dispatch(new RacesActions.GetAll());
-    this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
+    // this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
+
+    this.store.dispatch(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS'));
   }
 
   getAll() {
     this.store.dispatch(new RacesActions.GetAll());
   }
 
+  get() {
+    // const ids = ['4(CPo6Fy(7Mo^YklK[Q8', 'FouQf@q4FHJcc&%cnmkT', 'LBWH5KvYp43ia)!IYpwv', ']cfct5iL8(H)@Sl#xTcS'];
+    // for (let index = 0; index < ids.length; index++) {
+    //   setTimeout(() => this.store.dispatch(new RacesActions.Get(ids[index])), 1000 * index);
+    // }
+
+    this.store.dispatch(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS'));
+  }
+
   create() {
     const chance = new Chance();
     const race: Partial<Race> = {};
     race.id = chance.string({ length: 20 });
-    race.name = chance.string();
-    race.title = chance.string();
-    race.description = chance.word();
+    race.name = chance.word();
+    race.title = chance.word();
+    race.description = chance.sentence();
     this.store.dispatch(new RacesActions.Create(race));
+
+    // this.store.dispatch(new RacesActions.Create({
+    //   id: 'test-id',
+    //   name: 'Test',
+    //   title: 'Test Title',
+    //   description: 'Test description',
+    // }));
   }
 
   update(race: Race) {
@@ -70,6 +91,6 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.store.dispatch(new Disconnect(RacesActions.GetAll));
+    this.store.dispatch(new Disconnect(RacesActions.GetAll));
   }
 }
