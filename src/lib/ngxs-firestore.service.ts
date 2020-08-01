@@ -11,13 +11,15 @@ export abstract class NgxsFirestore<T> {
     constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
 
     public page$(queryFn?: QueryFn): Observable<T[]> {
-        if (!!this.activePagedQuery && this.activePagedQuery.queryFn === queryFn + '') {
-            return throwError('ERROR');
+        if (!!this.activePagedQuery && this.activePagedQuery.queryFn !== queryFn + '') {
+            return throwError('NgxsFirestore page$ error. Yon can have only one paging query per service instance.');
         }
 
-        this.activePagedQuery = {
-            queryFn: queryFn + ''
-        };
+        if (!this.activePagedQuery) {
+            this.activePagedQuery = {
+                queryFn: queryFn + ''
+            };
+        }
 
         return this.firestore
             .collection<T>(this.path, (ref) =>
