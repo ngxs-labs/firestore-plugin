@@ -36,12 +36,13 @@ import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
         NgxsLoggerPluginModule.forRoot({
             disabled: environment.production
         }),
+        NgxsFirestoreModule.forRoot(),
+        NgxsActionsExecutingModule.forRoot(),
         NgxsReduxDevtoolsPluginModule.forRoot({
             name: 'Ngxs Firestore',
-            disabled: environment.production
-        }),
-        NgxsFirestoreModule.forRoot(),
-        NgxsActionsExecutingModule.forRoot()
+            disabled: environment.production,
+            actionSanitizer: (action) => ({ ...action, action: null })
+        })
     ],
     providers: [],
     bootstrap: [AppComponent]
