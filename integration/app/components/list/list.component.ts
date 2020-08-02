@@ -49,6 +49,10 @@ export class ListComponent implements OnInit, OnDestroy {
     this.store.dispatch(new RacesActions.GetAll());
   }
 
+  getPage() {
+    this.store.dispatch(new RacesActions.NextPage());
+  }
+
   get() {
     // const ids = ['4(CPo6Fy(7Mo^YklK[Q8', 'FouQf@q4FHJcc&%cnmkT', 'LBWH5KvYp43ia)!IYpwv', ']cfct5iL8(H)@Sl#xTcS'];
     // for (let index = 0; index < ids.length; index++) {

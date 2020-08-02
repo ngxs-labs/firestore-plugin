@@ -1,8 +1,7 @@
 <div class="my-3">
   <button [disabled]="creating$ | async" class="btn btn-primary mr-1" (click)="create()">Create</button>
   <button [disabled]="gettingAll$ | async" class="btn btn-primary mr-1" (click)="getAll()">Get All</button>
-
-  <button [disabled]="gettingSingle$ | async" class="btn btn-primary" (click)="get()">Get Single</button>
+  <button [disabled]="gettingSingle$ | async" class="btn btn-primary mr-1" (click)="get()">Get Single</button>
   <button [disabled]="getPageExecuting$ | async" class="btn btn-primary" (click)="getPage()">Get Page</button>
 </div>
 <div class="my-3">
