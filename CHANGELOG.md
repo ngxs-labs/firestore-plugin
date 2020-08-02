@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.8](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.7...v0.1.8) (2020-08-02)
+
+### Features
+
+- add paging functionality
+  ([9e1c515](https://github.com/ngxs-labs/firestore-plugin/commit/9e1c515f6e5fa2c2cfb2a9c33c0d6897fc27969d))
+- integration test
+  ([0f67da1](https://github.com/ngxs-labs/firestore-plugin/commit/0f67da10405c61141882447bef9df949e78e1fe8))
+
+### Bug Fixes
+
+- allow one paging query per service instance
+  ([559c942](https://github.com/ngxs-labs/firestore-plugin/commit/559c942a254c01a1f26f93d337d3f2bd036af240))
+- get page impl
+  ([7963db5](https://github.com/ngxs-labs/firestore-plugin/commit/7963db5cd18506b2f5cb5c4671eaf9722655d5f2))
+
 ### [0.1.7](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.6...v0.1.7) (2020-07-24)
 
 ### [0.1.6](https://github.com/ngxs-labs/firebase-plugin/compare/v0.1.0...v0.1.6) (2020-07-24)
