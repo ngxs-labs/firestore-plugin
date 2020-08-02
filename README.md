@@ -150,7 +150,7 @@ export class GetAll {
 }
 
 export class Get {
-  public static readonly type = '[Races] GetAll';
+  public static readonly type = '[Races] Get';
   constructor(public payload: string) {}
 }
 
