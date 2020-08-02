@@ -2,16 +2,16 @@
   "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve --port=4251",
-    "build": " ng build ngxs-firestore",
-    "build:pre:publish": "yarn bump --release patch && yarn build && yarn copy-readme",
+    "build": " ng build ngxs-firestore && yarn copy-readme",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
-    "bump": "ts-node --project tsconfig.tools.json ./tools/bump",
     "build-integration": "ng build integration",
     "test": "jest --config ./jest.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.config.js",
     "test:ci": "jest --config ./jest.config.js --coverage",
-    "format": "prettier --write \"{src,integration}/**/*.{ts,json,html}\"",
-    "lint": "tslint '{src,integration}/**/*.ts' --project tsconfig.json"
+    "format": "prettier --write \"{src,integration,tools}/**/*.{html,scss,json,ts}\"",
+    "format:check": "prettier \"{src,integration,tools}/**/*.{html,scss,json,ts}\"",
+    "lint": "tslint '{src,integration}/**/*.ts' --project tsconfig.json",
+    "release": "standard-version"
   },
   "dependencies": {
     "@angular/animations": "^8.2.14",
@@ -60,6 +60,7 @@
     "ng-packagr": "^5.5.0",
     "prettier": "^1.18.2",
     "semver": "^6.3.0",
+    "standard-version": "^8.0.2",
     "ts-loader": "^6.0.4",
     "ts-node": "^8.3.0",
     "tsickle": "^0.37.0",
@@ -68,5 +69,7 @@
     "tslint-sonarts": "^1.9.0",
     "typescript": "~3.5.3"
   },
-  "version": "0.0.0"
+  "resolutions": {
+    "**/**/lodash": "^4.17.19"
+  }
 }

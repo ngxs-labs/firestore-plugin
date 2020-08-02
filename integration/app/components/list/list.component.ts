@@ -5,71 +5,93 @@ import { RacesState } from './../../states/races/races.state';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
-import { Disconnect } from '@ngxs-labs/firestore-plugin';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
+import { Disconnect } from '@ngxs-labs/firestore-plugin';
 
 @Component({
-    selector: 'app-list',
-    templateUrl: './list.component.html',
-    styleUrls: ['./list.component.scss']
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit, OnDestroy {
-    races$ = this.store.select(RacesState.races);
-    total$ = this.races$.pipe(map((races) => races.length));
+  races$ = this.store.select(RacesState.races);
+  total$ = this.races$.pipe(map((races) => races.length));
 
-    getAllExecuting$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
-    getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
+  gettingAll$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
+  gettingSingle$ = this.store.select(actionsExecuting([RacesActions.Get]));
+  creating$ = this.store.select(actionsExecuting([RacesActions.Create]));
+  loading$ = this.store.select(actionsExecuting([RacesActions.GetAll, RacesActions.Get]));
+  loaded$ = this.loading$.pipe(map((loading) => !loading));
+  disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
+  getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
 
-    constructor(private store: Store) {}
+  constructor(private store: Store) {}
 
-    ngOnInit() {
-        // this.store.dispatch(new RacesActions.GetAll());
-    }
+  ngOnInit() {
+    // this.store.dispatch(new RacesActions.GetAll());
+    // this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
+    // this.store.dispatch(new RacesActions.Get('AAAAAA'));
+  }
 
-    disconnect() {
-        this.store.dispatch(new Disconnect(RacesActions.GetAll));
-    }
+  disconnect() {
+    // this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
+    this.store.dispatch(new Disconnect(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS')));
+  }
 
-    reconnect() {
-        this.store.dispatch(new RacesActions.GetAll());
-    }
+  reconnect() {
+    // this.store.dispatch(new RacesActions.GetAll());
+    // this.store.dispatch(new RacesActions.Get('8iI)0md[dTAFC[wo!&[N'));
 
-    getAll() {
-        this.store.dispatch(new RacesActions.GetAll());
-    }
+    this.store.dispatch(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS'));
+  }
 
-    getPage() {
-        this.store.dispatch(new RacesActions.NextPage());
-    }
+  getAll() {
+    this.store.dispatch(new RacesActions.GetAll());
+  }
 
-    create() {
-        const chance = new Chance();
-        const race: Partial<Race> = {};
-        race.id = chance.string({ length: 20 });
-        race.name = chance.city();
-        race.order = chance.year();
-        race.title = chance.name();
-        race.description = chance.sentence();
-        this.store.dispatch(new RacesActions.Create(race));
-    }
+  get() {
+    // const ids = ['4(CPo6Fy(7Mo^YklK[Q8', 'FouQf@q4FHJcc&%cnmkT', 'LBWH5KvYp43ia)!IYpwv', ']cfct5iL8(H)@Sl#xTcS'];
+    // for (let index = 0; index < ids.length; index++) {
+    //   setTimeout(() => this.store.dispatch(new RacesActions.Get(ids[index])), 1000 * index);
+    // }
 
-    update(race: Race) {
-        const chance = new Chance();
+    this.store.dispatch(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS'));
+  }
 
-        this.store.dispatch(
-            new RacesActions.Update({
-                ...race,
-                name: chance.city(),
-                description: chance.sentence()
-            })
-        );
-    }
+  create() {
+    const chance = new Chance();
+    const race: Partial<Race> = {};
+    race.id = chance.string({ length: 20 });
+    race.name = chance.word();
+    race.title = chance.word();
+    race.description = chance.sentence();
+    this.store.dispatch(new RacesActions.Create(race));
 
-    delete(id: string) {
-        this.store.dispatch(new RacesActions.Delete(id));
-    }
+    // this.store.dispatch(new RacesActions.Create({
+    //   id: 'test-id',
+    //   name: 'Test',
+    //   title: 'Test Title',
+    //   description: 'Test description',
+    // }));
+  }
 
-    ngOnDestroy() {
-        // this.store.dispatch(new Disconnect(RacesActions.GetAll));
-    }
+  update(race: Race) {
+    const chance = new Chance();
+
+    this.store.dispatch(
+      new RacesActions.Update({
+        ...race,
+        name: chance.string(),
+        description: chance.word()
+      })
+    );
+  }
+
+  delete(id: string) {
+    this.store.dispatch(new RacesActions.Delete(id));
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(new Disconnect(RacesActions.GetAll));
+  }
 }
