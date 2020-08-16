@@ -1,7 +1,7 @@
 import { AngularFirestore, QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { map, take, tap, finalize } from 'rxjs/operators';
+import { map, take, tap, finalize, mapTo } from 'rxjs/operators';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
@@ -97,7 +97,7 @@ export abstract class NgxsFirestore<T> {
     return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
   }
 
-  public upsert$(value: Partial<T>) {
+  public upsert$(value: Partial<T>): Observable<string> {
     let id;
     let newValue;
 
@@ -109,6 +109,6 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value, { id });
     }
 
-    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe();
+    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe(mapTo(id));
   }
 }
