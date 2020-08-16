@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.9](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.8...v0.1.9) (2020-08-16)
+
+### Features
+
+- expose docRef on NgxsFirestore
+  ([939b286](https://github.com/ngxs-labs/firestore-plugin/commit/939b28656a6e4c763825f883c9146d48954ceec7))
+
 ### [0.1.8](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.7...v0.1.8) (2020-08-02)
 
 ### Features
