@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.10...v0.1.11) (2020-08-16)
+
+### Features
+
+- return id on upsert
+  ([823faa4](https://github.com/ngxs-labs/firestore-plugin/commit/823faa4f8cbae9fe976fe10af614a6d0175e83f0))
+
 ### [0.1.10](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.9...v0.1.10) (2020-08-16)
 
 ### Features
