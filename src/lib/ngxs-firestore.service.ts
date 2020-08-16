@@ -63,6 +63,10 @@ export abstract class NgxsFirestore<T> {
       .pipe(map((_) => _.payload.data()));
   }
 
+  public doc(id: string) {
+    return this.firestore.doc<T>(`${this.path}/${id}`);
+  }
+
   public docOnce$(id: string): Observable<T> {
     return this.doc$(id).pipe(take(1));
   }
