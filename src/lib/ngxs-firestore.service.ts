@@ -44,6 +44,14 @@ export abstract class NgxsFirestore<T> {
     return this.page$(queryFn).pipe(take(1));
   }
 
+  public docRef(id: string) {
+    return this.firestore.doc<T>(`${this.path}/${id}`).ref;
+  }
+
+  public collectionRef(queryFn?: QueryFn) {
+    return this.firestore.collection<T>(this.path, queryFn).ref;
+  }
+
   public createId() {
     return this.firestore.createId();
   }
