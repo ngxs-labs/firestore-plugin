@@ -44,14 +44,6 @@ export abstract class NgxsFirestore<T> {
     return this.page$(queryFn).pipe(take(1));
   }
 
-  public docRef(id: string) {
-    return this.firestore.doc<T>(`${this.path}/${id}`).ref;
-  }
-
-  public collectionRef(queryFn?: QueryFn) {
-    return this.firestore.collection<T>(this.path, queryFn).ref;
-  }
-
   public createId() {
     return this.firestore.createId();
   }
@@ -61,10 +53,6 @@ export abstract class NgxsFirestore<T> {
       .doc<T>(`${this.path}/${id}`)
       .snapshotChanges()
       .pipe(map((_) => _.payload.data()));
-  }
-
-  public doc(id: string) {
-    return this.firestore.doc<T>(`${this.path}/${id}`);
   }
 
   public docOnce$(id: string): Observable<T> {
