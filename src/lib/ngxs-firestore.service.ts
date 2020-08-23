@@ -6,6 +6,9 @@ import { map, take, tap, finalize, mapTo } from 'rxjs/operators';
 @Injectable()
 export abstract class NgxsFirestore<T> {
   protected abstract path: string;
+  protected idField: string;
+  protected mapToDb: (value: T) => any;
+  protected mapFromDb: (value: any) => T;
   private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
 
   constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
@@ -52,7 +55,22 @@ export abstract class NgxsFirestore<T> {
     return this.firestore
       .doc<T>(`${this.path}/${id}`)
       .snapshotChanges()
-      .pipe(map((_) => _.payload.data()));
+      .pipe(
+        map((docSnapshot) => {
+          let result = docSnapshot.payload.data();
+          if (this.idField) {
+            result = { ...result, [this.idField]: docSnapshot.payload.id };
+          }
+          return result;
+        }),
+        map((item) => {
+          if (this.mapFromDb) {
+            return this.mapFromDb(item);
+          } else {
+            return item;
+          }
+        })
+      );
   }
 
   public docOnce$(id: string): Observable<T> {
@@ -63,7 +81,25 @@ export abstract class NgxsFirestore<T> {
     return this.firestore
       .collection<T>(this.path, queryFn)
       .snapshotChanges()
-      .pipe(map((items) => items.map((item) => item.payload.doc.data())));
+      .pipe(
+        map((docSnapshots) =>
+          docSnapshots
+            .map((docSnapshot) => {
+              let result = docSnapshot.payload.doc.data();
+              if (this.idField) {
+                result = { result, [this.idField]: docSnapshot.payload.doc.id } as any;
+              }
+              return result;
+            })
+            .map((item) => {
+              if (this.mapFromDb) {
+                return this.mapFromDb(item);
+              } else {
+                return item;
+              }
+            })
+        )
+      );
   }
 
   public collectionOnce$(queryFn?: QueryFn): Observable<T[]> {
