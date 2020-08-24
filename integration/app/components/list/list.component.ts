@@ -98,4 +98,8 @@ export class ListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.store.dispatch(new Disconnect(RacesActions.GetAll));
   }
+
+  throwError() {
+    this.store.dispatch(new RacesActions.Error());
+  }
 }

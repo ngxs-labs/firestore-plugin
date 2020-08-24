@@ -51,6 +51,16 @@ export class RacesState implements NgxsOnInit {
       to: () => this.racesFS.page$((ref) => ref.limit(10).orderBy('order')),
       trackBy: ({ payload }) => `Page ${payload}`
     });
+
+    this.ngxsFirestoreConnect.connect(RacesActions.Error, {
+      to: () =>
+        this.racesFS.collection$((ref) =>
+          ref
+            .where('aaa', '==', 0)
+            .where('bbb', '==', 0)
+            .orderBy('aaa')
+        )
+    });
   }
 
   @Action(RacesActions.NextPage)

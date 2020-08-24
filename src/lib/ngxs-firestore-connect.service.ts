@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, switchMap, share } from 'rxjs/operators';
-import { Observable, race, Subscription, of, Subject, defer, iif } from 'rxjs';
+import { Observable, race, Subscription, Subject, defer, iif, of } from 'rxjs';
 import { StreamConnected, StreamEmitted, StreamDisconnected } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
@@ -81,11 +81,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
       const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
 
       const completed$ = actionCompletedHandlerSubject.asObservable().pipe(
-        take(1),
-        catchError((_) => {
-          // NGXS doesnt complete the action returning EMPTY
-          return of({});
-        })
+        take(1)
+        // catchError((_) => {
+        //   // NGXS doesnt complete the action returning EMPTY
+        //   return of({});
+        // })
       );
 
       if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
