@@ -43,8 +43,8 @@ export class RacesState implements NgxsOnInit {
       connectedActionFinishesOn: 'FirstEmit'
     });
 
-    this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
-      to: () => this.racesFS.collection$()
+    this.ngxsFirestoreConnect.connect(RacesActions.Get, {
+      to: ({ payload }) => this.racesFS.doc$(payload)
     });
 
     this.ngxsFirestoreConnect.connect(Page(RacesActions.NextPage), {
