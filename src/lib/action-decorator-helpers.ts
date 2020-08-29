@@ -27,3 +27,10 @@ export function StreamDisconnected(actionType: ActionType) {
     constructor(public action: any) {}
   };
 }
+
+export function StreamErrored(actionType: ActionType) {
+  return class {
+    static readonly type = `${actionType.type} Errored`;
+    constructor(public action: any, public error: any) {}
+  };
+}

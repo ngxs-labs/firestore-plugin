@@ -9,7 +9,9 @@ import {
   StreamConnected,
   StreamEmitted,
   StreamDisconnected,
-  Page
+  Page,
+  StreamErrored,
+  Errored
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
@@ -62,6 +64,9 @@ export class RacesState implements NgxsOnInit {
         )
     });
   }
+
+  @Action(StreamErrored(RacesActions.Error))
+  error(ctx: StateContext<RacesStateModel>, { error }: Errored<RacesActions.Error>) {}
 
   @Action(RacesActions.NextPage)
   getPage(ctx: StateContext<RacesStateModel>) {

@@ -24,6 +24,7 @@ export class ListComponent implements OnInit, OnDestroy {
   loaded$ = this.loading$.pipe(map((loading) => !loading));
   disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
   getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
+  throwingError$ = this.store.select(actionsExecuting([RacesActions.Error]));
 
   constructor(private store: Store) {}
 

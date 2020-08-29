@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, switchMap, share } from 'rxjs/operators';
 import { Observable, race, Subscription, Subject, defer, iif, of } from 'rxjs';
-import { StreamConnected, StreamEmitted, StreamDisconnected } from './action-decorator-helpers';
+import { StreamConnected, StreamEmitted, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
 import { attachAction } from './attach-action';
@@ -191,6 +191,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
         catchError((err) => {
           const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
           actionCompletedHandlerSubject.error(err);
+
+          const StreamErroredClass = StreamErrored(actionType);
+          this.store.dispatch(new StreamErroredClass(action, err));
+
           return of({});
         })
       );
