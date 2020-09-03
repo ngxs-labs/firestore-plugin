@@ -601,6 +601,7 @@ describe('NgxsFirestoreConnect', () => {
             })
           )
           .subscribe();
+
         store.dispatch(TestActionError);
         expect(events).toEqual(['action-errored', 'action-completed', 'errored', 'disconnected']);
       });
