@@ -24,6 +24,7 @@ export class ListComponent implements OnInit, OnDestroy {
   loaded$ = this.loading$.pipe(map((loading) => !loading));
   disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
   getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
+  throwingError$ = this.store.select(actionsExecuting([RacesActions.Error]));
 
   constructor(private store: Store) {}
 
@@ -97,5 +98,9 @@ export class ListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new Disconnect(RacesActions.GetAll));
+  }
+
+  throwError() {
+    this.store.dispatch(new RacesActions.Error());
   }
 }

@@ -9,7 +9,9 @@ import {
   StreamConnected,
   StreamEmitted,
   StreamDisconnected,
-  Page
+  Page,
+  StreamErrored,
+  Errored
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
@@ -43,15 +45,28 @@ export class RacesState implements NgxsOnInit {
       connectedActionFinishesOn: 'FirstEmit'
     });
 
-    this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
-      to: () => this.racesFS.collection$()
+    this.ngxsFirestoreConnect.connect(RacesActions.Get, {
+      to: ({ payload }) => this.racesFS.doc$(payload)
     });
 
     this.ngxsFirestoreConnect.connect(Page(RacesActions.NextPage), {
       to: () => this.racesFS.page$((ref) => ref.limit(10).orderBy('order')),
       trackBy: ({ payload }) => `Page ${payload}`
     });
+
+    this.ngxsFirestoreConnect.connect(RacesActions.Error, {
+      to: () =>
+        this.racesFS.collection$((ref) =>
+          ref
+            .where('aaa', '==', 0)
+            .where('bbb', '==', 0)
+            .orderBy('aaa')
+        )
+    });
   }
+
+  @Action(StreamErrored(RacesActions.Error))
+  error(ctx: StateContext<RacesStateModel>, { error }: Errored<RacesActions.Error>) {}
 
   @Action(RacesActions.NextPage)
   getPage(ctx: StateContext<RacesStateModel>) {

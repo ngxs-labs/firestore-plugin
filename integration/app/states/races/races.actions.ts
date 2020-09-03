@@ -42,4 +42,7 @@ export namespace RacesActions {
     public static readonly type = '[Races] Delete';
     constructor(public payload: string) {}
   }
+  export class Error {
+    public static readonly type = '[Races] Error';
+  }
 }

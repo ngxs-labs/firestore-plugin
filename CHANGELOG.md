@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.12](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.11...v0.1.12) (2020-09-03)
+
+### Features
+
+- dispatch stream error
+  ([08cde38](https://github.com/ngxs-labs/firestore-plugin/commit/08cde38c4891a049a4ee3df1c1df59fc50ed2bc6))
+- make dispatch action error
+  ([c481f9f](https://github.com/ngxs-labs/firestore-plugin/commit/c481f9f902cb23dd66ebf2e3b7860e715096802f))
+
 ### [0.1.11](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.10...v0.1.11) (2020-08-16)
 
 ### Features

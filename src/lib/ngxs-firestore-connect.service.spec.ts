@@ -1,25 +1,49 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NgxsFirestoreConnect } from './ngxs-firestore-connect.service';
-import { Store, NgxsModule, State, NgxsOnInit, Action, StateContext, getActionTypeFromInstance } from '@ngxs/store';
+import {
+  Store,
+  NgxsModule,
+  State,
+  NgxsOnInit,
+  Action,
+  StateContext,
+  getActionTypeFromInstance,
+  Actions,
+  ofActionErrored,
+  ofActionCompleted
+} from '@ngxs/store';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
-import { BehaviorSubject, from, Subject } from 'rxjs';
-import { Emitted, Connected, Disconnected } from './types';
-import { StreamEmitted, StreamConnected, StreamDisconnected } from './action-decorator-helpers';
+import { BehaviorSubject, from, Subject, throwError } from 'rxjs';
+import { Emitted, Connected, Disconnected, Errored } from './types';
+import { StreamEmitted, StreamConnected, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
+import { tap } from 'rxjs/operators';
+
+type EventType =
+  | 'emitted'
+  | 'connected'
+  | 'disconnected'
+  | 'action-dispatched'
+  | 'action-completed'
+  | 'action-errored'
+  | 'errored';
 
 describe('NgxsFirestoreConnect', () => {
   let store: Store;
-  let events: ('emitted' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed')[];
+  let actions: Actions;
+  let events: EventType[];
   let actionEvents: {
     actionType: string;
-    eventType: 'emitted' | 'connected' | 'disconnected' | 'action-dispatched' | 'action-completed';
+    eventType: EventType;
     actionPayload?: any;
+    actionError?: any;
   }[];
 
   const mockFirestoreStream = jest.fn();
   const emittedFn = jest.fn();
   const connectedFn = jest.fn();
   const disconnectedFn = jest.fn();
+  const erroredFn = jest.fn();
   class TestAction {
     static type = 'TEST ACTION';
   }
@@ -40,6 +64,10 @@ describe('NgxsFirestoreConnect', () => {
   class TestActionThatKeepsLast {
     static type = 'TEST ACTION THAT KEEPS LAST';
     constructor(public payload: string) {}
+  }
+
+  class TestActionError {
+    static type = 'TEST ACTION ERROR';
   }
 
   @State({
@@ -71,6 +99,10 @@ describe('NgxsFirestoreConnect', () => {
         to: mockFirestoreStream,
         cancelPrevious: true
       });
+
+      this.ngxsFirestoreConnect.connect(TestActionError, {
+        to: mockFirestoreStream
+      });
     }
 
     @Action([
@@ -78,7 +110,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamEmitted(TestActionWithPayload),
       StreamEmitted(TestActionThatFinishesOnObservableComplete),
       StreamEmitted(TestActionThatFinishesOnFirstEmit),
-      StreamEmitted(TestActionThatKeepsLast)
+      StreamEmitted(TestActionThatKeepsLast),
+      StreamEmitted(TestActionError)
     ])
     testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<any, number>) {
       emittedFn(action);
@@ -95,7 +128,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamConnected(TestActionWithPayload),
       StreamConnected(TestActionThatFinishesOnObservableComplete),
       StreamConnected(TestActionThatFinishesOnFirstEmit),
-      StreamConnected(TestActionThatKeepsLast)
+      StreamConnected(TestActionThatKeepsLast),
+      StreamConnected(TestActionError)
     ])
     testActionConnected(ctx: StateContext<any>, { action }: Connected<any>) {
       connectedFn(action);
@@ -112,7 +146,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamDisconnected(TestActionWithPayload),
       StreamDisconnected(TestActionThatFinishesOnObservableComplete),
       StreamDisconnected(TestActionThatFinishesOnFirstEmit),
-      StreamDisconnected(TestActionThatKeepsLast)
+      StreamDisconnected(TestActionThatKeepsLast),
+      StreamDisconnected(TestActionError)
     ])
     testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<any>) {
       disconnectedFn(action);
@@ -121,6 +156,24 @@ describe('NgxsFirestoreConnect', () => {
         actionType: getActionTypeFromInstance(action),
         eventType: 'disconnected',
         actionPayload: action && action.payload
+      });
+    }
+
+    @Action([
+      StreamErrored(TestAction),
+      StreamErrored(TestActionWithPayload),
+      StreamErrored(TestActionThatFinishesOnObservableComplete),
+      StreamErrored(TestActionThatFinishesOnFirstEmit),
+      StreamErrored(TestActionThatKeepsLast),
+      StreamErrored(TestActionError)
+    ])
+    testActionErrored(ctx: StateContext<any>, { action, error }: Errored<any>) {
+      erroredFn(action);
+      events.push('errored');
+      actionEvents.push({
+        actionType: getActionTypeFromInstance(action),
+        eventType: 'errored',
+        actionError: error
       });
     }
   }
@@ -134,6 +187,7 @@ describe('NgxsFirestoreConnect', () => {
       ]
     });
     store = TestBed.get(Store);
+    actions = TestBed.get(Actions);
     events = [];
     actionEvents = [];
     mockFirestoreStream.mockImplementation(() => new BehaviorSubject(1).asObservable());
@@ -518,6 +572,86 @@ describe('NgxsFirestoreConnect', () => {
             eventType: 'action-completed',
             actionPayload: '3rd dispatch'
           }
+        ]);
+      }));
+    });
+  });
+
+  describe('Error', () => {
+    describe('before connected to stream', () => {
+      beforeEach(() => {
+        mockFirestoreStream.mockImplementation(() => throwError('test error'));
+      });
+
+      test('should disconnect before completion', () => {
+        actions
+          .pipe(
+            ofActionErrored(TestActionError),
+            tap(() => {
+              events.push('action-errored');
+            })
+          )
+          .subscribe();
+
+        actions
+          .pipe(
+            ofActionCompleted(TestActionError),
+            tap(() => {
+              events.push('action-completed');
+            })
+          )
+          .subscribe();
+
+        store.dispatch(TestActionError);
+        expect(events).toEqual(['action-errored', 'action-completed', 'errored', 'disconnected']);
+      });
+    });
+
+    describe('after connected to stream', () => {
+      let subject: Subject<number>;
+
+      beforeEach(() => {
+        subject = new Subject();
+        mockFirestoreStream.mockImplementation(() => subject.asObservable());
+      });
+
+      test('should disconnect before completion', fakeAsync(() => {
+        actions
+          .pipe(
+            ofActionErrored(TestActionError),
+            tap(() => {
+              events.push('action-errored');
+            })
+          )
+          .subscribe();
+
+        actions
+          .pipe(
+            ofActionCompleted(TestActionError),
+            tap(() => {
+              events.push('action-completed');
+            })
+          )
+          .subscribe();
+
+        store.dispatch(TestActionError);
+
+        subject.next(1);
+        tick();
+
+        expect(events).toEqual(['connected', 'emitted', 'action-completed']);
+
+        subject.error('test error');
+        tick();
+        tick();
+
+        expect(events).toEqual(['connected', 'emitted', 'action-completed', 'errored', 'disconnected']);
+
+        expect(actionEvents).toEqual([
+          { actionType: TestActionError.type, eventType: 'connected', actionPayload: undefined },
+          { actionType: TestActionError.type, eventType: 'emitted', actionPayload: undefined },
+          { actionType: TestActionError.type, eventType: 'errored', actionError: 'test error' },
+          { actionType: TestActionError.type, eventType: 'disconnected', actionPayload: undefined }
         ]);
       }));
     });

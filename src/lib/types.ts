@@ -8,3 +8,8 @@ export interface Emitted<T, U> {
 export interface Disconnected<T> {
   action: T;
 }
+
+export interface Errored<T> {
+  action: T;
+  error: any;
+}
