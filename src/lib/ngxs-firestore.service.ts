@@ -71,7 +71,7 @@ export abstract class NgxsFirestore<T> {
   }
 
   public update$(id: string, value: Partial<T>) {
-    return from(this.firestore.doc(`${this.path}/${id}`).update(value)).pipe();
+    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
   }
 
   public delete$(id: string) {
