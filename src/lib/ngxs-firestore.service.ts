@@ -79,11 +79,19 @@ export abstract class NgxsFirestore<T> {
     return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe();
   }
 
-  public create$(id: string, value: Partial<T>) {
-    if (!id) {
-      return throwError('[NgxsFirestore] create$ failed, id is empty!');
+  public create$(value: Partial<T>) {
+    let id;
+    let newValue;
+
+    if (Object.keys(value).includes('id') && !!value['id']) {
+      id = value['id'];
+      newValue = Object.assign({}, value);
+    } else {
+      id = this.createId();
+      newValue = Object.assign({}, value, { id });
     }
-    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
+
+    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe(mapTo(id));
   }
 
   public upsert$(value: Partial<T>): Observable<string> {

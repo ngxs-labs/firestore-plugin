@@ -158,7 +158,7 @@ export class RacesState implements NgxsOnInit {
 
   @Action(RacesActions.Create)
   create({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Create) {
-    return this.racesFS.create$(payload.id, payload);
+    return this.racesFS.create$(payload);
   }
 
   @Action(RacesActions.Upsert)
