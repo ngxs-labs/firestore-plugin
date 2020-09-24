@@ -91,7 +91,7 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value, { id });
     }
 
-    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe(mapTo(id));
+    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe(mapTo(id));
   }
 
   public upsert$(value: Partial<T>): Observable<string> {
