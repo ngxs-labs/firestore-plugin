@@ -79,7 +79,7 @@ export abstract class NgxsFirestore<T> {
     return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe();
   }
 
-  public create$(value: Partial<T>) {
+  public create$(value: Partial<T>): Observable<string> {
     let id;
     let newValue;
 
