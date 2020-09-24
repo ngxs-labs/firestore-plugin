@@ -2,13 +2,14 @@ import { AngularFirestore, QueryFn, QueryDocumentSnapshot } from '@angular/fire/
 import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, take, tap, finalize, mapTo } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
   protected abstract path: string;
   private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
 
-  constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
+  constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore, @Inject(Store) protected store: Store) {}
 
   public page$(queryFn?: QueryFn): Observable<T[]> {
     if (!!this.activePagedQuery && this.activePagedQuery.queryFn !== queryFn + '') {
