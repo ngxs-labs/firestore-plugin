@@ -2,6 +2,7 @@ import { AngularFirestore, QueryFn, QueryDocumentSnapshot } from '@angular/fire/
 import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, take, tap, finalize, mapTo } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
@@ -11,7 +12,7 @@ export abstract class NgxsFirestore<T> {
   protected mapFromDb: (value: any) => T;
   private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
 
-  constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore) {}
+  constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore, @Inject(Store) protected store: Store) {}
 
   public page$(queryFn?: QueryFn): Observable<T[]> {
     if (!!this.activePagedQuery && this.activePagedQuery.queryFn !== queryFn + '') {
@@ -107,18 +108,26 @@ export abstract class NgxsFirestore<T> {
   }
 
   public update$(id: string, value: Partial<T>) {
-    return from(this.firestore.doc(`${this.path}/${id}`).update(value)).pipe();
+    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
   }
 
   public delete$(id: string) {
     return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe();
   }
 
-  public create$(id: string, value: Partial<T>) {
-    if (!id) {
-      return throwError('[NgxsFirestore] create$ failed, id is empty!');
+  public create$(value: Partial<T>): Observable<string> {
+    let id;
+    let newValue;
+
+    if (Object.keys(value).includes('id') && !!value['id']) {
+      id = value['id'];
+      newValue = Object.assign({}, value);
+    } else {
+      id = this.createId();
+      newValue = Object.assign({}, value, { id });
     }
-    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
+
+    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe(mapTo(id));
   }
 
   public upsert$(value: Partial<T>): Observable<string> {

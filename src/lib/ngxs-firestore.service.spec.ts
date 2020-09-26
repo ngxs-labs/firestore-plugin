@@ -3,12 +3,22 @@ import { NgxsFirestore } from './ngxs-firestore.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 
 describe('NgxsFirestore', () => {
+  const createIdMock = jest.fn();
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: AngularFirestore, useValue: jest.fn() },
+        {
+          provide: AngularFirestore,
+          useValue: jest.fn().mockImplementation(() => ({
+            createId: createIdMock,
+            doc: jest.fn(() => ({
+              set: jest.fn(() => of({}))
+            }))
+          }))()
+        },
         { provide: Store, useValue: jest.fn() }
       ]
     });
@@ -27,5 +37,46 @@ describe('NgxsFirestore', () => {
     }
 
     expect(TestBed.get(TestFirestore)).toBeTruthy();
+  });
+
+  describe('', () => {
+    @Injectable({ providedIn: 'root' })
+    class ImplFirestore extends NgxsFirestore<{}> {
+      protected path = 'impl';
+    }
+
+    describe('create$', () => {
+      it('should create id if not provided', () => {
+        createIdMock.mockReturnValue('newId');
+        const service: ImplFirestore = TestBed.get(ImplFirestore);
+        service.create$({}).subscribe((id) => {
+          expect(id).toEqual('newId');
+        });
+      });
+
+      it('should return id when provided', () => {
+        const service: ImplFirestore = TestBed.get(ImplFirestore);
+        service.create$({ id: 'someid' }).subscribe((id) => {
+          expect(id).toEqual('someid');
+        });
+      });
+    });
+
+    describe('upsert$', () => {
+      it('should create id if not provided', () => {
+        createIdMock.mockReturnValue('newId');
+        const service: ImplFirestore = TestBed.get(ImplFirestore);
+        service.upsert$({}).subscribe((id) => {
+          expect(id).toEqual('newId');
+        });
+      });
+
+      it('should return id when provided', () => {
+        const service: ImplFirestore = TestBed.get(ImplFirestore);
+        service.upsert$({ id: 'someid' }).subscribe((id) => {
+          expect(id).toEqual('someid');
+        });
+      });
+    });
   });
 });

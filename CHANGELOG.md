@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.17](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.16...v0.1.17) (2020-09-24)
+
+### Bug Fixes
+
+- typing ([5ad61d8](https://github.com/ngxs-labs/firestore-plugin/commit/5ad61d87fe5c935aa8186c217e7ff026df6fc491))
+
+### [0.1.16](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.14...v0.1.16) (2020-09-24)
+
+### Bug Fixes
+
+- create\$ ([1e03085](https://github.com/ngxs-labs/firestore-plugin/commit/1e03085838a178c1f3e284105db6ca0119de3f7e))
+
+### [0.1.15](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.14...v0.1.15) (2020-09-24)
+
+### Bug Fixes
+
+- create\$ ([1e03085](https://github.com/ngxs-labs/firestore-plugin/commit/1e03085838a178c1f3e284105db6ca0119de3f7e))
+
+### [0.1.14](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.13...v0.1.14) (2020-09-24)
+
+### [0.1.13](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.12...v0.1.13) (2020-09-16)
+
+### Bug Fixes
+
+- **firestore-service:** use merge fields on update\$
+  ([abf5333](https://github.com/ngxs-labs/firestore-plugin/commit/abf53331588ad76ac810f0c8fb956e3248bf915b))
+
 ### [0.1.12](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.11...v0.1.12) (2020-09-03)
 
 ### Features
