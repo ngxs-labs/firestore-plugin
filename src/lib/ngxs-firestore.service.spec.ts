@@ -7,17 +7,22 @@ import { of } from 'rxjs';
 
 describe('NgxsFirestore', () => {
   const createIdMock = jest.fn();
+  const angularFirestoreMock = jest.fn().mockImplementation(() => ({
+    createId: createIdMock,
+    doc: jest.fn(() => ({
+      set: jest.fn(() => of({})),
+      ref: {
+        withConverter: jest.fn()
+      }
+    }))
+  }));
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         {
           provide: AngularFirestore,
-          useValue: jest.fn().mockImplementation(() => ({
-            createId: createIdMock,
-            doc: jest.fn(() => ({
-              set: jest.fn(() => of({}))
-            }))
-          }))()
+          useValue: angularFirestoreMock()
         },
         { provide: Store, useValue: jest.fn() }
       ]
