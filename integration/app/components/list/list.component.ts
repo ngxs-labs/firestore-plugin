@@ -60,7 +60,7 @@ export class ListComponent implements OnInit, OnDestroy {
     //   setTimeout(() => this.store.dispatch(new RacesActions.Get(ids[index])), 1000 * index);
     // }
 
-    this.store.dispatch(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS'));
+    this.store.dispatch(new RacesActions.Get('0V!^fMrWetbs68]ob6%M'));
   }
 
   create() {

@@ -3,13 +3,20 @@ import { Observable, from, throwError } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, take, tap, finalize, mapTo } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
   protected abstract path: string;
-  protected idField: string;
-  protected mapToDb: (value: T) => any;
-  protected mapFromDb: (value: any) => T;
+  protected idField: string = 'id';
+  protected converter: firebase.firestore.FirestoreDataConverter<T> = {
+    toFirestore: (value) => value,
+    fromFirestore: (snapshot, options) => {
+      return { ...(<T>snapshot.data(options)) };
+    }
+  };
+
   private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
 
   constructor(@Inject(AngularFirestore) protected firestore: AngularFirestore, @Inject(Store) protected store: Store) {}
@@ -54,51 +61,27 @@ export abstract class NgxsFirestore<T> {
 
   public doc$(id: string): Observable<T> {
     return this.firestore
-      .doc<T>(`${this.path}/${id}`)
+      .doc<T>(this.docRef(id))
       .snapshotChanges()
-      .pipe(
-        map((docSnapshot) => {
-          let result = docSnapshot.payload.data();
-          if (this.idField) {
-            result = { ...result, [this.idField]: docSnapshot.payload.id };
-          }
-          return result;
-        }),
-        map((item) => {
-          if (this.mapFromDb) {
-            return this.mapFromDb(item);
-          } else {
-            return item;
-          }
-        })
-      );
+      .pipe(map((docSnapshot) => ({ [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() })));
   }
 
   public docOnce$(id: string): Observable<T> {
     return this.doc$(id).pipe(take(1));
   }
 
-  public collection$(queryFn?: QueryFn): Observable<T[]> {
+  public collection$(queryFn: QueryFn = (ref) => ref): Observable<T[]> {
     return this.firestore
-      .collection<T>(this.path, queryFn)
+      .collection<T>(this.path, (ref) => {
+        return queryFn(ref.withConverter(this.converter));
+      })
       .snapshotChanges()
       .pipe(
         map((docSnapshots) =>
-          docSnapshots
-            .map((docSnapshot) => {
-              let result = docSnapshot.payload.doc.data();
-              if (this.idField) {
-                result = { result, [this.idField]: docSnapshot.payload.doc.id } as any;
-              }
-              return result;
-            })
-            .map((item) => {
-              if (this.mapFromDb) {
-                return this.mapFromDb(item);
-              } else {
-                return item;
-              }
-            })
+          docSnapshots.map((docSnapshot) => ({
+            [this.idField]: docSnapshot.payload.doc.id,
+            ...docSnapshot.payload.doc.data()
+          }))
         )
       );
   }
@@ -108,11 +91,11 @@ export abstract class NgxsFirestore<T> {
   }
 
   public update$(id: string, value: Partial<T>) {
-    return from(this.firestore.doc(`${this.path}/${id}`).set(value, { merge: true })).pipe();
+    return from(this.doc(id).set(value, { merge: true })).pipe();
   }
 
   public delete$(id: string) {
-    return from(this.firestore.doc(`${this.path}/${id}`).delete()).pipe();
+    return from(this.doc(id).delete()).pipe();
   }
 
   public create$(value: Partial<T>): Observable<string> {
@@ -127,7 +110,7 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value, { id });
     }
 
-    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe(mapTo(id));
+    return from(this.doc(id).set(newValue, { merge: true })).pipe(mapTo(id));
   }
 
   public upsert$(value: Partial<T>): Observable<string> {
@@ -142,6 +125,14 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value, { id });
     }
 
-    return from(this.firestore.doc(`${this.path}/${id}`).set(newValue, { merge: true })).pipe(mapTo(id));
+    return from(this.doc(id).set(newValue, { merge: true })).pipe(mapTo(id));
+  }
+
+  private doc(id: string) {
+    return this.firestore.doc(this.docRef(id));
+  }
+
+  private docRef(id: string) {
+    return this.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter);
   }
 }

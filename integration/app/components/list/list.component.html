@@ -24,6 +24,8 @@
         <p class="card-text">{{ race.name }}</p>
         <p class="card-text">{{ race.description }}</p>
 
+        <pre>{{ race | json }}</pre>
+
         <button (click)="update(race)" class="mr-1">Update</button>
         <button (click)="delete(race.id)">Delete</button>
       </div>
