@@ -51,10 +51,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
   /**
    * Connect a query that will dispatch a `StreamEmitted` action on each emission.
    *
-   * @param {ActionTypeDef<T>} actionType Action to connect with
+   * @param actionType Action to connect with
    * @param opts.to Firestore Query to connect with
    * @param opts.trackBy used to allow multiple connections for a same action, and Disconnect them individually
-   * @param {'FirstEmit' | 'StreamCompleted'} opts.connectedActionFinishesOn complete connected action on first emit or stream completed
+   * @param opts.connectedActionFinishesOn complete connected action on first emit or stream completed
    * @param opts.cancelPrevious cancel previous connected action
    */
   connect<T>(
