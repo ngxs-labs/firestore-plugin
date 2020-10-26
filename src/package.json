@@ -1,6 +1,6 @@
 {
   "name": "@ngxs-labs/firestore-plugin",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "peerDependencies": {
     "@ngxs/store": ">=3.4.0 <4.0.0",
     "@angular/fire": ">=5.0.0 <6.0.0"
