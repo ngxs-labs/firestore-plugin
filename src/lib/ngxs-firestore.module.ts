@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-
-const PIPES = [];
-
+import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './utils';
 @NgModule({
-  imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreState]), AngularFirestoreModule],
-  declarations: [...PIPES],
-  exports: [...PIPES]
+  imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreState]), AngularFirestoreModule]
 })
 export class NgxsFirestoreModule {
-  public static forRoot(): ModuleWithProviders<NgxsFirestoreModule> {
+  public static forRoot(options?: NgxsFirestoreModuleOptions): ModuleWithProviders<NgxsFirestoreModule> {
     return {
-      ngModule: NgxsFirestoreModule
+      ngModule: NgxsFirestoreModule,
+      providers: [
+        {
+          provide: NGXS_FIRESTORE_MODULE_OPTIONS,
+          useValue: options
+        }
+      ]
     };
   }
 }
