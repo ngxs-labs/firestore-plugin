@@ -149,7 +149,6 @@ export class NgxsFirestoreConnect implements OnDestroy {
         }),
         // completed if FirstEmit
         tapOnce(() => {
-          debugger;
           if (connectedActionFinishesOn === 'FirstEmit') {
             const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
             actionCompletedHandlerSubject.next(action);
@@ -180,7 +179,6 @@ export class NgxsFirestoreConnect implements OnDestroy {
           )
         ),
         finalize(() => {
-          debugger;
           const StreamDisconnectedClass = StreamDisconnected(actionType);
           this.store.dispatch(new StreamDisconnectedClass(action));
           this.store.dispatch(
