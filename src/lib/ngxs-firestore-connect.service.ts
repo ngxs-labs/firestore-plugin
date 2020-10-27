@@ -14,7 +14,7 @@ interface ActionTypeDef<T> {
 }
 
 function defaultTrackBy(action: any) {
-  return action.payload || '';
+  return '';
 }
 
 function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {

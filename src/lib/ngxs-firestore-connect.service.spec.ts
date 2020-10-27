@@ -86,7 +86,8 @@ describe('NgxsFirestoreConnect', () => {
       });
 
       this.ngxsFirestoreConnect.connect(TestActionWithPayload, {
-        to: mockFirestoreStream
+        to: mockFirestoreStream,
+        trackBy: (action) => action.payload
       });
 
       this.ngxsFirestoreConnect.connect(TestActionThatFinishesOnObservableComplete, {
@@ -101,6 +102,7 @@ describe('NgxsFirestoreConnect', () => {
 
       this.ngxsFirestoreConnect.connect(TestActionThatKeepsLast, {
         to: mockFirestoreStream,
+        trackBy: (action) => action.payload,
         cancelPrevious: true
       });
 
