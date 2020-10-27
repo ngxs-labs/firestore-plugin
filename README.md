@@ -228,3 +228,39 @@ this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
 // or
 this.store.dispatch(new Disconnect(new RacesActions.Get(id)));
 ```
+
+### NgxsFirestore options
+
+NgxsFirestore allows to setup an "id" field, and automatically set the Firestore's doc id in the response object. To do
+this, you just need to setup `idField` in your `NgxsFirestore` class.
+
+```ts
+export class RacesFirestore extends NgxsFirestore<Race> {
+  idField = 'raceId';
+}
+```
+
+Another option you can setup is a conversion on items that come from or go to Firestore. You can do this, setting a
+`firebase.firestore.FirestoreDataConverter` and configure `toFirestore` and `fromFirestore`. `toFirestore` will be
+applied before saving the object to Firestore and `fromFirestore` will be applied when items are streamed from Firestore
+to your app.
+
+```ts
+export class RacesFirestore extends NgxsFirestore<Race> {
+  protected path = 'races';
+  idField = 'raceId';
+
+  converter: firebase.firestore.FirestoreDataConverter<Race> = {
+    toFirestore: (value) => {
+      const db = { ...value };
+      delete db.testProp;
+      return db;
+    },
+    fromFirestore: (snapshot, options) => {
+      const data = snapshot.data(options);
+
+      return <Race>{ ...data, testProp: data.id + data.title };
+    }
+  };
+}
+```
