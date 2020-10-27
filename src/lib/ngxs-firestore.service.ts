@@ -18,7 +18,9 @@ export abstract class NgxsFirestore<T> {
   protected abstract path: string;
   protected idField: string = 'id';
   protected converter: firebase.firestore.FirestoreDataConverter<T> = {
-    toFirestore: (value) => value,
+    toFirestore: (value) => {
+      return value;
+    },
     fromFirestore: (snapshot, options) => {
       return { ...(<T>snapshot.data(options)) };
     }
@@ -67,7 +69,11 @@ export abstract class NgxsFirestore<T> {
     return this.firestore
       .doc<T>(this.docRef(id))
       .snapshotChanges()
-      .pipe(map((docSnapshot) => ({ [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() })));
+      .pipe(
+        map((docSnapshot) => {
+          return { [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() };
+        })
+      );
   }
 
   public docOnce$(id: string): Observable<T> {
