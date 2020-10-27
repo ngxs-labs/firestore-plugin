@@ -142,7 +142,7 @@ export abstract class NgxsFirestore<T> {
       return of(id);
     }
 
-    if (this.options?.timeoutWriteOperations) {
+    if (this.options && this.options.timeoutWriteOperations) {
       return from(this.doc(id).set(value, { merge: true })).pipe(
         timeoutWith(this.options.timeoutWriteOperations, of(id)),
         mapTo(id)
