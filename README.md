@@ -166,7 +166,8 @@ export class RacesState implements NgxsOnInit {
 
     // query doc
     this.ngxsFirestoreConnect.connect(RacesActions.Get, {
-      to: (action) => this.racesFS.doc$(action.payload)
+      to: (action) => this.racesFS.doc$(action.payload),
+      trackBy: (action) => action.payload
     });
   }
 

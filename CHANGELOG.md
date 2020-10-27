@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.21](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.20...v0.1.21) (2020-10-27)
+
+### Features
+
+- remove default trackBy payload
+  ([9722989](https://github.com/ngxs-labs/firestore-plugin/commit/972298983fe35c7f4669c0483471ea822426cde6))
+
+### [0.1.20](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.19...v0.1.20) (2020-10-26)
+
+### [0.1.19](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.18...v0.1.19) (2020-10-26)
+
+### [0.1.18](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.17...v0.1.18) (2020-10-26)
+
+### Bug Fixes
+
+- cancelPrevious action without trackby
+  ([6a4ca2a](https://github.com/ngxs-labs/firestore-plugin/commit/6a4ca2ae5c1fde5bdd2610cede41d380f2a42e80))
+
 ### [0.1.17](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.16...v0.1.17) (2020-09-24)
 
 ### Bug Fixes

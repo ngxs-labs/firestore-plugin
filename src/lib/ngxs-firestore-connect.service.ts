@@ -14,7 +14,7 @@ interface ActionTypeDef<T> {
 }
 
 function defaultTrackBy(action: any) {
-  return action.payload || '';
+  return '';
 }
 
 function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {
@@ -48,6 +48,15 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
   constructor(private store: Store, private actions: Actions) {}
 
+  /**
+   * Connect a query that will dispatch a `StreamEmitted` action on each emission.
+   *
+   * @param actionType Action to connect with
+   * @param opts.to Firestore Query to connect with
+   * @param opts.trackBy used to allow multiple connections for a same action, and Disconnect them individually
+   * @param opts.connectedActionFinishesOn complete connected action on first emit or stream completed
+   * @param opts.cancelPrevious cancel previous connected action
+   */
   connect<T>(
     actionType: ActionTypeDef<T>,
     opts: {
@@ -82,6 +91,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
       const completed$ = actionCompletedHandlerSubject.asObservable().pipe(take(1));
 
+      if (cancelPrevious) {
+        return completed$;
+      }
+
       if (this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))) {
         return;
       }
@@ -95,9 +108,9 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
     const actionDispatched$ = this.actions.pipe(
       ofActionDispatched(actionType),
-      // skip actions already connected
+      // skip actions already connected or cancelPrevious
       filter((action) => {
-        return !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
+        return cancelPrevious || !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
       }),
       // filter actions dispatched on same tick
       filter((action) => {
