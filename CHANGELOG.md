@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.22](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.21...v0.1.22) (2020-10-27)
+
+### Features
+
+- idField and FirestoreDataConverter
+  ([5950a23](https://github.com/ngxs-labs/firestore-plugin/commit/5950a2390804a1df234d550c6ba14842660bd484))
+- include mapTo, mapFrom, idField options
+  ([bb1cce4](https://github.com/ngxs-labs/firestore-plugin/commit/bb1cce4901fd39724e804062a696b82b4d5f263d))
+- offline fire and forget
+  ([803f49c](https://github.com/ngxs-labs/firestore-plugin/commit/803f49c2b6bfecdb27880262ad2e94f0fac35178))
+
+### Bug Fixes
+
+- remove ? optional chaning
+  ([9b148df](https://github.com/ngxs-labs/firestore-plugin/commit/9b148df118d21d6ef80fa1c7ef15634091b6bdf4))
+
 ### [0.1.21](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.20...v0.1.21) (2020-10-27)
 
 ### Features
