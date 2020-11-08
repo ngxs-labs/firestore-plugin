@@ -4,7 +4,7 @@ import { Inject, Injectable, Optional } from '@angular/core';
 import { map, take, tap, finalize, mapTo, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './utils';
 import { Store } from '@ngxs/store';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 @Injectable()
