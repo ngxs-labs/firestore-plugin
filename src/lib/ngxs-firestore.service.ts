@@ -61,7 +61,7 @@ export abstract class NgxsFirestore<T> {
     return this.page$(queryFn).pipe(take(1));
   }
 
-  public createId() {
+  public createId(value: Partial<T>) {
     return this.firestore.createId();
   }
 
@@ -112,12 +112,12 @@ export abstract class NgxsFirestore<T> {
     let id;
     let newValue;
 
-    if (Object.keys(value).includes('id') && !!value['id']) {
-      id = value['id'];
+    if (Object.keys(value).includes(this.idField) && !!value[this.idField]) {
+      id = value[this.idField];
       newValue = Object.assign({}, value);
     } else {
-      id = this.createId();
-      newValue = Object.assign({}, value, { id });
+      id = this.createId(value);
+      newValue = Object.assign({}, value, { [this.idField]: id });
     }
 
     return this.docSet(id, newValue);
@@ -127,12 +127,12 @@ export abstract class NgxsFirestore<T> {
     let id;
     let newValue;
 
-    if (Object.keys(value).includes('id') && !!value['id']) {
-      id = value['id'];
+    if (Object.keys(value).includes(this.idField) && !!value[this.idField]) {
+      id = value[this.idField];
       newValue = Object.assign({}, value);
     } else {
-      id = this.createId();
-      newValue = Object.assign({}, value, { id });
+      id = this.createId(value);
+      newValue = Object.assign({}, value, { [this.idField]: id });
     }
 
     return this.docSet(id, newValue);
