@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.24](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.23...v0.1.24) (2020-11-16)
+
+### Bug Fixes
+
+- create and upsert should use the idField
+  ([0de4c40](https://github.com/ngxs-labs/firestore-plugin/commit/0de4c407c7e55dfc42d9b2f8ae8dec0839d39e65))
+
 ### [0.1.23](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.22...v0.1.23) (2020-11-16)
 
 ### Bug Fixes
