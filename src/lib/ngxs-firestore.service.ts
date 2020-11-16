@@ -113,30 +113,19 @@ export abstract class NgxsFirestore<T> {
   }
 
   public create$(value: Partial<T>): Observable<string> {
-    let id;
-    let newValue;
-
-    if (Object.keys(value).includes('id') && !!value['id']) {
-      id = value['id'];
-      newValue = Object.assign({}, value);
-    } else {
-      id = this.createId();
-      newValue = Object.assign({}, value, { id });
-    }
-
-    return this.docSet(id, newValue);
+    return this.upsert$(value);
   }
 
   public upsert$(value: Partial<T>): Observable<string> {
     let id;
     let newValue;
 
-    if (Object.keys(value).includes('id') && !!value['id']) {
-      id = value['id'];
+    if (Object.keys(value).includes(this.idField) && !!value[this.idField]) {
+      id = value[this.idField];
       newValue = Object.assign({}, value);
     } else {
       id = this.createId();
-      newValue = Object.assign({}, value, { id });
+      newValue = Object.assign({}, value, { [this.idField]: id });
     }
 
     return this.docSet(id, newValue);
