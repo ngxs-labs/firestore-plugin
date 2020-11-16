@@ -71,7 +71,11 @@ export abstract class NgxsFirestore<T> {
       .snapshotChanges()
       .pipe(
         map((docSnapshot) => {
-          return { [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() };
+          if (docSnapshot.payload.exists) {
+            return { [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() };
+          } else {
+            return undefined;
+          }
         })
       );
   }
