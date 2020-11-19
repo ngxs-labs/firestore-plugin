@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.27](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.26...v0.1.27) (2020-11-19)
+
+### Bug Fixes
+
+- a null id should not overwrite the payload id
+  ([1b86e01](https://github.com/ngxs-labs/firestore-plugin/commit/1b86e0137370cd4cc14972f464247b0b84aa93f5))
+- linting error (shadowed type)
+  ([4ea9265](https://github.com/ngxs-labs/firestore-plugin/commit/4ea9265f0763e83d832972e9591eb4bf29d68c56))
+
 ### [0.1.26](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.25...v0.1.26) (2020-11-19)
 
 ### [0.1.25](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.24...v0.1.25) (2020-11-19)
