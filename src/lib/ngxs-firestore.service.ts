@@ -130,7 +130,7 @@ export abstract class NgxsFirestore<T> {
     return this.docSet(id, newValue);
   }
 
-  private getDataWithId<T>(doc: QueryDocumentSnapshot<T>) {
+  private getDataWithId<TData>(doc: QueryDocumentSnapshot<TData>) {
     const data = doc.data();
     const id = (data && data[this.idField]) || doc.id;
     return { ...data, [this.idField]: id };
