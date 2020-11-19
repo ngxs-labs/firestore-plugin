@@ -53,10 +53,11 @@ export abstract class NgxsFirestore<T> {
             page: `${start} - ${start + 10}`
           };
         }),
-        map((items) => items.map((item) => item.payload.doc.data())),
+        map((items) => items.map((item) => this.getDataWithId(item))),
         finalize(() => (this.activePagedQuery = null))
       );
   }
+
   public pageOnce$(queryFn?: QueryFn): Observable<T[]> {
     return this.page$(queryFn).pipe(take(1));
   }
@@ -72,7 +73,7 @@ export abstract class NgxsFirestore<T> {
       .pipe(
         map((docSnapshot) => {
           if (docSnapshot.payload.exists) {
-            return { [this.idField]: docSnapshot.payload.id, ...docSnapshot.payload.data() };
+            return this.getDataWithId(docSnapshot);
           } else {
             return undefined;
           }
@@ -92,10 +93,7 @@ export abstract class NgxsFirestore<T> {
       .snapshotChanges()
       .pipe(
         map((docSnapshots) =>
-          docSnapshots.map((docSnapshot) => ({
-            [this.idField]: docSnapshot.payload.doc.id,
-            ...docSnapshot.payload.doc.data()
-          }))
+          docSnapshots.map((docSnapshot) => this.getDataWithId(docSnapshot))
         )
       );
   }
@@ -129,6 +127,12 @@ export abstract class NgxsFirestore<T> {
     }
 
     return this.docSet(id, newValue);
+  }
+
+  private getDataWithId(docSnapshot: any) {
+    const data = docSnapshot.payload.data();
+    const id = data.id || docSnapshot.payload.id;
+    return { ...data, [this.idField]: id };
   }
 
   private doc(id: string) {
