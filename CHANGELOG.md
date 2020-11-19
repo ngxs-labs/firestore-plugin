@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.25](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.24...v0.1.25) (2020-11-19)
+
+### Bug Fixes
+
+- a null id should not overwrite the payload id
+  ([812b89a](https://github.com/ngxs-labs/firestore-plugin/commit/812b89a1af39a049cf74461596016cf67b396b66))
+
 ### [0.1.24](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.23...v0.1.24) (2020-11-16)
 
 ### Bug Fixes
