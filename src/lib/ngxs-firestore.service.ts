@@ -1,19 +1,14 @@
-import { AngularFirestore, QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { Observable, from, throwError, of } from 'rxjs';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { map, take, tap, finalize, mapTo, timeoutWith } from 'rxjs/operators';
-import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './utils';
-import { Store } from '@ngxs/store';
+import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
-  constructor(
-    @Inject(AngularFirestore) protected firestore: AngularFirestore,
-    @Inject(Store) protected store: Store,
-    @Optional() @Inject(NGXS_FIRESTORE_MODULE_OPTIONS) protected options: NgxsFirestoreModuleOptions
-  ) {}
+  constructor(@Inject(NgxsFirestoreAdapter) protected adapter: NgxsFirestoreAdapter) {}
 
   protected abstract path: string;
   protected idField: string = 'id';
@@ -39,7 +34,7 @@ export abstract class NgxsFirestore<T> {
       };
     }
 
-    return this.firestore
+    return this.adapter.firestore
       .collection<T>(this.path, (ref) =>
         queryFn(ref).startAfter((this.activePagedQuery && this.activePagedQuery.lastDoc) || null)
       )
@@ -62,11 +57,11 @@ export abstract class NgxsFirestore<T> {
   }
 
   public createId() {
-    return this.firestore.createId();
+    return this.adapter.firestore.createId();
   }
 
   public doc$(id: string): Observable<T> {
-    return this.firestore
+    return this.adapter.firestore
       .doc<T>(this.docRef(id))
       .snapshotChanges()
       .pipe(
@@ -85,7 +80,7 @@ export abstract class NgxsFirestore<T> {
   }
 
   public collection$(queryFn: QueryFn = (ref) => ref): Observable<T[]> {
-    return this.firestore
+    return this.adapter.firestore
       .collection<T>(this.path, (ref) => {
         return queryFn(ref.withConverter(this.converter));
       })
@@ -137,7 +132,7 @@ export abstract class NgxsFirestore<T> {
   }
 
   private doc(id: string) {
-    return this.firestore.doc(this.docRef(id));
+    return this.adapter.firestore.doc(this.docRef(id));
   }
 
   private docSet(id: string, value: any) {
@@ -146,9 +141,9 @@ export abstract class NgxsFirestore<T> {
       return of(id);
     }
 
-    if (this.options && this.options.timeoutWriteOperations) {
+    if (this.adapter.options && this.adapter.options.timeoutWriteOperations) {
       return from(this.doc(id).set(value, { merge: true })).pipe(
-        timeoutWith(this.options.timeoutWriteOperations, of(id)),
+        timeoutWith(this.adapter.options.timeoutWriteOperations, of(id)),
         mapTo(id)
       );
     } else {
@@ -157,7 +152,7 @@ export abstract class NgxsFirestore<T> {
   }
 
   private docRef(id: string) {
-    return this.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter);
+    return this.adapter.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter);
   }
 
   private isOffline() {
