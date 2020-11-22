@@ -4,7 +4,7 @@ import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './uti
 import { Store } from '@ngxs/store';
 import 'firebase/firestore';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NgxsFirestoreAdapter {
   constructor(
     @Inject(AngularFirestore) public firestore: AngularFirestore,
