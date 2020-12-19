@@ -20,31 +20,33 @@ import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 
 @NgModule({
-    declarations: [AppComponent, ListComponent, OtherComponent],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        RouterModule.forRoot([
-            { path: 'list', component: ListComponent },
-            { path: 'other', component: OtherComponent },
-            { path: '', redirectTo: '/list', pathMatch: 'full' }
-        ]),
-        AngularFireModule.initializeApp(environment.firebase),
-        NgxsModule.forRoot([RacesState], {
-            developmentMode: !environment.production
-        }),
-        NgxsLoggerPluginModule.forRoot({
-            disabled: environment.production
-        }),
-        NgxsFirestoreModule.forRoot(),
-        NgxsActionsExecutingModule.forRoot(),
-        NgxsReduxDevtoolsPluginModule.forRoot({
-            name: 'Ngxs Firestore',
-            disabled: environment.production,
-            actionSanitizer: (action) => ({ ...action, action: null })
-        })
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent, ListComponent, OtherComponent],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot([
+      { path: 'list', component: ListComponent },
+      { path: 'other', component: OtherComponent },
+      { path: '', redirectTo: '/list', pathMatch: 'full' }
+    ]),
+    AngularFireModule.initializeApp(environment.firebase),
+    NgxsModule.forRoot([RacesState], {
+      developmentMode: !environment.production
+    }),
+    NgxsLoggerPluginModule.forRoot({
+      disabled: environment.production
+    }),
+    NgxsFirestoreModule.forRoot({
+      timeoutWriteOperations: 1000
+    }),
+    NgxsActionsExecutingModule.forRoot(),
+    NgxsReduxDevtoolsPluginModule.forRoot({
+      name: 'Ngxs Firestore',
+      disabled: environment.production,
+      actionSanitizer: (action) => ({ ...action, action: null })
+    })
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
