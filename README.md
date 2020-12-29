@@ -12,13 +12,18 @@
 
 ## Demo
 
-[Demo](https://ngxs-firebase-plugin.netlify.com/)
+- [Demo](https://ngxs-firebase-plugin.netlify.com/)
+
+## Resources
+
+- [ngHouston - Firebase + NGXS, the perfect couple](https://www.youtube.com/watch?v=_V_8K_dbb0g&t=1697s)
+- [indepth - Firebase + NGXS, the perfect couple](https://indepth.dev/posts/1322/firebase-ngxs-the-perfect-couple)
 
 ## Description
 
 NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a
-wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition provides
-tracking of active connections.
+wrapper service with CRUD operations methods and easy integration with NGXS actions. In addition provides tracking of
+active connections.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_debug_data.png)
 
@@ -47,23 +52,29 @@ import { AngularFireModule } from '@angular/fire';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 
 @NgModule({
-    declarations: [AppComponent, ListComponent],
-    imports: [
-        //...
-        AngularFireModule.initializeApp(environment.firebase),
-        NgxsModule.forRoot(//...),
-        NgxsReduxDevtoolsPluginModule.forRoot()
-        NgxsFirestoreModule.forRoot()
-    ],
+  declarations: [AppComponent, ListComponent],
+  imports: [
     //...
+    AngularFireModule.initializeApp(environment.firebase),
+    NgxsModule
+      .forRoot
+      //...
+      (),
+    NgxsLoggerPluginModule.forRoot(),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsFirestoreModule.forRoot()
+  ]
+  //...
 })
-export class AppModule { }
+export class AppModule {}
 ```
 
 Next create a service (i.e `races.firestore.ts`) to execute Firestore operations. This service extends `NgxsFirestore`,
-a generic service that takes type `<T>` of the Firestore document. We also need to provide the `path` of the collection.
+a generic service that takes type `<T>` of the Firestore document. We also need to provide the `path` of the Firestore
+collection.
 
 ```ts
 //...
