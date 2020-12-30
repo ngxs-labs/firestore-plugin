@@ -18,33 +18,34 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
+import { ClassificationsState } from './states/classifications/classifications.state';
 
 @NgModule({
-    declarations: [AppComponent, ListComponent, OtherComponent],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        RouterModule.forRoot([
-            { path: 'list', component: ListComponent },
-            { path: 'other', component: OtherComponent },
-            { path: '', redirectTo: '/list', pathMatch: 'full' }
-        ]),
-        AngularFireModule.initializeApp(environment.firebase),
-        NgxsModule.forRoot([RacesState], {
-            developmentMode: !environment.production
-        }),
-        NgxsLoggerPluginModule.forRoot({
-            disabled: environment.production
-        }),
-        NgxsFirestoreModule.forRoot(),
-        NgxsActionsExecutingModule.forRoot(),
-        NgxsReduxDevtoolsPluginModule.forRoot({
-            name: 'Ngxs Firestore',
-            disabled: environment.production,
-            actionSanitizer: (action) => ({ ...action, action: null })
-        })
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+  declarations: [AppComponent, ListComponent, OtherComponent],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot([
+      { path: 'list', component: ListComponent },
+      { path: 'other', component: OtherComponent },
+      { path: '', redirectTo: '/list', pathMatch: 'full' }
+    ]),
+    AngularFireModule.initializeApp(environment.firebase),
+    NgxsModule.forRoot([RacesState, ClassificationsState], {
+      developmentMode: !environment.production
+    }),
+    NgxsLoggerPluginModule.forRoot({
+      disabled: environment.production
+    }),
+    NgxsFirestoreModule.forRoot(),
+    NgxsActionsExecutingModule.forRoot(),
+    NgxsReduxDevtoolsPluginModule.forRoot({
+      name: 'Ngxs Firestore',
+      disabled: environment.production,
+      actionSanitizer: (action) => ({ ...action, action: null })
+    })
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
