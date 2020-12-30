@@ -275,3 +275,29 @@ export class RacesFirestore extends NgxsFirestore<Race> {
   };
 }
 ```
+
+### Retrieving data from subcollections
+
+When you need to pull data from a subcollection you can create a specific Firestore service for the subcollection. Let's
+say the races collection, contains a classification subcollection, then you could setup the Firestore subcollection
+service like this.
+
+```ts
+@Injectable({
+  providedIn: 'root'
+})
+export class ClassificationsFirestore extends NgxsFirestore<Race> {
+  protected get path() {
+    return `races/${this.raceId}/classifications`;
+  }
+
+  private _raceId = '';
+  public setRaceId(raceId) {
+    this._raceId = raceId;
+  }
+
+  protected get raceId() {
+    return this._raceId;
+  }
+}
+```
