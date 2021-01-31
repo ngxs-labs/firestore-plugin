@@ -12,13 +12,18 @@
 
 ## Demo
 
-[Demo](https://ngxs-firebase-plugin.netlify.com/)
+- [Demo](https://ngxs-firebase-plugin.netlify.com/)
+
+## Resources
+
+- [ngHouston - Firebase + NGXS, the perfect couple](https://www.youtube.com/watch?v=_V_8K_dbb0g&t=1697s)
+- [indepth - Firebase + NGXS, the perfect couple](https://indepth.dev/posts/1322/firebase-ngxs-the-perfect-couple)
 
 ## Description
 
 NGXS Firestore plugin helps you integrate Firestore and NGXS. It uses `@angular/fire` under the hood and provides a
-wrapper service with handful CRUD operations methods and easy integration with NGXS actions. In addition provides
-tracking of active connections.
+wrapper service with CRUD operations methods and easy integration with NGXS actions. In addition provides tracking of
+active connections.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_debug_data.png)
 
@@ -47,23 +52,29 @@ import { AngularFireModule } from '@angular/fire';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 
 @NgModule({
-    declarations: [AppComponent, ListComponent],
-    imports: [
-        //...
-        AngularFireModule.initializeApp(environment.firebase),
-        NgxsModule.forRoot(//...),
-        NgxsReduxDevtoolsPluginModule.forRoot()
-        NgxsFirestoreModule.forRoot()
-    ],
+  declarations: [AppComponent, ListComponent],
+  imports: [
     //...
+    AngularFireModule.initializeApp(environment.firebase),
+    NgxsModule
+      .forRoot
+      //...
+      (),
+    NgxsLoggerPluginModule.forRoot(),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsFirestoreModule.forRoot()
+  ]
+  //...
 })
-export class AppModule { }
+export class AppModule {}
 ```
 
 Next create a service (i.e `races.firestore.ts`) to execute Firestore operations. This service extends `NgxsFirestore`,
-a generic service that takes type `<T>` of the Firestore document. We also need to provide the `path` of the collection.
+a generic service that takes type `<T>` of the Firestore document. We also need to provide the `path` of the Firestore
+collection.
 
 ```ts
 //...
@@ -208,6 +219,28 @@ easier to debug.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_actions_emit.gif)
 
+#### Adding write operations
+
+When adding write operation to your state, you can use the helper methods from `NgxsFirestore`. Since your data is
+connnected from Firestore, every write operation you run in the state will trigger an emission and update the state.
+
+```ts
+export class Create {
+  public static readonly type = '[Races] Create';
+  constructor(public payload: Race) {}
+}
+
+export class RacesState implements NgxsOnInit {
+  //...
+  // Create
+  @Action(RacesActions.Create)
+  create(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Create>) {
+    // do something when connected
+    return this.racesFS.create$(action.payload);
+  }
+}
+```
+
 #### Getting data from Firestore and Disconnecting
 
 After all your Firestore queries are bind to its respective Actions, you can start getting data by dispatching the
@@ -262,5 +295,31 @@ export class RacesFirestore extends NgxsFirestore<Race> {
       return <Race>{ ...data, testProp: data.id + data.title };
     }
   };
+}
+```
+
+### Retrieving data from subcollections
+
+When you need to pull data from a subcollection you can create a specific Firestore service for the subcollection. Let's
+say the races collection, contains a classification subcollection, then you could setup the Firestore subcollection
+service like this.
+
+```ts
+@Injectable({
+  providedIn: 'root'
+})
+export class ClassificationsFirestore extends NgxsFirestore<Race> {
+  protected get path() {
+    return `races/${this.raceId}/classifications`;
+  }
+
+  private _raceId = '';
+  public setRaceId(raceId) {
+    this._raceId = raceId;
+  }
+
+  protected get raceId() {
+    return this._raceId;
+  }
 }
 ```

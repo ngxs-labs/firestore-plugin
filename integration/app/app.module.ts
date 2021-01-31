@@ -18,6 +18,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
+import { ClassificationsState } from './states/classifications/classifications.state';
 
 @NgModule({
   declarations: [AppComponent, ListComponent, OtherComponent],
@@ -30,7 +31,7 @@ import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
       { path: '', redirectTo: '/list', pathMatch: 'full' }
     ]),
     AngularFireModule.initializeApp(environment.firebase),
-    NgxsModule.forRoot([RacesState], {
+    NgxsModule.forRoot([RacesState, ClassificationsState], {
       developmentMode: !environment.production
     }),
     NgxsLoggerPluginModule.forRoot({
@@ -39,6 +40,7 @@ import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
     NgxsFirestoreModule.forRoot({
       timeoutWriteOperations: 1000
     }),
+    NgxsFirestoreModule.forRoot(),
     NgxsActionsExecutingModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot({
       name: 'Ngxs Firestore',

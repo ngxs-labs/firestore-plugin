@@ -7,6 +7,8 @@ import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
 import { Disconnect } from '@ngxs-labs/firestore-plugin';
+import { ClassificationsActions } from 'integration/app/states/classifications/classifications.actions';
+import { ClassificationsState } from 'integration/app/states/classifications/classifications.state';
 
 @Component({
   selector: 'app-list',
@@ -15,6 +17,7 @@ import { Disconnect } from '@ngxs-labs/firestore-plugin';
 })
 export class ListComponent implements OnInit, OnDestroy {
   races$ = this.store.select(RacesState.races);
+  classifications$ = this.store.select(ClassificationsState.classifications);
   total$ = this.races$.pipe(map((races) => races.length));
 
   gettingAll$ = this.store.select(actionsExecuting([RacesActions.GetAll]));
@@ -25,6 +28,7 @@ export class ListComponent implements OnInit, OnDestroy {
   disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
   getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
   throwingError$ = this.store.select(actionsExecuting([RacesActions.Error]));
+  gettingSubCollection$ = this.store.select(actionsExecuting([ClassificationsActions.GetAll]));
 
   constructor(private store: Store) {}
 
@@ -48,6 +52,10 @@ export class ListComponent implements OnInit, OnDestroy {
 
   getAll() {
     this.store.dispatch(new RacesActions.GetAll());
+  }
+
+  getSubCollection() {
+    this.store.dispatch(new ClassificationsActions.GetAll('0NN6x6GKDGumGU5dtnk4'));
   }
 
   getPage() {

@@ -3,6 +3,9 @@
   <button [disabled]="gettingAll$ | async" class="btn btn-primary mr-1" (click)="getAll()">Get All</button>
   <button [disabled]="gettingSingle$ | async" class="btn btn-primary mr-1" (click)="get()">Get Single</button>
   <button [disabled]="getPageExecuting$ | async" class="btn btn-primary" (click)="getPage()">Get Page</button>
+  <button [disabled]="gettingSubCollection$ | async" class="btn btn-primary mr-1" (click)="getSubCollection()">
+    Get SubCollection
+  </button>
 </div>
 <div class="my-3">
   <button class="btn btn-primary mr-1" [disabled]="disconnecting$ | async" (click)="disconnect()">Disconnect</button>
@@ -28,6 +31,22 @@
 
         <button (click)="update(race)" class="mr-1">Update</button>
         <button (click)="delete(race.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-1">
+    <div
+      *ngFor="let classification of classifications$ | async"
+      class="card mr-1 mb-1 d-inline-flex"
+      style="width: 12rem;"
+    >
+      <div class="card-body">
+        <h5 class="card-title">{{ classification.id }}</h5>
+        <p class="card-text">{{ classification.order }}</p>
+        <p class="card-text">{{ classification.name }}</p>
+
+        <pre>{{ classification | json }}</pre>
       </div>
     </div>
   </div>

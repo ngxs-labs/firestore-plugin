@@ -8,7 +8,7 @@
   "homepage": "https://github.com/ngxs-labs/firebase-plugin#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ngxs-labs/firebase.git"
+    "url": "https://github.com/ngxs-labs/firestore-plugin"
   },
   "license": "MIT",
   "private": false,
