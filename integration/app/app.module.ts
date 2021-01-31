@@ -37,6 +37,9 @@ import { ClassificationsState } from './states/classifications/classifications.s
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production
     }),
+    NgxsFirestoreModule.forRoot({
+      timeoutWriteOperations: 1000
+    }),
     NgxsFirestoreModule.forRoot(),
     NgxsActionsExecutingModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot({

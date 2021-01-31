@@ -1,15 +1,14 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RacesFirestore } from './races.firestore';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Store } from '@ngxs/store';
 
 describe('RacesFirestore', () => {
   beforeEach(async(() =>
     TestBed.configureTestingModule({
-      providers: [
-        { provide: AngularFirestore, useValue: jest.fn() },
-        { provide: Store, useValue: jest.fn() }
-      ]
+      imports: [NgxsModule.forRoot([]), NgxsFirestoreModule.forRoot()],
+      providers: [{ provide: AngularFirestore, useValue: jest.fn() }]
     })));
 
   it('should be created', () => {

@@ -8,6 +8,7 @@ import { Race } from '../models/race';
   providedIn: 'root'
 })
 export class ClassificationsFirestore extends NgxsFirestore<Race> {
+  idField = 'classificationId';
   private _raceId = '';
   protected get path() {
     return `races/${this.raceId}/classifications`;
@@ -20,6 +21,4 @@ export class ClassificationsFirestore extends NgxsFirestore<Race> {
   protected get raceId() {
     return this._raceId;
   }
-
-  idField = 'classificationId';
 }

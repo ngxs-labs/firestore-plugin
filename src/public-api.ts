@@ -5,3 +5,4 @@ export * from './lib/ngxs-firestore-connections.selector';
 export * from './lib/action-decorator-helpers';
 export * from './lib/actions';
 export * from './lib/types';
+export * from './lib/ngxs-firestore.adapter';

@@ -20,6 +20,7 @@ describe('NgxsFirestore', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        { provide: AngularFirestore, useValue: angularFirestoreMock() },
         {
           provide: AngularFirestore,
           useValue: angularFirestoreMock()
