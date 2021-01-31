@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.28](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.27...v0.1.28) (2021-01-31)
+
+### Features
+
+- demo of using subcollection
+  ([7866972](https://github.com/ngxs-labs/firestore-plugin/commit/7866972ccea07a4683b357927ff6b606d98b5ce3))
+
 ### [0.1.27](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.26...v0.1.27) (2020-11-19)
 
 ### Bug Fixes
