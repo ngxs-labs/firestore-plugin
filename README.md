@@ -219,6 +219,28 @@ easier to debug.
 
 ![debug](https://raw.githubusercontent.com/ngxs-labs/firebase-plugin/master/docs/assets/readme_actions_emit.gif)
 
+#### Adding write operations
+
+When adding write operation to your state, you can use the helper methods from `NgxsFirestore`. Since your data is
+connnected from Firestore, every write operation you run in the state will trigger an emission and update the state.
+
+```ts
+export class Create {
+  public static readonly type = '[Races] Create';
+  constructor(public payload: Race) {}
+}
+
+export class RacesState implements NgxsOnInit {
+  //...
+  // Create
+  @Action(RacesActions.Create)
+  create(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Create>) {
+    // do something when connected
+    return this.racesFS.create$(action.payload);
+  }
+}
+```
+
 #### Getting data from Firestore and Disconnecting
 
 After all your Firestore queries are bind to its respective Actions, you can start getting data by dispatching the
