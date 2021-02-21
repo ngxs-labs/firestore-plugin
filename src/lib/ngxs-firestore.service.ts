@@ -6,6 +6,11 @@ import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
+/**
+ * Changes the behavior of a set() call to only replace the values specified
+ * in its data argument. Fields omitted from the set() call remain
+ * untouched.
+ */
 interface SetOptions {
   merge: boolean;
 }
