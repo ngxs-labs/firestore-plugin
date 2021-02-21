@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.29](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.28...v0.1.29) (2021-02-21)
+
+### Features
+
+- add setOptions param to write operations
+  ([b91721c](https://github.com/ngxs-labs/firestore-plugin/commit/b91721caa90c927a5e16e244a2e9426e34809b14))
+
 ### [0.1.28](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.27...v0.1.28) (2021-01-31)
 
 ### Features
