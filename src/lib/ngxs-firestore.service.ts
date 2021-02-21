@@ -6,7 +6,9 @@ import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
-type SetOptions = { merge: boolean };
+interface SetOptions {
+  merge: boolean;
+}
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
