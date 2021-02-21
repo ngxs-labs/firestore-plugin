@@ -6,6 +6,8 @@ import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
+type SetOptions = { merge: boolean };
+
 @Injectable()
 export abstract class NgxsFirestore<T> {
   constructor(@Inject(NgxsFirestoreAdapter) protected adapter: NgxsFirestoreAdapter) {}
@@ -98,8 +100,8 @@ export abstract class NgxsFirestore<T> {
     return this.collection$(queryFn).pipe(take(1));
   }
 
-  public update$(id: string, value: Partial<T>) {
-    return this.docSet(id, value);
+  public update$(id: string, value: Partial<T>, setOptions?: SetOptions) {
+    return this.docSet(id, value, setOptions);
   }
 
   public delete$(id: string) {
@@ -110,7 +112,7 @@ export abstract class NgxsFirestore<T> {
     return this.upsert$(value);
   }
 
-  public upsert$(value: Partial<T>): Observable<string> {
+  public upsert$(value: Partial<T>, setOptions?: SetOptions): Observable<string> {
     let id;
     let newValue;
 
@@ -122,7 +124,7 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value, { [this.idField]: id });
     }
 
-    return this.docSet(id, newValue);
+    return this.docSet(id, newValue, setOptions);
   }
 
   private getDataWithId<TData>(doc: QueryDocumentSnapshot<TData>) {
@@ -135,19 +137,21 @@ export abstract class NgxsFirestore<T> {
     return this.adapter.firestore.doc(this.docRef(id));
   }
 
-  private docSet(id: string, value: any) {
+  private docSet(id: string, value: any, setOptions?: SetOptions) {
+    setOptions = setOptions || { merge: true };
+
     if (this.isOffline()) {
-      this.doc(id).set(value, { merge: true });
+      this.doc(id).set(value, setOptions);
       return of(id);
     }
 
     if (this.adapter.options && this.adapter.options.timeoutWriteOperations) {
-      return from(this.doc(id).set(value, { merge: true })).pipe(
+      return from(this.doc(id).set(value, setOptions)).pipe(
         timeoutWith(this.adapter.options.timeoutWriteOperations, of(id)),
         mapTo(id)
       );
     } else {
-      return from(this.doc(id).set(value, { merge: true })).pipe(mapTo(id));
+      return from(this.doc(id).set(value, setOptions)).pipe(mapTo(id));
     }
   }
 
