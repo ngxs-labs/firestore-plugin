@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "target": "es2015",
     "lib": ["es2017", "dom"],
-    "module": "esnext",
+    "module": "es2020",
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "@ngxs-labs/firestore-plugin": ["src/public-api.ts"]
