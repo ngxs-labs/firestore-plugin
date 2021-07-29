@@ -2,7 +2,7 @@
   "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve --port=4251",
-    "build": " ng build ngxs-firestore && yarn copy-readme",
+    "build": " ng build ngxs-firestore --prod && yarn copy-readme",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "test": "jest --config ./jest.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.config.js",
