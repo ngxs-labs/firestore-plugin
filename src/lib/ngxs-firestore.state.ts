@@ -21,7 +21,7 @@ export interface NgxsFirestoreStateModel {
 })
 @Injectable()
 export class NgxsFirestoreState implements NgxsOnInit {
-  ngxsOnInit({ dispatch }: StateContext<NgxsFirestoreStateModel>) {}
+  ngxsOnInit(_ctx: StateContext<NgxsFirestoreStateModel>) {}
 
   @Action([NgxsFirestoreConnectActions.StreamConnected])
   streamConnected(
