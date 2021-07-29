@@ -257,7 +257,7 @@ If you need to disconnect you can dispatch
 
 ```ts
 //...
-this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
+this.store.dispatch(new Disconnect(new RacesActions.GetAll()));
 // or
 this.store.dispatch(new Disconnect(new RacesActions.Get(id)));
 ```

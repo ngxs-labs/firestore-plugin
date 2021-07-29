@@ -39,7 +39,6 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   disconnect() {
-    // this.store.dispatch(new DisconnectStream(RacesActions.GetAll));
     this.store.dispatch(new Disconnect(new RacesActions.Get(']cfct5iL8(H)@Sl#xTcS')));
   }
 

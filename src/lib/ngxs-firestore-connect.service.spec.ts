@@ -16,7 +16,7 @@ import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { BehaviorSubject, from, Subject, throwError } from 'rxjs';
 import { Emitted, Connected, Disconnected, Errored } from './types';
 import { StreamEmitted, StreamConnected, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
-import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
+import { DisconnectAll, Disconnect } from './actions';
 import { tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
@@ -250,7 +250,7 @@ describe('NgxsFirestoreConnect', () => {
       test('should disconnect', () => {
         store.dispatch(TestAction);
         expect(events).toEqual(['connected', 'emitted']);
-        store.dispatch(new DisconnectStream(TestAction));
+        store.dispatch(new Disconnect(new TestAction()));
         expect(events).toEqual(['connected', 'emitted', 'disconnected']);
       });
 
@@ -286,7 +286,7 @@ describe('NgxsFirestoreConnect', () => {
       test('should disconnect', () => {
         store.dispatch(new TestAction());
         expect(events).toEqual(['connected', 'emitted']);
-        store.dispatch(new DisconnectStream(TestAction));
+        store.dispatch(new Disconnect(new TestAction()));
         expect(events).toEqual(['connected', 'emitted', 'disconnected']);
       });
 
