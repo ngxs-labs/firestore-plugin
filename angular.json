@@ -17,23 +17,24 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/integration",
             "index": "integration/index.html",
             "main": "integration/main.ts",
             "polyfills": "integration/polyfills.ts",
             "tsConfig": "integration/tsconfig.app.json",
-            "assets": [
-              "integration/favicon.ico",
-              "integration/assets",
-              "integration/_redirects"
-            ],
-            "styles": [
-              "integration/styles.scss"
-            ],
+            "assets": ["integration/favicon.ico", "integration/assets", "integration/_redirects"],
+            "styles": ["integration/styles.scss"],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "integration/environments/environment.ts",
@@ -76,10 +77,18 @@
           "options": {
             "tsConfig": "src/tsconfig.lib.json",
             "project": "src/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "src/tsconfig.lib.prod.json"
+            }
           }
         }
       }
     }
   },
-  "defaultProject": "integration"
+  "defaultProject": "integration",
+  "cli": {
+    "analytics": false
+  }
 }
