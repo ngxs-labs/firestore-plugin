@@ -44,8 +44,8 @@ import { ClassificationsState } from './states/classifications/classifications.s
     NgxsActionsExecutingModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot({
       name: 'Ngxs Firestore',
-      disabled: environment.production,
-      actionSanitizer: (action) => ({ ...action, action: null })
+      disabled: environment.production
+      // actionSanitizer: (action) => ({ ...action, action: null })
     })
   ],
   providers: [],
