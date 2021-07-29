@@ -18,6 +18,7 @@ import { Emitted, Connected, Disconnected, Errored } from './types';
 import { StreamEmitted, StreamConnected, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { DisconnectStream, DisconnectAll, Disconnect } from './actions';
 import { tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
 type EventType =
   | 'emitted'
@@ -77,6 +78,7 @@ describe('NgxsFirestoreConnect', () => {
   @State({
     name: 'test'
   })
+  @Injectable()
   class TestState implements NgxsOnInit {
     constructor(private ngxsFirestoreConnect: NgxsFirestoreConnect) {}
 

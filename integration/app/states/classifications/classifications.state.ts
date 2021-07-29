@@ -4,6 +4,7 @@ import { NgxsFirestoreConnect, Emitted, StreamEmitted } from '@ngxs-labs/firesto
 import { Classification } from 'integration/app/models/classification';
 import { ClassificationsFirestore } from 'integration/app/services/classifications.firestore';
 import { iif, insertItem, patch, updateItem } from '@ngxs/store/operators';
+import { Injectable } from '@angular/core';
 
 export interface ClassificationsStateModel {
   classifications: Classification[];
@@ -15,6 +16,7 @@ export interface ClassificationsStateModel {
     classifications: []
   }
 })
+@Injectable()
 export class ClassificationsState implements NgxsOnInit {
   @Selector() static classifications(state: ClassificationsStateModel) {
     return state.classifications;

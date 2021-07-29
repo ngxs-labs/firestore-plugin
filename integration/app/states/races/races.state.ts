@@ -16,6 +16,7 @@ import {
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
 import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
+import { Injectable } from '@angular/core';
 
 export interface RacesStateModel {
   races: Race[];
@@ -29,6 +30,7 @@ export interface RacesStateModel {
     activeRaces: []
   }
 })
+@Injectable()
 export class RacesState implements NgxsOnInit {
   @Selector() static races(state: RacesStateModel) {
     return state.races;
