@@ -1,0 +1,10 @@
+{
+  "name": "NGXS Firestore Plugin",
+  "platforms": ["Web"],
+  "content": "README.md",
+  "pages": {
+    "README.md": "Read me"
+  },
+  "related": [],
+  "tabs": [{ "title": "NPM", "href": "https://www.npmjs.com/package/@ngxs-labs/firestore-plugin" }]
+}

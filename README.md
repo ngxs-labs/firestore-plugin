@@ -18,6 +18,7 @@
 
 - [ngHouston - Firebase + NGXS, the perfect couple](https://www.youtube.com/watch?v=_V_8K_dbb0g&t=1697s)
 - [indepth - Firebase + NGXS, the perfect couple](https://indepth.dev/posts/1322/firebase-ngxs-the-perfect-couple)
+- [Adventures in Angular - Matchmaking NGXS and Firebase with Joaquin Cid ](https://open.spotify.com/episode/6r1j1QxEhcb4MeQg4RL7Yc?si=qBv_n7EbQ9-yodAvqukePQ&dl_branch=1)
 
 ## Description
 
