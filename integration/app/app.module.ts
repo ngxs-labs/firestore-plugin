@@ -40,7 +40,6 @@ import { ClassificationsState } from './states/classifications/classifications.s
     NgxsFirestoreModule.forRoot({
       timeoutWriteOperations: 1000
     }),
-    NgxsFirestoreModule.forRoot(),
     NgxsActionsExecutingModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot({
       name: 'Ngxs Firestore',
