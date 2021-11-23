@@ -9,9 +9,9 @@ import {
   StreamConnected,
   StreamEmitted,
   StreamDisconnected,
-  Page,
   StreamErrored,
-  Errored
+  Errored,
+  NgxsFirestorePageService
 } from '@ngxs-labs/firestore-plugin';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
@@ -39,7 +39,11 @@ export class RacesState implements NgxsOnInit {
     return state.activeRaces;
   }
 
-  constructor(private racesFS: RacesFirestore, private ngxsFirestoreConnect: NgxsFirestoreConnect) {}
+  constructor(
+    private racesFS: RacesFirestore,
+    private ngxsFirestoreConnect: NgxsFirestoreConnect,
+    private nxgsFirestorePage: NgxsFirestorePageService
+  ) {}
 
   ngxsOnInit(ctx: StateContext<RacesStateModel>) {
     this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
@@ -51,9 +55,18 @@ export class RacesState implements NgxsOnInit {
       to: ({ payload }) => this.racesFS.doc$(payload)
     });
 
-    this.ngxsFirestoreConnect.connect(Page(RacesActions.NextPage), {
-      to: () => this.racesFS.page$((ref) => ref.limit(10).orderBy('order')),
-      trackBy: ({ payload }) => `Page ${payload}`
+    this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
+      to: () => {
+        const obs$ = this.nxgsFirestorePage.create(
+          (fn) =>
+            this.racesFS.collection$((ref) => {
+              return fn(ref);
+            }),
+          5
+        );
+
+        return obs$;
+      }
     });
 
     this.ngxsFirestoreConnect.connect(RacesActions.Error, {
@@ -70,37 +83,22 @@ export class RacesState implements NgxsOnInit {
   @Action(StreamErrored(RacesActions.Error))
   error(ctx: StateContext<RacesStateModel>, { error }: Errored<RacesActions.Error>) {}
 
-  @Action(RacesActions.NextPage)
-  getPage(ctx: StateContext<RacesStateModel>) {
-    const start = ctx.getState().races.length;
-    return ctx.dispatch(new (Page(RacesActions.NextPage))(`${start} - ${start + 10}`));
-  }
-
-  @Action(StreamEmitted(Page(RacesActions.NextPage)))
-  getPageEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
+  @Action(StreamEmitted(RacesActions.GetPages))
+  getPageEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.GetPages, Race[]>) {
     // upsert items
-    payload.forEach((race) => {
-      ctx.setState(
-        patch<RacesStateModel>({
-          races: iif(
-            (s) => !!s.find((c) => c.id === race.id),
-            updateItem((c) => c.id === race.id, patch({ ...race })),
-            insertItem({ ...race })
-          )
-        })
-      );
-    });
-    // sort
-    ctx.setState(
-      patch({
-        races: ctx
-          .getState()
-          .races.slice()
-          .sort((a, b) => {
-            return +a.order - +b.order;
-          })
-      })
-    );
+    // payload.forEach((race) => {
+    //   ctx.setState(
+    //     patch<RacesStateModel>({
+    //       races: iif(
+    //         (s) => !!s.find((c) => c.id === race.id),
+    //         updateItem((c) => c.id === race.id, patch({ ...race })),
+    //         insertItem({ ...race })
+    //       )
+    //     })
+    //   );
+    // });
+
+    ctx.setState(patch({ races: payload || [] }));
   }
 
   @Action(StreamConnected(RacesActions.Get))

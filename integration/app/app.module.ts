@@ -19,14 +19,16 @@ import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 import { ClassificationsState } from './states/classifications/classifications.state';
+import { PagedListComponent } from './components/paged-list/paged-list.component';
 
 @NgModule({
-  declarations: [AppComponent, ListComponent, OtherComponent],
+  declarations: [AppComponent, ListComponent, OtherComponent, PagedListComponent],
   imports: [
     BrowserModule,
     FormsModule,
     RouterModule.forRoot([
       { path: 'list', component: ListComponent },
+      { path: 'paged-list', component: PagedListComponent },
       { path: 'other', component: OtherComponent },
       { path: '', redirectTo: '/list', pathMatch: 'full' }
     ]),

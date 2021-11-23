@@ -22,8 +22,8 @@ export namespace RacesActions {
     public static readonly type = '[Races] GetAll';
   }
 
-  export class NextPage {
-    public static readonly type = '[Races] NextPage';
+  export class GetPages {
+    public static readonly type = '[Races] GetPages';
   }
 
   export class Create {

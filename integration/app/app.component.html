@@ -3,6 +3,7 @@
     <div class="navbar-nav">
       <a class="nav-item nav-link" [routerLink]="['/list']" routerLinkActive="active">List</a>
       <a class="nav-item nav-link" [routerLink]="['/other']" routerLinkActive="active">Other page</a>
+      <a class="nav-item nav-link" [routerLink]="['/paged-list']" routerLinkActive="active">Paged List</a>
     </div>
   </div>
 </nav>
@@ -16,7 +17,7 @@
 <div
   *ngIf="ngxsFirestoreState$ | async; let ngxsFirestoreState"
   class="fixed-bottom bg-info p-3"
-  style="max-height:400px;overflow-y:auto;"
+  style="max-height:200px;overflow-y:auto;"
 >
   <h2>NGXS Firestore:</h2>
   <pre>{{ ngxsFirestoreState | json }}</pre>

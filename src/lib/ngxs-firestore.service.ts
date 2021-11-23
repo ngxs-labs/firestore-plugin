@@ -1,7 +1,7 @@
 import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
-import { Observable, from, throwError, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { map, take, tap, finalize, mapTo, timeoutWith } from 'rxjs/operators';
+import { map, take, mapTo, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -29,41 +29,6 @@ export abstract class NgxsFirestore<T> {
       return { ...(<T>snapshot.data(options)) };
     }
   };
-
-  private activePagedQuery: { lastDoc?: QueryDocumentSnapshot<T>; page?: string; queryFn?: string } = null;
-
-  public page$(queryFn?: QueryFn): Observable<T[]> {
-    if (!!this.activePagedQuery && this.activePagedQuery.queryFn !== queryFn + '') {
-      return throwError('NgxsFirestore page$ error. Yon can have only one paging query per service instance.');
-    }
-
-    if (!this.activePagedQuery) {
-      this.activePagedQuery = {
-        queryFn: queryFn + ''
-      };
-    }
-
-    return this.adapter.firestore
-      .collection<T>(this.path, (ref) =>
-        queryFn(ref).startAfter((this.activePagedQuery && this.activePagedQuery.lastDoc) || null)
-      )
-      .snapshotChanges()
-      .pipe(
-        tap((items) => {
-          const start = items.length;
-          this.activePagedQuery = {
-            ...this.activePagedQuery,
-            lastDoc: items.length > 0 && items[items.length - 1].payload.doc,
-            page: `${start} - ${start + 10}`
-          };
-        }),
-        map((items) => items.map((item) => this.getDataWithId(item.payload.doc))),
-        finalize(() => (this.activePagedQuery = null))
-      );
-  }
-  public pageOnce$(queryFn?: QueryFn): Observable<T[]> {
-    return this.page$(queryFn).pipe(take(1));
-  }
 
   public createId() {
     return this.adapter.firestore.createId();
