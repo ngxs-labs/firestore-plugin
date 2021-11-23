@@ -58,11 +58,12 @@ export class RacesState implements NgxsOnInit {
     this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
       to: () => {
         const obs$ = this.nxgsFirestorePage.create(
-          (fn) =>
+          (pageFn) =>
             this.racesFS.collection$((ref) => {
-              return fn(ref);
+              return pageFn(ref);
             }),
-          5
+          5,
+          [{ fieldPath: 'title' }]
         );
 
         return obs$;

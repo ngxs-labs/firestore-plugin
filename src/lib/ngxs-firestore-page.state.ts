@@ -1,6 +1,6 @@
 import { State, StateContext, NgxsOnInit, createSelector, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { SavePage } from './ngxs-firestore-page.service';
+import { SavePage } from './ngxs-firestore-page.actions';
 import { iif, insertItem, patch, updateItem } from '@ngxs/store/operators';
 
 export interface FirestorePage {
@@ -30,7 +30,6 @@ export class NgxsFirestorePageState implements NgxsOnInit {
 
   @Action(SavePage)
   savePage(ctx: StateContext<NgxsFirestorePageStateModel>, action: SavePage) {
-    debugger;
     ctx.setState(
       patch<NgxsFirestorePageStateModel>({
         pages: iif(
