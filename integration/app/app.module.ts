@@ -20,6 +20,7 @@ import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 import { ClassificationsState } from './states/classifications/classifications.state';
 import { PagedListComponent } from './components/paged-list/paged-list.component';
+import { AttendeesState } from './states/attendees/attendees.state';
 
 @NgModule({
   declarations: [AppComponent, ListComponent, OtherComponent, PagedListComponent],
@@ -33,7 +34,7 @@ import { PagedListComponent } from './components/paged-list/paged-list.component
       { path: '', redirectTo: '/list', pathMatch: 'full' }
     ]),
     AngularFireModule.initializeApp(environment.firebase),
-    NgxsModule.forRoot([RacesState, ClassificationsState], {
+    NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
       developmentMode: !environment.production
     }),
     NgxsLoggerPluginModule.forRoot({

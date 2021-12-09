@@ -20,6 +20,7 @@ import { Injectable } from '@angular/core';
 
 export interface RacesStateModel {
   races: Race[];
+  pageId: string;
   activeRaces: Race[];
 }
 
@@ -27,6 +28,7 @@ export interface RacesStateModel {
   name: 'races',
   defaults: {
     races: [],
+    pageId: '',
     activeRaces: []
   }
 })
@@ -37,6 +39,9 @@ export class RacesState implements NgxsOnInit {
   }
   @Selector() static activeRaces(state: RacesStateModel) {
     return state.activeRaces;
+  }
+  @Selector() static pageId(state: RacesStateModel) {
+    return state.pageId;
   }
 
   constructor(
@@ -85,21 +90,11 @@ export class RacesState implements NgxsOnInit {
   error(ctx: StateContext<RacesStateModel>, { error }: Errored<RacesActions.Error>) {}
 
   @Action(StreamEmitted(RacesActions.GetPages))
-  getPageEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.GetPages, Race[]>) {
-    // upsert items
-    // payload.forEach((race) => {
-    //   ctx.setState(
-    //     patch<RacesStateModel>({
-    //       races: iif(
-    //         (s) => !!s.find((c) => c.id === race.id),
-    //         updateItem((c) => c.id === race.id, patch({ ...race })),
-    //         insertItem({ ...race })
-    //       )
-    //     })
-    //   );
-    // });
-
-    ctx.setState(patch({ races: payload || [] }));
+  getPageEmitted(
+    ctx: StateContext<RacesStateModel>,
+    { action, payload }: Emitted<RacesActions.GetPages, { results: Race[]; pageId: string }>
+  ) {
+    ctx.setState(patch({ races: payload.results || [], pageId: payload.pageId }));
   }
 
   @Action(StreamConnected(RacesActions.Get))

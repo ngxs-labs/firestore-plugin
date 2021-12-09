@@ -1,21 +1,15 @@
-import { State, StateContext, NgxsOnInit, createSelector, Action } from '@ngxs/store';
+import { State, StateContext, NgxsOnInit, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { SavePage } from './ngxs-firestore-page.actions';
 import { iif, insertItem, patch, updateItem } from '@ngxs/store/operators';
 
 export interface FirestorePage {
-  action: string;
-  size: number;
+  limit: number;
+  id: string;
 }
 
 export interface NgxsFirestorePageStateModel {
   pages: FirestorePage[];
-}
-
-export function NgxsFirestorePage(action: string) {
-  return createSelector([NgxsFirestorePageState], (state: NgxsFirestorePageStateModel) => {
-    return state.pages.find((page) => page.action === action);
-  });
 }
 
 @State<NgxsFirestorePageStateModel>({
@@ -33,9 +27,9 @@ export class NgxsFirestorePageState implements NgxsOnInit {
     ctx.setState(
       patch<NgxsFirestorePageStateModel>({
         pages: iif(
-          (s) => !!s.find((c) => c.action === action.payload),
-          updateItem((c) => c.action === action.payload, patch({ ...action })),
-          insertItem({ action: action.payload, size: action.size })
+          (s) => !!s.find((c) => c.id === action.payload.id),
+          updateItem((c) => c.id === action.payload.id, patch({ ...action.payload })),
+          insertItem(action.payload)
         )
       })
     );

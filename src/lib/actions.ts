@@ -1,5 +1,3 @@
-import { ActionType } from '@ngxs/store';
-
 export class DisconnectAll {
   static readonly type = '[NgxsFirestore] DisconnectAll';
 }
@@ -11,5 +9,5 @@ export class Disconnect {
 
 export class GetNextPage {
   static readonly type = 'GetNextPage';
-  constructor(public payload: ActionType) {}
+  constructor(public payload: string) {}
 }

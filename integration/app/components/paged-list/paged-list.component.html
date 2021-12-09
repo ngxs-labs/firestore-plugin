@@ -1,5 +1,5 @@
 <div class="my-3">
-  <button [disabled]="nextPageExecuting$ | async" class="btn btn-primary" (click)="nextPage()">Next</button>
+  <button [disabled]="nextPageExecuting$ | async" class="btn btn-primary" (click)="nextPage()">Next Page Races</button>
 </div>
 <div class="">
   <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
@@ -8,6 +8,22 @@
       <p class="card-text">{{ race.order }}</p>
       <p class="card-text">{{ race.name }}</p>
       <p class="card-text">{{ race.description }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="my-3">
+  <button [disabled]="nextPageExecuting$ | async" class="btn btn-primary" (click)="nextPageAttendees()">
+    Next Page Attendees
+  </button>
+</div>
+<div class="">
+  <div *ngFor="let attendee of attendees$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{ attendee.id }}</h5>
+      <p class="card-text">{{ attendee.order }}</p>
+      <p class="card-text">{{ attendee.name }}</p>
+      <p class="card-text">{{ attendee.description }}</p>
     </div>
   </div>
 </div>
