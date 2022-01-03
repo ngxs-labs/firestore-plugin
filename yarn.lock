@@ -216,10 +216,10 @@
   dependencies:
     tslib "^2.2.0"
 
-"@angular/fire@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@angular/fire/-/fire-6.1.0.tgz#1082c0a57178ce67d36a7c4cfb0633129bbac01c"
-  integrity sha512-YDuLB6/J8XOuOEB0nuG0gQ+xuFnx0n58GwExR9VacDqTDkSO93zlu2zT7nhtNttVOrpblNAbpTQe87Rlu7HBpA==
+"@angular/fire@6.1.5":
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/@angular/fire/-/fire-6.1.5.tgz#099600ceb5285fcd8d6469f7671ad09609ba84e3"
+  integrity sha512-jrstSStogpfJvhlrX8ajtsnbVzIzcrh/InYUGbMVzXyQoT6wHA0LODjR6eIzGhb9/YQ+myMuVelJ39PfU3e8Sg==
   dependencies:
     tslib "^2.0.0"
 
