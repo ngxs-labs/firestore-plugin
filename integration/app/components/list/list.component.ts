@@ -26,7 +26,6 @@ export class ListComponent implements OnInit, OnDestroy {
   loading$ = this.store.select(actionsExecuting([RacesActions.GetAll, RacesActions.Get]));
   loaded$ = this.loading$.pipe(map((loading) => !loading));
   disconnecting$ = this.store.select(actionsExecuting([Disconnect]));
-  getPageExecuting$ = this.store.select(actionsExecuting([RacesActions.NextPage]));
   throwingError$ = this.store.select(actionsExecuting([RacesActions.Error]));
   gettingSubCollection$ = this.store.select(actionsExecuting([ClassificationsActions.GetAll]));
 
@@ -55,10 +54,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   getSubCollection() {
     this.store.dispatch(new ClassificationsActions.GetAll('0NN6x6GKDGumGU5dtnk4'));
-  }
-
-  getPage() {
-    this.store.dispatch(new RacesActions.NextPage());
   }
 
   get() {

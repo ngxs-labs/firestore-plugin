@@ -9,7 +9,6 @@ import {
   StreamConnected,
   StreamEmitted,
   StreamDisconnected,
-  Page,
   StreamErrored,
   Errored
 } from '@ngxs-labs/firestore-plugin';
@@ -51,11 +50,6 @@ export class RacesState implements NgxsOnInit {
       to: ({ payload }) => this.racesFS.doc$(payload)
     });
 
-    this.ngxsFirestoreConnect.connect(Page(RacesActions.NextPage), {
-      to: () => this.racesFS.page$((ref) => ref.limit(10).orderBy('order')),
-      trackBy: ({ payload }) => `Page ${payload}`
-    });
-
     this.ngxsFirestoreConnect.connect(RacesActions.Error, {
       to: () =>
         this.racesFS.collection$((ref) =>
@@ -69,39 +63,6 @@ export class RacesState implements NgxsOnInit {
 
   @Action(StreamErrored(RacesActions.Error))
   error(ctx: StateContext<RacesStateModel>, { error }: Errored<RacesActions.Error>) {}
-
-  @Action(RacesActions.NextPage)
-  getPage(ctx: StateContext<RacesStateModel>) {
-    const start = ctx.getState().races.length;
-    return ctx.dispatch(new (Page(RacesActions.NextPage))(`${start} - ${start + 10}`));
-  }
-
-  @Action(StreamEmitted(Page(RacesActions.NextPage)))
-  getPageEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
-    // upsert items
-    payload.forEach((race) => {
-      ctx.setState(
-        patch<RacesStateModel>({
-          races: iif(
-            (s) => !!s.find((c) => c.id === race.id),
-            updateItem((c) => c.id === race.id, patch({ ...race })),
-            insertItem({ ...race })
-          )
-        })
-      );
-    });
-    // sort
-    ctx.setState(
-      patch({
-        races: ctx
-          .getState()
-          .races.slice()
-          .sort((a, b) => {
-            return +a.order - +b.order;
-          })
-      })
-    );
-  }
 
   @Action(StreamConnected(RacesActions.Get))
   getConnected(ctx: StateContext<RacesStateModel>, { action }: Connected<RacesActions.Get>) {
