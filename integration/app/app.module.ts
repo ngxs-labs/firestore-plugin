@@ -25,11 +25,14 @@ import { ClassificationsState } from './states/classifications/classifications.s
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot([
-      { path: 'list', component: ListComponent },
-      { path: 'other', component: OtherComponent },
-      { path: '', redirectTo: '/list', pathMatch: 'full' }
-    ]),
+    RouterModule.forRoot(
+      [
+        { path: 'list', component: ListComponent },
+        { path: 'other', component: OtherComponent },
+        { path: '', redirectTo: '/list', pathMatch: 'full' }
+      ],
+      { relativeLinkResolution: 'legacy' }
+    ),
     AngularFireModule.initializeApp(environment.firebase),
     NgxsModule.forRoot([RacesState, ClassificationsState], {
       developmentMode: !environment.production
