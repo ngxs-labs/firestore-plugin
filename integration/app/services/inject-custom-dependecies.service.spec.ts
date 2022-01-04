@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { CustomDependency, InjectCustomDependenciesService } from './inject-custom-dependecies.service';

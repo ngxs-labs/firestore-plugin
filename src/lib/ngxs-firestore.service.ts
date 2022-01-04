@@ -1,10 +1,16 @@
-import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import {
+  QueryFn,
+  QueryDocumentSnapshot,
+  Action,
+  DocumentSnapshot,
+  DocumentChangeAction
+} from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { map, take, mapTo, timeoutWith } from 'rxjs/operators';
+import { map, mapTo, take, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 /**
  * Changes the behavior of a set() call to only replace the values specified
@@ -39,7 +45,7 @@ export abstract class NgxsFirestore<T> {
       .doc<T>(this.docRef(id))
       .snapshotChanges()
       .pipe(
-        map((docSnapshot) => {
+        map((docSnapshot: Action<DocumentSnapshot<T>>) => {
           if (docSnapshot.payload.exists) {
             return this.getDataWithId(docSnapshot.payload);
           } else {
@@ -60,7 +66,7 @@ export abstract class NgxsFirestore<T> {
       })
       .snapshotChanges()
       .pipe(
-        map((docSnapshots) =>
+        map((docSnapshots: DocumentChangeAction<T>[]) =>
           docSnapshots.map((docSnapshot) => {
             return this.getDataWithId(docSnapshot.payload.doc);
           })
