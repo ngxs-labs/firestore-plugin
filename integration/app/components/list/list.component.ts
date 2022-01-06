@@ -68,7 +68,8 @@ export class ListComponent implements OnInit, OnDestroy {
   create() {
     const chance = new Chance();
     const race: Partial<Race> = {};
-    race.id = chance.string({ length: 20 });
+    // race.id = chance.string({ length: 20 });
+    race.raceId = chance.string({ length: 20 });
     race.name = chance.word();
     race.title = chance.word();
     race.description = chance.sentence();
@@ -87,6 +88,18 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(
       new RacesActions.Update({
+        ...race,
+        name: chance.string(),
+        description: chance.word()
+      })
+    );
+  }
+
+  updateIfExists(race: Race) {
+    const chance = new Chance();
+
+    this.store.dispatch(
+      new RacesActions.UpdateIfExists({
         ...race,
         name: chance.string(),
         description: chance.word()

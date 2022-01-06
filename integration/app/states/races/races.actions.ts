@@ -38,6 +38,10 @@ export namespace RacesActions {
     public static readonly type = '[Races] Update';
     constructor(public payload: RacesActionsPayloads.Update) {}
   }
+  export class UpdateIfExists {
+    public static readonly type = '[Races] UpdateIfExists';
+    constructor(public payload: RacesActionsPayloads.Update) {}
+  }
   export class Delete {
     public static readonly type = '[Races] Delete';
     constructor(public payload: string) {}

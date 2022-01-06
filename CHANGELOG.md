@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.32](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.31...v0.1.32) (2022-01-04)
+
+### Features
+
+- deps ng 12 ([1b3f69a](https://github.com/ngxs-labs/firestore-plugin/commit/1b3f69ab19c9da6bc4f653b0907383baa9404433))
+- **deps:** angular/fire 6.1.0
+  ([6885163](https://github.com/ngxs-labs/firestore-plugin/commit/68851638b273ca149ec20283e92a510cfaec7b41))
+- **deps:** angular/fire@6.1.5
+  ([f4c3c08](https://github.com/ngxs-labs/firestore-plugin/commit/f4c3c085713308843a35d157668d3f07f17fffa1))
+- **deps:** ng 11
+  ([feb2d5d](https://github.com/ngxs-labs/firestore-plugin/commit/feb2d5dfe984b17e14608a955554ee10908f3e6f))
+
+### Bug Fixes
+
+- deps ([5a535ce](https://github.com/ngxs-labs/firestore-plugin/commit/5a535ce631333bf41d2e03af7e00b3130f58587c))
+- jest config and deps
+  ([2eeb3f7](https://github.com/ngxs-labs/firestore-plugin/commit/2eeb3f76b58754611a72ec8902c82a3ee26cb8eb))
+
 ### [0.1.31](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.30...v0.1.31) (2021-07-29)
 
 ### [0.1.30](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.29...v0.1.30) (2021-05-29)

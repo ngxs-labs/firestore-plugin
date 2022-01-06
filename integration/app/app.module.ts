@@ -27,12 +27,15 @@ import { AttendeesState } from './states/attendees/attendees.state';
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot([
-      { path: 'list', component: ListComponent },
-      { path: 'paged-list', component: PagedListComponent },
-      { path: 'other', component: OtherComponent },
-      { path: '', redirectTo: '/list', pathMatch: 'full' }
-    ]),
+    RouterModule.forRoot(
+      [
+        { path: 'list', component: ListComponent },
+        { path: 'paged-list', component: PagedListComponent },
+        { path: 'other', component: OtherComponent },
+        { path: '', redirectTo: '/list', pathMatch: 'full' }
+      ],
+      { relativeLinkResolution: 'legacy' }
+    ),
     AngularFireModule.initializeApp(environment.firebase),
     NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
       developmentMode: !environment.production
