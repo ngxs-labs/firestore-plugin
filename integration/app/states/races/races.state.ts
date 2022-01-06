@@ -75,8 +75,8 @@ export class RacesState implements NgxsOnInit {
       ctx.setState(
         patch<RacesStateModel>({
           races: iif(
-            (races) => !!races.find((race) => race.id === payload.id),
-            updateItem((race) => race.id === payload.id, patch(payload)),
+            (races) => !!races.find((race) => race.raceId === payload.raceId),
+            updateItem((race) => race.raceId === payload.raceId, patch(payload)),
             insertItem(payload)
           )
         })
@@ -108,7 +108,7 @@ export class RacesState implements NgxsOnInit {
     return this.racesFS.docOnce$(payload).pipe(
       tap((race) => {
         const races = [...getState().races];
-        const exists = races.findIndex((r) => r.id === payload);
+        const exists = races.findIndex((r) => r.raceId === payload);
         if (exists > -1) {
           races.splice(exists, 1, race);
           patchState({ races });
@@ -131,7 +131,12 @@ export class RacesState implements NgxsOnInit {
 
   @Action(RacesActions.Update)
   update({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
-    return this.racesFS.update$(payload.id, payload);
+    return this.racesFS.update$(payload.raceId, payload);
+  }
+
+  @Action(RacesActions.UpdateIfExists)
+  updateIfExists({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
+    return this.racesFS.updateIfExists(payload.raceId, payload);
   }
 
   @Action(RacesActions.Delete)

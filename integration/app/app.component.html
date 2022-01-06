@@ -16,7 +16,7 @@
 <div
   *ngIf="ngxsFirestoreState$ | async; let ngxsFirestoreState"
   class="fixed-bottom bg-info p-3"
-  style="max-height:400px;overflow-y:auto;"
+  style="max-height:200px;overflow-y:auto;"
 >
   <h2>NGXS Firestore:</h2>
   <pre>{{ ngxsFirestoreState | json }}</pre>

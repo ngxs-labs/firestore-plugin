@@ -18,7 +18,7 @@
     <h5>Total: {{ total$ | async }}</h5>
   </div>
 
-  <div class="mt-1">
+  <div class="mt-1" style="overflow-y: scroll;max-height: 350px;">
     <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
       <div class="card-body">
         <h5 class="card-title">{{ race.id }}</h5>
@@ -29,7 +29,8 @@
         <pre>{{ race | json }}</pre>
 
         <button (click)="update(race)" class="mr-1">Update</button>
-        <button (click)="delete(race.id)">Delete</button>
+        <button (click)="updateIfExists(race)" class="mr-1">Update If Exists</button>
+        <button (click)="delete(race.raceId)">Delete</button>
       </div>
     </div>
   </div>
