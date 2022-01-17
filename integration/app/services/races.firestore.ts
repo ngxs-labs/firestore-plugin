@@ -13,7 +13,6 @@ export class RacesFirestore extends NgxsFirestore<Race> {
 
   converter: firebase.firestore.FirestoreDataConverter<Race> = {
     toFirestore: (value) => {
-      debugger;
       const db = { ...value };
       delete db.testProp;
       return db;
@@ -26,7 +25,6 @@ export class RacesFirestore extends NgxsFirestore<Race> {
   };
 
   updateIfExists(id, data) {
-    debugger;
     return this.adapter.firestore
       .doc(this.adapter.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter))
       .update(data);

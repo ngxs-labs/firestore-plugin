@@ -19,7 +19,7 @@
   </div>
 
   <div class="mt-1" style="overflow-y: scroll;max-height: 350px;">
-    <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 12rem;">
+    <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 21rem;">
       <div class="card-body">
         <h5 class="card-title">{{ race.id }}</h5>
         <p class="card-text">{{ race.order }}</p>
@@ -39,7 +39,7 @@
     <div
       *ngFor="let classification of classifications$ | async"
       class="card mr-1 mb-1 d-inline-flex"
-      style="width: 12rem;"
+      style="width: 21rem;"
     >
       <div class="card-body">
         <h5 class="card-title">{{ classification.id }}</h5>

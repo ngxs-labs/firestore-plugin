@@ -13,3 +13,9 @@ export interface Errored<T> {
   action: T;
   error: any;
 }
+
+export interface Page<T> {
+  results: T[];
+  pageId: string;
+  pageSize: number;
+}

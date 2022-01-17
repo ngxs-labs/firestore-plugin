@@ -47,7 +47,7 @@ export class RacesState implements NgxsOnInit {
   constructor(
     private racesFS: RacesFirestore,
     private ngxsFirestoreConnect: NgxsFirestoreConnect,
-    private nxgsFirestorePage: NgxsFirestorePageService
+    private ngxsFirestorePage: NgxsFirestorePageService
   ) {}
 
   ngxsOnInit(ctx: StateContext<RacesStateModel>) {
@@ -62,14 +62,9 @@ export class RacesState implements NgxsOnInit {
 
     this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
       to: () => {
-        const obs$ = this.nxgsFirestorePage.create(
-          (pageFn) =>
-            this.racesFS.collection$((ref) => {
-              return pageFn(ref);
-            }),
-          5,
-          [{ fieldPath: 'title' }]
-        );
+        const obs$ = this.ngxsFirestorePage.create((pageFn) => this.racesFS.collection$((ref) => pageFn(ref)), 5, [
+          { fieldPath: 'title' }
+        ]);
 
         return obs$;
       }

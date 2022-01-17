@@ -11,3 +11,8 @@ export class GetNextPage {
   static readonly type = 'GetNextPage';
   constructor(public payload: string) {}
 }
+
+export class GetLastPage {
+  static readonly type = 'GetLastPage';
+  constructor(public payload: string) {}
+}

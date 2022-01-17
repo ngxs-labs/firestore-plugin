@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
-import { GetNextPage } from '@ngxs-labs/firestore-plugin';
+import { GetLastPage, GetNextPage } from '@ngxs-labs/firestore-plugin';
 import { Store } from '@ngxs/store';
 import { AttendeesActions } from 'integration/app/states/attendees/attendees.actions';
 import { AttendeesState } from 'integration/app/states/attendees/attendees.state';
@@ -16,6 +16,7 @@ export class PagedListComponent implements OnInit {
   races$ = this.store.select(RacesState.races);
   attendees$ = this.store.select(AttendeesState.attendees);
   nextPageExecuting$ = this.store.select(actionsExecuting([GetNextPage]));
+  lastPageExecuting$ = this.store.select(actionsExecuting([GetLastPage]));
 
   constructor(private store: Store) {}
 
@@ -29,8 +30,18 @@ export class PagedListComponent implements OnInit {
     this.store.dispatch(new GetNextPage(pageId));
   }
 
+  lastPage() {
+    const pageId = this.store.selectSnapshot(RacesState.pageId);
+    this.store.dispatch(new GetLastPage(pageId));
+  }
+
   nextPageAttendees() {
     const pageId = this.store.selectSnapshot(AttendeesState.pageId);
     this.store.dispatch(new GetNextPage(pageId));
+  }
+
+  lastPageAttendees() {
+    const pageId = this.store.selectSnapshot(AttendeesState.pageId);
+    this.store.dispatch(new GetLastPage(pageId));
   }
 }
