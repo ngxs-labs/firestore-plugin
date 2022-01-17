@@ -3,7 +3,7 @@ import { NgxsModule, Store } from '@ngxs/store';
 import { RacesState } from './races.state';
 import { RacesActions } from './races.actions';
 import { RacesFirestore } from 'integration/app/services/races.firestore';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreModule, NgxsFirestorePageIdService } from '@ngxs-labs/firestore-plugin';
 import { BehaviorSubject } from 'rxjs';
 import { Race } from 'integration/app/models/race';
 
@@ -21,14 +21,17 @@ describe('Races State', () => {
 
     TestBed.configureTestingModule({
       imports: [NgxsModule.forRoot([RacesState]), NgxsFirestoreModule.forRoot()],
-      providers: [{ provide: RacesFirestore, useValue: mockRacesFS() }]
+      providers: [
+        { provide: RacesFirestore, useValue: mockRacesFS() },
+        { provide: NgxsFirestorePageIdService, useValue: { createId: jest.fn() } }
+      ]
     }).compileComponents();
     store = TestBed.get(Store);
   }));
 
   it('should getall races', () => {
-    mockCollection$.mockReturnValue(new BehaviorSubject([{ id: 'a' }]));
+    mockCollection$.mockReturnValue(new BehaviorSubject([{ raceId: 'a' }]));
     store.dispatch(new RacesActions.GetAll());
-    expect(store.selectSnapshot(RacesState.races)).toEqual([{ id: 'a' } as Race]);
+    expect(store.selectSnapshot(RacesState.races)).toEqual([{ raceId: 'a' } as Race]);
   });
 });

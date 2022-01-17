@@ -4,11 +4,23 @@ import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
 import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/firestore';
 import { GetNextPage, GetLastPage } from './actions';
-import { FirestorePage } from './ngxs-firestore-page.state';
+export interface FirestorePage {
+  limit: number;
+  id: string;
+}
+
+@Injectable()
+export class NgxsFirestorePageIdService {
+  constructor(private firestore: AngularFirestore) {}
+
+  createId() {
+    return this.firestore.createId();
+  }
+}
 
 @Injectable({ providedIn: 'root' })
-export abstract class NgxsFirestorePageService {
-  constructor(private actions$: Actions, private firestore: AngularFirestore) {}
+export class NgxsFirestorePageService {
+  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
 
   create<T>(
     queryFn: (pageFn: QueryFn) => Observable<T>,
@@ -23,7 +35,7 @@ export abstract class NgxsFirestorePageService {
         startWith('INIT'),
         map((action) => {
           const actionType = <'GetNextPage' | 'GetLastPage'>getActionTypeFromInstance(action);
-          const payload = action === 'INIT' ? this.firestore.createId() : action.payload;
+          const payload = action === 'INIT' ? this.pageId.createId() : action.payload;
           return { payload, actionType: actionType || 'GetNextPage' };
         }),
         filter(({ payload, actionType }) => {

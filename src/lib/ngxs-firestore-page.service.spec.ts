@@ -24,6 +24,10 @@ describe('NgxsFirestorePage', () => {
     static type = 'TEST ACTION GET PAGES';
   }
 
+  class AnotherTestActionGetPages {
+    static type = 'ANOTHER TEST ACTION GET PAGES';
+  }
+
   @State({
     name: 'test'
   })
@@ -61,13 +65,50 @@ describe('NgxsFirestorePage', () => {
     }
   }
 
+  @State({
+    name: 'another_test'
+  })
+  @Injectable()
+  class AnotherTestState implements NgxsOnInit {
+    @Selector() static pageId(state) {
+      return state.pageId;
+    }
+
+    @Selector() static pageSize(state) {
+      return state.pageSize;
+    }
+
+    @Selector() static results(state) {
+      return state.results;
+    }
+
+    constructor(
+      private ngxsFirestoreConnect: NgxsFirestoreConnect,
+      private ngxsFirestorePage: NgxsFirestorePageService
+    ) {}
+
+    ngxsOnInit() {
+      this.ngxsFirestoreConnect.connect(AnotherTestActionGetPages, {
+        to: () =>
+          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref) => pageFn(ref)), 5, [
+            { fieldPath: 'title' }
+          ])
+      });
+    }
+
+    @Action(StreamEmitted(AnotherTestActionGetPages))
+    getPageEmitted(ctx: StateContext<any>, { action, payload }: Emitted<TestActionGetPages, Page<any>>) {
+      ctx.setState(patch({ results: payload.results || [], pageId: payload.pageId, pageSize: payload.pageSize }));
+    }
+  }
+
   const page1 = ['1', '2', '3'];
   // const page2 = ['1', '2', '3', '4', '5', '6'];
   // const page3 = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NgxsModule.forRoot([TestState]), NgxsFirestoreModule.forRoot()],
+      imports: [NgxsModule.forRoot([TestState, AnotherTestState]), NgxsFirestoreModule.forRoot()],
       providers: [
         {
           provide: AngularFirestore,
@@ -141,5 +182,36 @@ describe('NgxsFirestorePage', () => {
     expect(mockFirestoreStream).toHaveBeenCalledTimes(3);
     expect(store.selectSnapshot(TestState.pageId)).toEqual('pageId');
     expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
+  }));
+
+  test('should support multiple page connections', fakeAsync(() => {
+    mockCreateId.mockReturnValueOnce('firstId').mockReturnValueOnce('secondId');
+
+    const stream = new BehaviorSubject(page1);
+    mockFirestoreStream.mockReturnValue(stream.asObservable());
+
+    store.dispatch(new TestActionGetPages()).subscribe((_) => {});
+    tick(1);
+    expect(store.selectSnapshot(TestState.pageId)).toEqual('firstId');
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
+    expect(store.selectSnapshot(AnotherTestState.pageId)).toEqual(undefined);
+    expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(undefined);
+
+    store.dispatch(new AnotherTestActionGetPages()).subscribe((_) => {});
+    tick(1);
+    expect(store.selectSnapshot(TestState.pageId)).toEqual('firstId');
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
+    expect(store.selectSnapshot(AnotherTestState.pageId)).toEqual('secondId');
+    expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(5);
+
+    store.dispatch(new GetNextPage('firstId')).subscribe((_) => {});
+    tick(1);
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(10);
+    expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(5);
+
+    store.dispatch(new GetNextPage('secondId')).subscribe((_) => {});
+    tick(1);
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(10);
+    expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(10);
   }));
 });

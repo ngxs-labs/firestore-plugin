@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { NgxsModule } from '@ngxs/store';
 
 import { PagedListComponent } from './paged-list.component';
 
@@ -8,6 +10,7 @@ describe('PagedListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [NgxsModule.forRoot(), NgxsFirestoreModule.forRoot()],
       declarations: [PagedListComponent]
     }).compileComponents();
   });
