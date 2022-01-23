@@ -1,10 +1,10 @@
-import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, take, mapTo, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 
 /**
  * Changes the behavior of a set() call to only replace the values specified

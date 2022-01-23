@@ -29,6 +29,6 @@ describe('Races State', () => {
   it('should getall races', () => {
     mockCollection$.mockReturnValue(new BehaviorSubject([{ id: 'a' }]));
     store.dispatch(new RacesActions.GetAll());
-    expect(store.selectSnapshot(RacesState.races)).toEqual([{ id: 'a' } as Race]);
+    expect(store.selectSnapshot(RacesState.races)).toEqual([({ id: 'a' } as unknown) as Race]);
   });
 });
