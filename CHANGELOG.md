@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.33](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.32...v0.1.33) (2022-02-01)
+
+### Features
+
+- next page and last page
+  ([8ba1e61](https://github.com/ngxs-labs/firestore-plugin/commit/8ba1e612952053067ba6dafa48aa02b03b3d8f2a))
+- paging ([705bd6b](https://github.com/ngxs-labs/firestore-plugin/commit/705bd6b19c8f09cecf34890b25e3f7023bc64f8a))
+- support multiple paged queries
+  ([864b503](https://github.com/ngxs-labs/firestore-plugin/commit/864b503d3cf50217997bded572131842ce30f7ea))
+- update if exists
+  ([f2b2723](https://github.com/ngxs-labs/firestore-plugin/commit/f2b27236d53e3eef35926d2d2ca9dcb1da4c7bc1))
+
 ### [0.1.32](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.31...v0.1.32) (2022-01-04)
 
 ### Features
