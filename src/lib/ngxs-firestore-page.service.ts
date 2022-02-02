@@ -28,7 +28,7 @@ export class NgxsFirestorePageService {
     orderBy: { fieldPath: string | FieldPath; directionStr?: 'desc' | 'asc' }[]
   ): Observable<{ results: T; pageId: string }> {
     return defer(() => {
-      let pages: FirestorePage[] = [];
+      const pages: FirestorePage[] = [];
 
       return this.actions$.pipe(
         ofActionDispatched(GetNextPage, GetLastPage),
