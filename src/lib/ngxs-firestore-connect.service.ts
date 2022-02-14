@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
-import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, switchMap, share } from 'rxjs/operators';
-import { Observable, race, Subscription, Subject, defer, iif, of } from 'rxjs';
+import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, share } from 'rxjs/operators';
+import { Observable, race, Subscription, Subject, defer, of } from 'rxjs';
 import { StreamConnected, StreamEmitted, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectAll, Disconnect } from './actions';
@@ -55,7 +55,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
    * @param opts.to Firestore Query to connect with
    * @param opts.trackBy used to allow multiple connections for a same action, and Disconnect them individually
    * @param opts.connectedActionFinishesOn complete connected action on first emit or stream completed
-   * @param opts.cancelPrevious cancel previous connected action
+   * @param opts.cancelPrevious cancel previous connected action, (when used combined with trackBy, will cancel stream with same id)
    */
   connect<T>(
     actionType: ActionTypeDef<T>,
@@ -108,7 +108,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
     const actionDispatched$ = this.actions.pipe(
       ofActionDispatched(actionType),
-      // skip actions already connected or cancelPrevious
+      // filter actions not connected already
+      // or cancelPrevious
       filter((action) => {
         return cancelPrevious || !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
       }),
@@ -154,6 +155,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
             actionCompletedHandlerSubject.next(action);
           }
         }),
+        // disconnect on Disconnect
         takeUntil(
           race(
             this.actions.pipe(ofActionDispatched(DisconnectAll)),
@@ -175,6 +177,27 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 return false;
               })
             )
+          )
+        ),
+        // disconnect on action re-dispatched
+        takeUntil(
+          this.actions.pipe(
+            ofActionDispatched(actionType),
+            filter((dispatchedAction) => {
+              if (!cancelPrevious) {
+                return false;
+              }
+              //SELF
+              if (dispatchedAction === action) {
+                return false;
+              }
+              const dispatchedActionStreamId = streamId({
+                actionType,
+                action: dispatchedAction,
+                trackBy
+              });
+              return dispatchedActionStreamId === streamId({ actionType, action, trackBy });
+            })
           )
         ),
         finalize(() => {
@@ -206,15 +229,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
       );
     };
 
-    this.firestoreConnectionsSub.push(
-      iif(
-        () => cancelPrevious,
-        // we use switchMap to cancel when action is called more than once
-        actionDispatched$.pipe(switchMap(firestoreStreamHandler$)),
-        // we use mergeMap to support a same action being called with different payloads.
-        actionDispatched$.pipe(mergeMap(firestoreStreamHandler$))
-      ).subscribe()
-    );
+    this.firestoreConnectionsSub.push(actionDispatched$.pipe(mergeMap(firestoreStreamHandler$)).subscribe());
   }
 
   ngOnDestroy() {

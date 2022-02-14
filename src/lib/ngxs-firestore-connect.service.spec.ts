@@ -29,16 +29,18 @@ type EventType =
   | 'action-errored'
   | 'errored';
 
+type ActionEvent = {
+  actionType: string;
+  eventType: EventType;
+  actionPayload?: any;
+  actionError?: any;
+};
+
 describe('NgxsFirestoreConnect', () => {
   let store: Store;
   let actions: Actions;
   let events: EventType[];
-  let actionEvents: {
-    actionType: string;
-    eventType: EventType;
-    actionPayload?: any;
-    actionError?: any;
-  }[];
+  let actionEvents: ActionEvent[];
 
   const mockFirestoreStream = jest.fn();
   const emittedFn = jest.fn();
@@ -54,20 +56,20 @@ describe('NgxsFirestoreConnect', () => {
     constructor(public payload: string) {}
   }
 
-  class TestActionThatFinishesOnObservableComplete {
-    static type = 'TEST ACTION THAT FINISHES ON OBS COMPLETE';
+  class TestActionFinishesOnStreamCompleted {
+    static type = 'TEST ACTION THAT FINISHES ON STREAM COMPLETED';
   }
 
-  class TestActionThatFinishesOnFirstEmit {
+  class TestActionFinishesOnFirstEmit {
     static type = 'TEST ACTION THAT FINISHES ON FIRST EMIT';
   }
 
-  class TestActionThatKeepsLast {
+  class TestActionTrackByIdCancelPrevious {
     static type = 'TEST ACTION THAT KEEPS LAST';
     constructor(public payload: string) {}
   }
 
-  class TestActionThatKeepsLastWithoutPayload {
+  class TestActionCancelPrevious {
     static type = 'TEST ACTION THAT KEEPS LAST WITHOUT PAYLOAD';
   }
 
@@ -92,23 +94,23 @@ describe('NgxsFirestoreConnect', () => {
         trackBy: (action) => action.payload
       });
 
-      this.ngxsFirestoreConnect.connect(TestActionThatFinishesOnObservableComplete, {
+      this.ngxsFirestoreConnect.connect(TestActionFinishesOnStreamCompleted, {
         to: mockFirestoreStream,
         connectedActionFinishesOn: 'StreamCompleted'
       });
 
-      this.ngxsFirestoreConnect.connect(TestActionThatFinishesOnFirstEmit, {
+      this.ngxsFirestoreConnect.connect(TestActionFinishesOnFirstEmit, {
         to: mockFirestoreStream,
         connectedActionFinishesOn: 'FirstEmit'
       });
 
-      this.ngxsFirestoreConnect.connect(TestActionThatKeepsLast, {
+      this.ngxsFirestoreConnect.connect(TestActionTrackByIdCancelPrevious, {
         to: mockFirestoreStream,
         trackBy: (action) => action.payload,
         cancelPrevious: true
       });
 
-      this.ngxsFirestoreConnect.connect(TestActionThatKeepsLastWithoutPayload, {
+      this.ngxsFirestoreConnect.connect(TestActionCancelPrevious, {
         to: mockFirestoreStream,
         cancelPrevious: true
       });
@@ -121,10 +123,10 @@ describe('NgxsFirestoreConnect', () => {
     @Action([
       StreamEmitted(TestAction),
       StreamEmitted(TestActionWithPayload),
-      StreamEmitted(TestActionThatFinishesOnObservableComplete),
-      StreamEmitted(TestActionThatFinishesOnFirstEmit),
-      StreamEmitted(TestActionThatKeepsLast),
-      StreamEmitted(TestActionThatKeepsLastWithoutPayload),
+      StreamEmitted(TestActionFinishesOnStreamCompleted),
+      StreamEmitted(TestActionFinishesOnFirstEmit),
+      StreamEmitted(TestActionTrackByIdCancelPrevious),
+      StreamEmitted(TestActionCancelPrevious),
       StreamEmitted(TestActionError)
     ])
     testActionEmitted(ctx: StateContext<any>, { action, payload }: Emitted<any, number>) {
@@ -140,10 +142,10 @@ describe('NgxsFirestoreConnect', () => {
     @Action([
       StreamConnected(TestAction),
       StreamConnected(TestActionWithPayload),
-      StreamConnected(TestActionThatFinishesOnObservableComplete),
-      StreamConnected(TestActionThatFinishesOnFirstEmit),
-      StreamConnected(TestActionThatKeepsLast),
-      StreamConnected(TestActionThatKeepsLastWithoutPayload),
+      StreamConnected(TestActionFinishesOnStreamCompleted),
+      StreamConnected(TestActionFinishesOnFirstEmit),
+      StreamConnected(TestActionTrackByIdCancelPrevious),
+      StreamConnected(TestActionCancelPrevious),
       StreamConnected(TestActionError)
     ])
     testActionConnected(ctx: StateContext<any>, { action }: Connected<any>) {
@@ -159,10 +161,10 @@ describe('NgxsFirestoreConnect', () => {
     @Action([
       StreamDisconnected(TestAction),
       StreamDisconnected(TestActionWithPayload),
-      StreamDisconnected(TestActionThatFinishesOnObservableComplete),
-      StreamDisconnected(TestActionThatFinishesOnFirstEmit),
-      StreamDisconnected(TestActionThatKeepsLast),
-      StreamDisconnected(TestActionThatKeepsLastWithoutPayload),
+      StreamDisconnected(TestActionFinishesOnStreamCompleted),
+      StreamDisconnected(TestActionFinishesOnFirstEmit),
+      StreamDisconnected(TestActionTrackByIdCancelPrevious),
+      StreamDisconnected(TestActionCancelPrevious),
       StreamDisconnected(TestActionError)
     ])
     testActionDisconnected(ctx: StateContext<any>, { action }: Disconnected<any>) {
@@ -178,10 +180,10 @@ describe('NgxsFirestoreConnect', () => {
     @Action([
       StreamErrored(TestAction),
       StreamErrored(TestActionWithPayload),
-      StreamErrored(TestActionThatFinishesOnObservableComplete),
-      StreamErrored(TestActionThatFinishesOnFirstEmit),
-      StreamErrored(TestActionThatKeepsLast),
-      StreamErrored(TestActionThatKeepsLastWithoutPayload),
+      StreamErrored(TestActionFinishesOnStreamCompleted),
+      StreamErrored(TestActionFinishesOnFirstEmit),
+      StreamErrored(TestActionTrackByIdCancelPrevious),
+      StreamErrored(TestActionCancelPrevious),
       StreamErrored(TestActionError)
     ])
     testActionErrored(ctx: StateContext<any>, { action, error }: Errored<any>) {
@@ -218,7 +220,7 @@ describe('NgxsFirestoreConnect', () => {
     expect(TestBed.get(NgxsFirestoreConnect)).toBeTruthy();
   });
 
-  describe('Action', () => {
+  describe('NgxsFirestoreConnect', () => {
     let actionReceived;
 
     beforeEach(() => {
@@ -348,14 +350,14 @@ describe('NgxsFirestoreConnect', () => {
       });
 
       test('should complete on FirstEmit', () => {
-        store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
+        store.dispatch(TestActionFinishesOnFirstEmit).subscribe((_) => {
           events.push('action-completed');
         });
         expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted', 'disconnected', 'action-completed']);
       });
 
-      test('should complete on ObservableComplete', () => {
-        store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
+      test('should complete on StreamCompleted', () => {
+        store.dispatch(TestActionFinishesOnStreamCompleted).subscribe((_) => {
           events.push('action-completed');
         });
         expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted', 'disconnected', 'action-completed']);
@@ -371,7 +373,7 @@ describe('NgxsFirestoreConnect', () => {
       });
 
       test('should complete on FirstEmit', fakeAsync(() => {
-        store.dispatch(TestActionThatFinishesOnFirstEmit).subscribe((_) => {
+        store.dispatch(TestActionFinishesOnFirstEmit).subscribe((_) => {
           events.push('action-completed');
         });
         tick(1);
@@ -390,8 +392,8 @@ describe('NgxsFirestoreConnect', () => {
         expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted', 'emitted', 'disconnected']);
       }));
 
-      test('should complete on ObservableComplete', fakeAsync(() => {
-        store.dispatch(TestActionThatFinishesOnObservableComplete).subscribe((_) => {
+      test('should complete on StreamCompleted', fakeAsync(() => {
+        store.dispatch(TestActionFinishesOnStreamCompleted).subscribe((_) => {
           events.push('action-completed');
         });
         tick(1);
@@ -412,7 +414,7 @@ describe('NgxsFirestoreConnect', () => {
     });
   });
 
-  describe('Dispatching Action Multiple Times', () => {
+  describe('Multiple Action Dispatch Handling', () => {
     let subject;
 
     beforeEach(() => {
@@ -420,8 +422,8 @@ describe('NgxsFirestoreConnect', () => {
       mockFirestoreStream.mockImplementation(() => subject.asObservable());
     });
 
-    describe('With Keep All strategy', () => {
-      test('should keep both connections active', fakeAsync(() => {
+    describe('cancelPrevious: false', () => {
+      test('different trackBy id should keep both connections active', fakeAsync(() => {
         store.dispatch(new TestActionWithPayload('first')).subscribe((_) => {
           actionEvents.push({
             actionType: TestActionWithPayload.type,
@@ -451,99 +453,107 @@ describe('NgxsFirestoreConnect', () => {
       }));
     });
 
-    describe('With Keep Latest strategy', () => {
-      test('should keep second connection active (with payload)', fakeAsync(() => {
-        store.dispatch(new TestActionThatKeepsLast('first')).subscribe((_) => {
+    describe('cancelPrevious: true', () => {
+      test('different trackBy id should disconnect prior connection of same id', fakeAsync(() => {
+        store.dispatch(new TestActionTrackByIdCancelPrevious('first')).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatKeepsLast.type,
+            actionType: TestActionTrackByIdCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'first'
           });
         });
-        store.dispatch(new TestActionThatKeepsLast('second')).subscribe((_) => {
+        store.dispatch(new TestActionTrackByIdCancelPrevious('second')).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatKeepsLast.type,
+            actionType: TestActionTrackByIdCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'second'
           });
         });
         tick(1);
-        expect(actionEvents).toEqual([
-          { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' }
-        ]);
+        expect(actionEvents).toEqual([]);
         subject.next(1);
         tick(1);
-        expect(actionEvents).toEqual([
-          { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
-          { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
-          { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
+        const firstExpect: ActionEvent[] = [
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'connected', actionPayload: 'first' },
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'emitted', actionPayload: 'first' },
           {
-            actionType: TestActionThatKeepsLast.type,
+            actionType: TestActionTrackByIdCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          },
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'connected', actionPayload: 'second' },
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'emitted', actionPayload: 'second' },
+          {
+            actionType: TestActionTrackByIdCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'second'
           }
-        ]);
+        ];
+        expect(actionEvents).toEqual(firstExpect);
         subject.next(2);
         tick(1);
-        expect(actionEvents).toEqual([
-          { actionType: TestActionThatKeepsLast.type, eventType: 'disconnected', actionPayload: 'first' },
-          { actionType: TestActionThatKeepsLast.type, eventType: 'connected', actionPayload: 'second' },
-          { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' },
-          {
-            actionType: TestActionThatKeepsLast.type,
+        const secondExpect: ActionEvent[] = [
+          ...firstExpect,
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'emitted', actionPayload: 'first' },
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'emitted', actionPayload: 'second' }
+        ];
+        expect(actionEvents).toEqual(secondExpect);
+        store.dispatch(new TestActionTrackByIdCancelPrevious('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionTrackByIdCancelPrevious.type,
             eventType: 'action-completed',
-            actionPayload: 'second'
-          },
-          { actionType: TestActionThatKeepsLast.type, eventType: 'emitted', actionPayload: 'second' }
+            actionPayload: 'first'
+          });
+        });
+        tick(1);
+        expect(actionEvents).toEqual([
+          ...secondExpect,
+          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'disconnected', actionPayload: 'first' }
         ]);
       }));
 
-      test('should keep second connection active (WITHOUT payload)', fakeAsync(() => {
-        store.dispatch(new TestActionThatKeepsLastWithoutPayload()).subscribe((_) => {
+      test('should disconnect prior connection (trackBy undefined)', fakeAsync(() => {
+        store.dispatch(new TestActionCancelPrevious()).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
+            actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'firstDispatch'
           });
         });
         subject.next(1);
         tick(1);
-        expect(actionEvents).toEqual([
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'connected', actionPayload: undefined },
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'emitted', actionPayload: undefined },
+        const firstExpect: ActionEvent[] = [
+          { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
           {
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
+            actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'firstDispatch'
           }
-        ]);
+        ];
+        expect(actionEvents).toEqual(firstExpect);
 
-        store.dispatch(new TestActionThatKeepsLastWithoutPayload()).subscribe((_) => {
+        store.dispatch(new TestActionCancelPrevious()).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
+            actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
           });
         });
         subject.next(1);
         tick(1);
+
         expect(actionEvents).toEqual([
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'connected', actionPayload: undefined },
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'emitted', actionPayload: undefined },
+          ...firstExpect,
           {
-            actionPayload: 'firstDispatch',
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
-            eventType: 'action-completed'
-          },
-          {
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
+            actionType: TestActionCancelPrevious.type,
             eventType: 'disconnected',
             actionPayload: undefined
           },
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'connected', actionPayload: undefined },
-          { actionType: TestActionThatKeepsLastWithoutPayload.type, eventType: 'emitted', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
           {
-            actionType: TestActionThatKeepsLastWithoutPayload.type,
+            actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
           }
@@ -597,47 +607,47 @@ describe('NgxsFirestoreConnect', () => {
 
     describe('Dispatch after action is connected', () => {
       test('should complete immediately', fakeAsync(() => {
-        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+        store.dispatch(new TestActionFinishesOnFirstEmit()).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatFinishesOnFirstEmit.type,
+            actionType: TestActionFinishesOnFirstEmit.type,
             eventType: 'action-completed'
           });
         });
         tick(1);
         subject.next(1);
         expect(actionEvents).toEqual([
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'connected' },
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'emitted' },
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'action-completed' }
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'connected' },
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'emitted' },
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'action-completed' }
         ]);
 
-        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+        store.dispatch(new TestActionFinishesOnFirstEmit()).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatFinishesOnFirstEmit.type,
+            actionType: TestActionFinishesOnFirstEmit.type,
             eventType: 'action-completed',
             actionPayload: '2nd dispatch'
           });
         });
 
-        store.dispatch(new TestActionThatFinishesOnFirstEmit()).subscribe((_) => {
+        store.dispatch(new TestActionFinishesOnFirstEmit()).subscribe((_) => {
           actionEvents.push({
-            actionType: TestActionThatFinishesOnFirstEmit.type,
+            actionType: TestActionFinishesOnFirstEmit.type,
             eventType: 'action-completed',
             actionPayload: '3rd dispatch'
           });
         });
 
         expect(actionEvents).toEqual([
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'connected' },
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'emitted' },
-          { actionType: TestActionThatFinishesOnFirstEmit.type, eventType: 'action-completed' },
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'connected' },
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'emitted' },
+          { actionType: TestActionFinishesOnFirstEmit.type, eventType: 'action-completed' },
           {
-            actionType: TestActionThatFinishesOnFirstEmit.type,
+            actionType: TestActionFinishesOnFirstEmit.type,
             eventType: 'action-completed',
             actionPayload: '2nd dispatch'
           },
           {
-            actionType: TestActionThatFinishesOnFirstEmit.type,
+            actionType: TestActionFinishesOnFirstEmit.type,
             eventType: 'action-completed',
             actionPayload: '3rd dispatch'
           }
