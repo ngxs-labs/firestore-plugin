@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.34](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.33...v0.1.34) (2022-02-14)
+
+### Bug Fixes
+
+- handle trackBy and cancelPrevious scenario
+  ([2329a6b](https://github.com/ngxs-labs/firestore-plugin/commit/2329a6bf7cb7fab8addb06448dc2394a57c80c34))
+
 ### [0.1.33](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.32...v0.1.33) (2022-02-01)
 
 ### Features
