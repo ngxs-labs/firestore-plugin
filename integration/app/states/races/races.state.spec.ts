@@ -26,7 +26,7 @@ describe('Races State', () => {
         { provide: NgxsFirestorePageIdService, useValue: { createId: jest.fn() } }
       ]
     }).compileComponents();
-    store = TestBed.get(Store);
+    store = TestBed.inject(Store);
   }));
 
   it('should getall races', () => {
