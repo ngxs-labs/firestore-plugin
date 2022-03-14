@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NgxsFirestore } from './ngxs-firestore.service';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';

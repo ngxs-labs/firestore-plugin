@@ -2,7 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { RacesFirestore } from './races.firestore';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 describe('RacesFirestore', () => {
   beforeEach(async(() =>
