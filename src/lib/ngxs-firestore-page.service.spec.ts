@@ -28,6 +28,10 @@ describe('NgxsFirestorePage', () => {
     static type = 'ANOTHER TEST ACTION GET PAGES';
   }
 
+  class MaxPageSizeTestActionGetPages {
+    static type = 'MAX PAGE SIZE TEST ACTION GET PAGES';
+  }
+
   @State({
     name: 'test'
   })
@@ -102,13 +106,50 @@ describe('NgxsFirestorePage', () => {
     }
   }
 
+  @State({
+    name: 'max_page_size_test'
+  })
+  @Injectable()
+  class MaxPageSizeTestState implements NgxsOnInit {
+    @Selector() static pageId(state) {
+      return state.pageId;
+    }
+
+    @Selector() static pageSize(state) {
+      return state.pageSize;
+    }
+
+    @Selector() static results(state) {
+      return state.results;
+    }
+
+    constructor(
+      private ngxsFirestoreConnect: NgxsFirestoreConnect,
+      private ngxsFirestorePage: NgxsFirestorePageService
+    ) {}
+
+    ngxsOnInit() {
+      this.ngxsFirestoreConnect.connect(MaxPageSizeTestActionGetPages, {
+        to: () =>
+          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref) => pageFn(ref)), 5000, [
+            { fieldPath: 'title' }
+          ])
+      });
+    }
+
+    @Action(StreamEmitted(MaxPageSizeTestActionGetPages))
+    getPageEmitted(ctx: StateContext<any>, { action, payload }: Emitted<MaxPageSizeTestActionGetPages, Page<any>>) {
+      ctx.setState(patch({ results: payload.results || [], pageId: payload.pageId, pageSize: payload.pageSize }));
+    }
+  }
+
   const page1 = ['1', '2', '3'];
   // const page2 = ['1', '2', '3', '4', '5', '6'];
   // const page3 = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NgxsModule.forRoot([TestState, AnotherTestState]), NgxsFirestoreModule.forRoot()],
+      imports: [NgxsModule.forRoot([TestState, AnotherTestState, MaxPageSizeTestState]), NgxsFirestoreModule.forRoot()],
       providers: [
         {
           provide: AngularFirestore,
@@ -182,6 +223,34 @@ describe('NgxsFirestorePage', () => {
     expect(mockFirestoreStream).toHaveBeenCalledTimes(3);
     expect(store.selectSnapshot(TestState.pageId)).toEqual('pageId');
     expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
+  }));
+
+  test('should skip if page > 10000', fakeAsync(() => {
+    mockCreateId.mockReturnValue('pageId');
+
+    const stream = new BehaviorSubject(page1);
+    mockFirestoreStream.mockReturnValue(stream.asObservable());
+
+    store.dispatch(new MaxPageSizeTestActionGetPages()).subscribe((_) => {});
+    tick(1);
+
+    expect(mockFirestoreStream).toHaveBeenCalledTimes(1);
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageId)).toEqual('pageId');
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageSize)).toEqual(5000);
+
+    store.dispatch(new GetNextPage('pageId')).subscribe((_) => {});
+    tick(1);
+
+    expect(mockFirestoreStream).toHaveBeenCalledTimes(2);
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageId)).toEqual('pageId');
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageSize)).toEqual(10000);
+
+    store.dispatch(new GetNextPage('pageId')).subscribe((_) => {});
+    tick(1);
+
+    expect(mockFirestoreStream).toHaveBeenCalledTimes(2);
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageId)).toEqual('pageId');
+    expect(store.selectSnapshot(MaxPageSizeTestState.pageSize)).toEqual(10000);
   }));
 
   test('should support multiple page connections', fakeAsync(() => {

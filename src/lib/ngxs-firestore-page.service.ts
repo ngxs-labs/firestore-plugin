@@ -51,7 +51,8 @@ export class NgxsFirestorePageService {
             limit -= size;
           }
 
-          const skip = thePage?.limit === limit;
+          // firestore max linit is 10000
+          const skip = thePage?.limit === limit || limit > 10000;
 
           if (thePage) {
             thePage.limit = limit;
