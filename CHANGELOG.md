@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.35](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.34...v0.1.35) (2022-03-15)
+
+### Bug Fixes
+
+- limit page size at 10000
+  ([e6b6988](https://github.com/ngxs-labs/firestore-plugin/commit/e6b6988820baa1af3072d348a486eb814f6f8288))
+
 ### [0.1.34](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.33...v0.1.34) (2022-02-14)
 
 ### Bug Fixes
