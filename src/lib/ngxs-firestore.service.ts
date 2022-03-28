@@ -1,7 +1,7 @@
 import { QueryFn, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { map, take, mapTo, timeoutWith } from 'rxjs/operators';
+import { map, mapTo, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreAdapter } from './ngxs-firestore.adapter';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -11,9 +11,6 @@ import 'firebase/firestore';
  * in its data argument. Fields omitted from the set() call remain
  * untouched.
  */
-interface SetOptions {
-  merge: boolean;
-}
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
@@ -49,8 +46,19 @@ export abstract class NgxsFirestore<T> {
       );
   }
 
-  public docOnce$(id: string): Observable<T> {
-    return this.doc$(id).pipe(take(1));
+  public docOnce$(id: string, getOptions: firebase.firestore.GetOptions = { source: 'default' }): Observable<T> {
+    return this.adapter.firestore
+      .doc<T>(this.docRef(id))
+      .get(getOptions)
+      .pipe(
+        map((docSnapshot) => {
+          if (docSnapshot.exists) {
+            return this.getDataWithId(docSnapshot);
+          } else {
+            return undefined;
+          }
+        })
+      );
   }
 
   public collection$(queryFn: QueryFn = (ref) => ref): Observable<T[]> {
@@ -68,11 +76,27 @@ export abstract class NgxsFirestore<T> {
       );
   }
 
-  public collectionOnce$(queryFn?: QueryFn): Observable<T[]> {
-    return this.collection$(queryFn).pipe(take(1));
+  public collectionOnce$(
+    queryFn: QueryFn = (ref) => ref,
+    getOptions: firebase.firestore.GetOptions = { source: 'default' }
+  ): Observable<T[]> {
+    return this.adapter.firestore
+      .collection<T>(this.path, (ref) => {
+        return queryFn(ref.withConverter(this.converter));
+      })
+      .get(getOptions)
+      .pipe(
+        map((querySnapshot) => {
+          const docSnapshots = querySnapshot.docs;
+          const items = docSnapshots.map((docSnapshot) => {
+            return this.getDataWithId(docSnapshot);
+          });
+          return items;
+        })
+      );
   }
 
-  public update$(id: string, value: Partial<T>, setOptions?: SetOptions) {
+  public update$(id: string, value: Partial<T>, setOptions: firebase.firestore.SetOptions = { merge: true }) {
     return this.docSet(id, value, setOptions);
   }
 
@@ -84,7 +108,7 @@ export abstract class NgxsFirestore<T> {
     return this.upsert$(value);
   }
 
-  public upsert$(value: Partial<T>, setOptions?: SetOptions): Observable<string> {
+  public upsert$(value: Partial<T>, setOptions: firebase.firestore.SetOptions = { merge: true }): Observable<string> {
     let id;
     let newValue;
 
@@ -109,9 +133,7 @@ export abstract class NgxsFirestore<T> {
     return this.adapter.firestore.doc(this.docRef(id));
   }
 
-  private docSet(id: string, value: any, setOptions?: SetOptions) {
-    setOptions = setOptions || { merge: true };
-
+  private docSet(id: string, value: any, setOptions?: firebase.firestore.SetOptions) {
     if (this.isOffline()) {
       this.doc(id).set(value, setOptions);
       return of(id);
