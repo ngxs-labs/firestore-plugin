@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.36](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.35...v0.1.36) (2022-03-28)
+
+### Features
+
+- include getOptions
+  ([af0b842](https://github.com/ngxs-labs/firestore-plugin/commit/af0b8420942b6bc21a1892e96f7b5d5dfc52b791))
+
 ### [0.1.35](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.34...v0.1.35) (2022-03-15)
 
 ### Bug Fixes
