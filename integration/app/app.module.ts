@@ -19,22 +19,27 @@ import { RacesState } from './states/races/races.state';
 import { OtherComponent } from './components/other/other.component';
 import { NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 import { ClassificationsState } from './states/classifications/classifications.state';
+import { PagedListComponent } from './components/paged-list/paged-list.component';
+import { AttendeesState } from './states/attendees/attendees.state';
+import { ListOnceComponent } from './components/list-once/list-once.component';
 
 @NgModule({
-  declarations: [AppComponent, ListComponent, OtherComponent],
+  declarations: [AppComponent, ListComponent, OtherComponent, PagedListComponent, ListOnceComponent],
   imports: [
     BrowserModule,
     FormsModule,
     RouterModule.forRoot(
       [
         { path: 'list', component: ListComponent },
+        { path: 'list-once', component: ListOnceComponent },
+        { path: 'paged-list', component: PagedListComponent },
         { path: 'other', component: OtherComponent },
         { path: '', redirectTo: '/list', pathMatch: 'full' }
       ],
       { relativeLinkResolution: 'legacy' }
     ),
     AngularFireModule.initializeApp(environment.firebase),
-    NgxsModule.forRoot([RacesState, ClassificationsState], {
+    NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
       developmentMode: !environment.production
     }),
     NgxsLoggerPluginModule.forRoot({

@@ -23,4 +23,10 @@ export class RacesFirestore extends NgxsFirestore<Race> {
       return <Race>{ ...data, testProp: data.id + data.title };
     }
   };
+
+  updateIfExists(id, data) {
+    return this.adapter.firestore
+      .doc(this.adapter.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter))
+      .update(data);
+  }
 }

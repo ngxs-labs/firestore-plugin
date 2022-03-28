@@ -324,3 +324,43 @@ export class ClassificationsFirestore extends NgxsFirestore<Race> {
   }
 }
 ```
+
+### Paging
+
+Firestore allows us to page queries using a combination of `limit` and `startAt` options when we create our query. This
+plugin includes a simple approach to allow fetching from the database using `limit`.
+
+```ts
+//...
+constructor(
+  //...
+  private ngxsFirestoreConnect: NgxsFirestoreConnect,
+  private ngxsFirestorePage: NgxsFirestorePageService
+) {}
+
+ngxsOnInit(ctx: StateContext<RacesStateModel>) {
+  this.ngxsFirestoreConnect.connect(GetPages, {
+    to: () => {
+      const obs$ = this.ngxsFirestorePage.create((pageFn) => this.racesFS.collection$((ref) => pageFn(ref)), 5, [
+        { fieldPath: 'title' }
+      ]);
+
+      return obs$;
+    }
+  });
+}
+
+```
+
+In your `@State` you include the `NgxsFirestorePageService` that we'll use to `connect` the paged query with NGXS. The
+page service will `create` a managed `Observable` based on the query you pass into. You completed the configuration with
+the page size and the fields to order the query by.
+
+The page service will fetch first page when you dispatch the connected `@Action`, in the example `GetPages`, and will
+increase the fetched results on each subsequent `GetNextPage`. The result will be 5 items pulled initially, 10 items
+after `GetNextPage` and so on and so forth. This way you always get synced results with the database and increase the
+size when you need to see more items. Along with `GetNextPage` the plugin includes `GetLastPage` that will decrease the
+size pulled when dispatched.
+
+This approach does not support paging queries providing where to start getting results from, but it is a simple way to
+limit queries and still be connected with the NGXS store.

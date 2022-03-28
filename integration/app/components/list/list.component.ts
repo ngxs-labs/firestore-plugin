@@ -2,13 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RacesActions } from './../../states/races/races.actions';
 import { RacesState } from './../../states/races/races.state';
+import { ClassificationsState } from './../../states/classifications/classifications.state';
+import { ClassificationsActions } from './../../states/classifications/classifications.actions';
 import { Race } from './../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
 import { Disconnect } from '@ngxs-labs/firestore-plugin';
-import { ClassificationsActions } from 'integration/app/states/classifications/classifications.actions';
-import { ClassificationsState } from 'integration/app/states/classifications/classifications.state';
 
 @Component({
   selector: 'app-list',
@@ -68,7 +68,8 @@ export class ListComponent implements OnInit, OnDestroy {
   create() {
     const chance = new Chance();
     const race: Partial<Race> = {};
-    race.id = chance.string({ length: 20 });
+    // race.id = chance.string({ length: 20 });
+    race.raceId = chance.string({ length: 20 });
     race.name = chance.word();
     race.title = chance.word();
     race.description = chance.sentence();
@@ -87,6 +88,18 @@ export class ListComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(
       new RacesActions.Update({
+        ...race,
+        name: chance.string(),
+        description: chance.word()
+      })
+    );
+  }
+
+  updateIfExists(race: Race) {
+    const chance = new Chance();
+
+    this.store.dispatch(
+      new RacesActions.UpdateIfExists({
         ...race,
         name: chance.string(),
         description: chance.word()
