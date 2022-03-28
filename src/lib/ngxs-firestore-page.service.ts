@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
-import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/firestore';
+import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/firestore';
 import { GetNextPage, GetLastPage } from './actions';
 export interface FirestorePage {
   limit: number;
