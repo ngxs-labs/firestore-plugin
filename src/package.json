@@ -3,7 +3,7 @@
   "version": "0.1.36",
   "peerDependencies": {
     "@ngxs/store": ">=3.4.0 <4.0.0",
-    "@angular/fire": ">=7.0.0 <7.4.0"
+    "@angular/fire": ">=7.0.0 <7.5.0"
   },
   "homepage": "https://github.com/ngxs-labs/firebase-plugin#readme",
   "repository": {
