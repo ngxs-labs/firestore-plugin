@@ -1,22 +1,23 @@
-import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
-import { RacesActions } from './races.actions';
-import { tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { CollectionReference, orderBy, query, where } from '@angular/fire/firestore';
 import {
-  NgxsFirestoreConnect,
   Connected,
-  Emitted,
   Disconnected,
-  StreamConnected,
-  StreamEmitted,
-  StreamDisconnected,
-  StreamErrored,
+  Emitted,
   Errored,
-  NgxsFirestorePageService
+  NgxsFirestoreConnect,
+  NgxsFirestorePageService,
+  StreamConnected,
+  StreamDisconnected,
+  StreamEmitted,
+  StreamErrored
 } from '@ngxs-labs/firestore-plugin';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { iif, insertItem, patch, updateItem } from '@ngxs/store/operators';
+import { tap } from 'rxjs/operators';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
-import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
-import { Injectable } from '@angular/core';
+import { RacesActions } from './races.actions';
 
 export interface RacesStateModel {
   races: Race[];
@@ -62,10 +63,10 @@ export class RacesState implements NgxsOnInit {
 
     this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
       to: () => {
-        const obs$ = this.ngxsFirestorePage.create(
-          (pageFn) => this.racesFS.collection$((ref) => pageFn(ref).where('s', '>=', 's')),
+        const obs$ = this.ngxsFirestorePage.create<Race>(
+          (pageFn) => this.racesFS.collection$((ref) => query<Race>(pageFn(ref), where('s', '>=', 's'))),
           5,
-          [{ fieldPath: 'title' }]
+          [{ fieldPath: 's' }, { fieldPath: 'title' }]
         );
 
         return obs$;
@@ -74,11 +75,8 @@ export class RacesState implements NgxsOnInit {
 
     this.ngxsFirestoreConnect.connect(RacesActions.Error, {
       to: () =>
-        this.racesFS.collection$((ref) =>
-          ref
-            .where('aaa', '==', 0)
-            .where('bbb', '==', 0)
-            .orderBy('aaa')
+        this.racesFS.collection$((ref: CollectionReference<Race>) =>
+          query(ref, where('aaa', '==', 0), where('bbb', '==', 0), orderBy('aaa'))
         )
     });
   }

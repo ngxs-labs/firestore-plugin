@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { doc, DocumentReference, Firestore } from '@angular/fire/firestore';
 import { Action, NgxsModule, NgxsOnInit, Selector, State, StateContext, Store } from '@ngxs/store';
 import { patch } from '@ngxs/store/operators';
 import { BehaviorSubject } from 'rxjs';
@@ -11,14 +11,16 @@ import { NgxsFirestorePageService } from './ngxs-firestore-page.service';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { Emitted, Page } from './types';
 
+jest.mock('@angular/fire/firestore');
+
 describe('NgxsFirestorePage', () => {
   let store: Store;
 
   const mockFirestoreStream = jest.fn();
   const mockCreateId = jest.fn();
-  const mockAngularFirestore = jest.fn(() => ({
-    createId: mockCreateId
-  }));
+
+  const mockDoc = jest.mocked(doc);
+  mockDoc.mockImplementation(() => ({ id: mockCreateId(), withConverter: jest.fn() } as unknown as DocumentReference));
 
   class TestActionGetPages {
     static type = 'TEST ACTION GET PAGES';
@@ -150,12 +152,7 @@ describe('NgxsFirestorePage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NgxsModule.forRoot([TestState, AnotherTestState, MaxPageSizeTestState]), NgxsFirestoreModule.forRoot()],
-      providers: [
-        {
-          provide: AngularFirestore,
-          useValue: mockAngularFirestore()
-        }
-      ]
+      providers: [{ provide: Firestore, useValue: jest.fn() }]
     });
     store = TestBed.inject(Store);
     // actions = TestBed.inject(Actions);

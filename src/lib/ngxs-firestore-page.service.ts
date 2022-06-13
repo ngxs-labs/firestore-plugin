@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
+import {
+  CollectionReference,
+  DocumentData,
+  FieldPath,
+  Firestore,
+  limit as limitFn,
+  orderBy,
+  Query,
+  query
+} from '@angular/fire/firestore';
+import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
 import { defer, Observable } from 'rxjs';
 import { filter, map, startWith, switchMap } from 'rxjs/operators';
-import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
-import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/firestore';
-import { GetNextPage, GetLastPage } from './actions';
+import { GetLastPage, GetNextPage } from './actions';
+import { createId } from './ngxs-firestore.service';
+
+export type QueryFn<T = DocumentData> = (ref: CollectionReference<T>) => Query<T>;
+
 export interface FirestorePage {
   limit: number;
   id: string;
@@ -11,10 +24,10 @@ export interface FirestorePage {
 
 @Injectable()
 export class NgxsFirestorePageIdService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: Firestore) {}
 
   createId() {
-    return this.firestore.createId();
+    return createId(this.firestore);
   }
 }
 
@@ -23,10 +36,10 @@ export class NgxsFirestorePageService {
   constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
 
   create<T>(
-    queryFn: (pageFn: QueryFn) => Observable<T>,
+    queryFn: (pageFn: QueryFn<T>) => Observable<T[]>,
     size: number,
-    orderBy: { fieldPath: string | FieldPath; directionStr?: 'desc' | 'asc' }[]
-  ): Observable<{ results: T; pageId: string }> {
+    orderByCfg: { fieldPath: string | FieldPath; directionStr?: 'desc' | 'asc' }[]
+  ): Observable<{ results: T[]; pageId: string }> {
     return defer(() => {
       const pages: FirestorePage[] = [];
 
@@ -67,9 +80,10 @@ export class NgxsFirestorePageService {
         }),
         switchMap(({ pageId, limit }) => {
           return queryFn((ref) => {
-            return orderBy
-              .reduce((prev, curr) => prev.orderBy(curr.fieldPath, curr.directionStr || 'asc'), ref)
-              .limit(limit);
+            return orderByCfg.reduce(
+              (prev, curr) => query(prev, orderBy(curr.fieldPath, curr.directionStr || 'asc'), limitFn(limit)),
+              ref
+            );
           }).pipe(
             map((results) => {
               return { results, pageId, pageSize: limit };
