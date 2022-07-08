@@ -10,6 +10,16 @@
 
 # NGXS Firestore
 
+## Compatibility
+
+We've introduced a breaking change in order to support firebase v9. You can find detailed compatibility between
+@angular/fire, angular and firebase [here](https://github.com/angular/angularfire/blob/master/README.md)
+
+| Angular | Firebase | AngularFire | @ngxs-labs/firestore-plugin |
+| ------- | -------- | ----------- | --------------------------- |
+| 12      | 9        | 7           | 1.x                         |
+| 11      | 8        | 6           | 0.x                         |
+
 ## Demo
 
 - [Demo](https://ngxs-firebase-plugin.netlify.com/)
