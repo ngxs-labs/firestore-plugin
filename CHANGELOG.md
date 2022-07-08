@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.36...v1.0.0) (2022-07-08)
+
+### Features
+
+- update to ivy and angular/fire 7 and firebase 9
+  ([1068064](https://github.com/ngxs-labs/firestore-plugin/commit/106806426a028d843634cd3216a66d53c05b800f))
+
+### Bug Fixes
+
+- use compat namespace
+  ([8f1d42b](https://github.com/ngxs-labs/firestore-plugin/commit/8f1d42b91c762a41e4495806cf81f18fadc23294))
+
 ### [0.1.36](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.35...v0.1.36) (2022-03-28)
 
 ### Features
