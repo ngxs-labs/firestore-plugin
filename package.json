@@ -2,7 +2,7 @@
   "name": "ngxs-firestore",
   "scripts": {
     "start": "ng serve --port=4251",
-    "build": " ng build ngxs-firestore --configuration production && yarn copy-readme",
+    "build": "ng build ngxs-firestore --configuration production && yarn copy-readme",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "test": "jest --config ./jest.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.config.js",
@@ -17,7 +17,7 @@
     "@angular/common": "^12.2.15",
     "@angular/compiler": "^12.2.15",
     "@angular/core": "^12.2.15",
-    "@angular/fire": "7.4.1",
+    "@angular/fire": "^7.2.0",
     "@angular/forms": "^12.2.15",
     "@angular/platform-browser": "^12.2.15",
     "@angular/platform-browser-dynamic": "^12.2.15",
@@ -28,10 +28,11 @@
     "bootstrap": "^4.3.1",
     "chance": "^1.1.4",
     "core-js": "^3.3.2",
-    "firebase": "9",
+    "firebase": "^9.4.0",
     "rxjs": "^6.5.3",
     "tslib": "^2.0.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.4",
+    "rxfire": "^6.0.0"
   },
   "devDependencies": {
     "@angular-devkit/architect": "0.1202.14",
