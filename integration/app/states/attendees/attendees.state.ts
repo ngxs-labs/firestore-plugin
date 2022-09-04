@@ -1,10 +1,10 @@
-import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
-import { AttendeesActions } from './attendees.actions';
-import { NgxsFirestoreConnect, Emitted, StreamEmitted, NgxsFirestorePageService } from '@ngxs-labs/firestore-plugin';
-import { patch } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
+import { Emitted, NgxsFirestoreConnect, NgxsFirestorePageService, StreamEmitted } from '@ngxs-labs/firestore-plugin';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { patch } from '@ngxs/store/operators';
 import { Attendee } from 'integration/app/models/attendee';
 import { AttendeesFirestore } from 'integration/app/services/attendees.firestore';
+import { AttendeesActions } from './attendees.actions';
 
 export interface AttendeesStateModel {
   attendees: Attendee[];
@@ -37,11 +37,8 @@ export class AttendeesState implements NgxsOnInit {
   ngxsOnInit(ctx: StateContext<AttendeesStateModel>) {
     this.ngxsFirestoreConnect.connect(AttendeesActions.GetPages, {
       to: () => {
-        const obs$ = this.nxgsFirestorePage.create(
-          (pageFn) =>
-            this.attendeesFS.collection$((ref) => {
-              return pageFn(ref);
-            }),
+        const obs$ = this.nxgsFirestorePage.create<Attendee>(
+          (pageFn) => this.attendeesFS.collection$((ref) => pageFn(ref)),
           5,
           [{ fieldPath: 'id' }]
         );

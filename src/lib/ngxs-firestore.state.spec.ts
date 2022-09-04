@@ -1,15 +1,21 @@
 import { TestBed } from '@angular/core/testing';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { NgxsModule, Store } from '@ngxs/store';
-import { NgxsFirestoreModule } from './ngxs-firestore.module';
-import { AngularFireModule } from '@angular/fire/compat';
 import { ngxsFirectoreConnections } from './ngxs-firestore-connections.selector';
+import { NgxsFirestoreModule } from './ngxs-firestore.module';
 
 describe('NGXS Firestore State', () => {
   let store: Store;
 
   beforeAll(() => {
     TestBed.configureTestingModule({
-      imports: [NgxsModule.forRoot([]), AngularFireModule.initializeApp({}), NgxsFirestoreModule.forRoot()]
+      imports: [
+        NgxsModule.forRoot([]),
+        provideFirebaseApp(() => initializeApp({})),
+        provideFirestore(() => getFirestore()),
+        NgxsFirestoreModule.forRoot()
+      ]
     });
 
     store = TestBed.get(Store);
