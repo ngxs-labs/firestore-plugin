@@ -17,7 +17,7 @@ We've introduced a breaking change in order to support firebase v9. You can find
 
 | Angular | Firebase | AngularFire | @ngxs-labs/firestore-plugin |
 | ------- | -------- | ----------- | --------------------------- |
-| 12      | 9        | 7           | 1.x                         |
+| 12      | 9        | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions)           | 1.x                         |
 | 11      | 8        | 6           | 0.x                         |
 
 ## Demo
