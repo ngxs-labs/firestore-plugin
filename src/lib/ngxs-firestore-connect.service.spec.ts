@@ -205,8 +205,8 @@ describe('NgxsFirestoreConnect', () => {
         NgxsFirestoreModule.forRoot()
       ]
     });
-    store = TestBed.get(Store);
-    actions = TestBed.get(Actions);
+    store = TestBed.inject(Store);
+    actions = TestBed.inject(Actions);
     events = [];
     actionEvents = [];
     mockFirestoreStream.mockImplementation(() => new BehaviorSubject(1).asObservable());
@@ -216,8 +216,8 @@ describe('NgxsFirestoreConnect', () => {
   });
 
   test('should be provided by module', () => {
-    expect(TestBed.get(Store)).toBeTruthy();
-    expect(TestBed.get(NgxsFirestoreConnect)).toBeTruthy();
+    expect(TestBed.inject(Store)).toBeTruthy();
+    expect(TestBed.inject(NgxsFirestoreConnect)).toBeTruthy();
   });
 
   describe('NgxsFirestoreConnect', () => {

@@ -24,7 +24,7 @@ describe('Classifications State', () => {
       imports: [NgxsModule.forRoot([ClassificationsState]), NgxsFirestoreModule.forRoot()],
       providers: [{ provide: ClassificationsFirestore, useValue: mockClassificationsFS() }]
     }).compileComponents();
-    store = TestBed.get(Store);
+    store = TestBed.inject(Store);
   }));
 
   it('should getall classifications', () => {

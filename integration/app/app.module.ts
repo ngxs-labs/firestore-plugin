@@ -8,7 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { ListComponent } from './components/list/list.component';
 
-import { AngularFireModule } from '@angular/fire/compat';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { NgxsModule } from '@ngxs/store';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
@@ -38,7 +39,8 @@ import { ListOnceComponent } from './components/list-once/list-once.component';
       ],
       { relativeLinkResolution: 'legacy' }
     ),
-    AngularFireModule.initializeApp(environment.firebase),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
     NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
       developmentMode: !environment.production
     }),

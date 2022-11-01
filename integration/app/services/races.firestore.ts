@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { doc, FirestoreDataConverter, updateDoc } from '@angular/fire/firestore';
 import { Race } from '../models/race';
 
 @Injectable({
@@ -11,7 +10,7 @@ export class RacesFirestore extends NgxsFirestore<Race> {
   protected path = 'races';
   idField = 'raceId';
 
-  converter: firebase.firestore.FirestoreDataConverter<Race> = {
+  converter: FirestoreDataConverter<Race> = {
     toFirestore: (value) => {
       const db = { ...value };
       delete db.testProp;
@@ -25,8 +24,7 @@ export class RacesFirestore extends NgxsFirestore<Race> {
   };
 
   updateIfExists(id, data) {
-    return this.adapter.firestore
-      .doc(this.adapter.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter))
-      .update(data);
+    const docRef = doc(this.adapter.firestore, `${this.path}/${id}`).withConverter(this.converter);
+    return updateDoc(docRef, data);
   }
 }

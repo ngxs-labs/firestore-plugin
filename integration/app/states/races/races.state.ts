@@ -17,6 +17,7 @@ import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
 import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
+import { orderBy, query, where } from '@angular/fire/firestore';
 
 export interface RacesStateModel {
   races: Race[];
@@ -50,7 +51,7 @@ export class RacesState implements NgxsOnInit {
     private ngxsFirestorePage: NgxsFirestorePageService
   ) {}
 
-  ngxsOnInit(ctx: StateContext<RacesStateModel>) {
+  ngxsOnInit(_ctx: StateContext<RacesStateModel>) {
     this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
       to: () => this.racesFS.collection$(),
       connectedActionFinishesOn: 'FirstEmit'
@@ -63,7 +64,7 @@ export class RacesState implements NgxsOnInit {
     this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
       to: () => {
         const obs$ = this.ngxsFirestorePage.create(
-          (pageFn) => this.racesFS.collection$((ref) => pageFn(ref).where('s', '>=', 's')),
+          (pageFn) => this.racesFS.collection$((ref) => query(pageFn(ref), where('title', '>=', 's'))),
           5,
           [{ fieldPath: 'title' }]
         );
@@ -74,12 +75,7 @@ export class RacesState implements NgxsOnInit {
 
     this.ngxsFirestoreConnect.connect(RacesActions.Error, {
       to: () =>
-        this.racesFS.collection$((ref) =>
-          ref
-            .where('aaa', '==', 0)
-            .where('bbb', '==', 0)
-            .orderBy('aaa')
-        )
+        this.racesFS.collection$((ref) => query(ref, where('aaa', '==', 0), where('bbb', '==', 0), orderBy('aaa')))
     });
   }
 
