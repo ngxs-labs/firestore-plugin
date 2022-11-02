@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/ngxs-labs/firestore-plugin/compare/v1.0.0...v1.1.0) (2022-11-02)
+
+### Features
+
+- upgrade to firebase modular version
+  ([3f8f6c9](https://github.com/ngxs-labs/firestore-plugin/commit/3f8f6c9c84f6e19c4b202d98f47042029f00c729))
+
 ## [1.0.0](https://github.com/ngxs-labs/firestore-plugin/compare/v0.1.36...v1.0.0) (2022-07-08)
 
 ### Features
