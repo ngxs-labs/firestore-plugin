@@ -15,10 +15,13 @@
 We've introduced a breaking change in order to support firebase v9. You can find detailed compatibility between
 @angular/fire, angular and firebase [here](https://github.com/angular/angularfire/blob/master/README.md)
 
-| Angular | Firebase | AngularFire | @ngxs-labs/firestore-plugin |
-| ------- | -------- | ----------- | --------------------------- |
-| 12      | 9        | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions)           | 1.x                         |
-| 11      | 8        | 6           | 0.x                         |
+| Angular | Firebase            | AngularFire                                                                  | @ngxs-labs/firestore-plugin |
+| ------- | ------------------- | ---------------------------------------------------------------------------- | --------------------------- |
+| 12      | 9 (Modular Version) | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions) | 1.1.x                       |
+| 12      | 9                   | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions) | 1.0.x                       |
+| 11      | 8                   | 6                                                                            | 0.x                         |
+
+If you are using Firebase modular version check [here](docs/FIREBASE_MODULAR).
 
 ## Demo
 
