@@ -17,14 +17,6 @@ function defaultTrackBy(action: any) {
   return '';
 }
 
-function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {
-  let id = `${opts.actionType.type}`;
-  if (opts.trackBy(opts.action)) {
-    id = id.concat(` (${opts.trackBy(opts.action)})`);
-  }
-  return id;
-}
-
 function tapOnce<T>(fn: (value) => void) {
   return (source: Observable<any>) =>
     defer(() => {
@@ -84,6 +76,17 @@ export class NgxsFirestoreConnect implements OnDestroy {
       }
 
       return subjects[id];
+    }
+
+    function streamId(opts: { actionType: ActionType; action: any; trackBy: (action: any) => string }) {
+      let id = `${opts.actionType.type}`;
+      if (opts.trackBy(opts.action)) {
+        id = id.concat(` (${opts.trackBy(opts.action)})`);
+      }
+      if (cancelPrevious) {
+        id = id.concat(` [cancelPrevious]`);
+      }
+      return id;
     }
 
     attachAction(NgxsFirestoreState, actionType, (_stateContext, action) => {
