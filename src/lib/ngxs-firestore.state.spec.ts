@@ -3,7 +3,7 @@ import { NgxsModule, Store } from '@ngxs/store';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { ngxsFirectoreConnections } from './ngxs-firestore-connections.selector';
+import { ngxsFirestoreConnections } from './ngxs-firestore-connections.selector';
 
 describe('NGXS Firestore State', () => {
   let store: Store;
@@ -22,6 +22,6 @@ describe('NGXS Firestore State', () => {
   });
 
   test('State exists', () => {
-    expect(store.selectSnapshot(ngxsFirectoreConnections)).toBeTruthy();
+    expect(store.selectSnapshot(ngxsFirestoreConnections)).toBeTruthy();
   });
 });
