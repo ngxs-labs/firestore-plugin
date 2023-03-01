@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { ngxsFirectoreConnections } from '@ngxs-labs/firestore-plugin';
+import { ngxsFirestoreConnections } from '@ngxs-labs/firestore-plugin';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import { ngxsFirectoreConnections } from '@ngxs-labs/firestore-plugin';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public ngxsFirestoreState$ = this.store.select(ngxsFirectoreConnections);
+  public ngxsFirestoreState$ = this.store.select(ngxsFirestoreConnections);
 
   constructor(private store: Store) {}
 }
