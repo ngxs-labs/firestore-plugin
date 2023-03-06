@@ -55,7 +55,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
    * @param opts.to Firestore Query to connect with
    * @param opts.trackBy used to allow multiple connections for a same action, and Disconnect them individually
    * @param opts.connectedActionFinishesOn complete connected action on first emit or stream completed
-   * @param opts.cancelPrevious cancel previous connected action, (when used combined with trackBy, will cancel stream with same id)
+   * @param opts.cancelPrevious cancel previous connected action,
+   * - false: will NOT cancel connected action, and subsequent dispatches will be skipped
+   * - true : will cancel previous connected action, if used combined with trackBy will cancel stream with same id
+   * - 'cancel-if-track-by-changed': will cancel previous connected action only when trackBy changed
    */
   connect<T>(
     actionType: ActionTypeDef<T>,
@@ -63,7 +66,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
       to: (action: T) => Observable<any>;
       trackBy?: (action: T) => string;
       connectedActionFinishesOn?: 'FirstEmit' | 'StreamCompleted';
-      cancelPrevious?: boolean;
+      cancelPrevious?: boolean | 'cancel-if-track-by-changed';
     }
   ) {
     const connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
@@ -111,7 +114,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
       // filter actions not connected already
       // or cancelPrevious
       filter((action) => {
-        return cancelPrevious || !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }));
+        return (
+          cancelPrevious === true ||
+          !this.activeFirestoreConnections.includes(streamId({ actionType, action, trackBy }))
+        );
       }),
       // filter actions dispatched on same tick
       filter((action) => {
@@ -184,7 +190,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
           this.actions.pipe(
             ofActionDispatched(actionType),
             filter((dispatchedAction) => {
-              if (!cancelPrevious) {
+              if (cancelPrevious === false) {
                 return false;
               }
               //SELF
@@ -196,7 +202,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 action: dispatchedAction,
                 trackBy
               });
-              return dispatchedActionStreamId === streamId({ actionType, action, trackBy });
+
+              if (cancelPrevious === true) {
+                return dispatchedActionStreamId === streamId({ actionType, action, trackBy });
+              } else if (cancelPrevious === 'cancel-if-track-by-changed') {
+                return dispatchedActionStreamId !== streamId({ actionType, action, trackBy });
+              }
             })
           )
         ),

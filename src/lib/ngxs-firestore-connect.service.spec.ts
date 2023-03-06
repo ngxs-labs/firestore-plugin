@@ -69,6 +69,16 @@ describe('NgxsFirestoreConnect', () => {
     constructor(public payload: string) {}
   }
 
+  class TestActionTrackByIdCancelPreviousCancelIfTrackByChanged {
+    static type = 'TEST ACTION CANCEL PREVIOUS TRACK BY ID cancel-if-track-by-changed';
+    constructor(public payload: string) {}
+  }
+
+  class TestActionCancelPreviousCancelIfTrackByChanged {
+    static type = 'TEST ACTION CANCEL PREVIOUS cancel-if-track-by-changed';
+    constructor(public payload: string) {}
+  }
+
   class TestActionCancelPrevious {
     static type = 'TEST ACTION THAT KEEPS LAST WITHOUT PAYLOAD';
   }
@@ -110,6 +120,17 @@ describe('NgxsFirestoreConnect', () => {
         cancelPrevious: true
       });
 
+      this.ngxsFirestoreConnect.connect(TestActionTrackByIdCancelPreviousCancelIfTrackByChanged, {
+        to: mockFirestoreStream,
+        trackBy: (action) => action.payload,
+        cancelPrevious: 'cancel-if-track-by-changed'
+      });
+
+      this.ngxsFirestoreConnect.connect(TestActionCancelPreviousCancelIfTrackByChanged, {
+        to: mockFirestoreStream,
+        cancelPrevious: 'cancel-if-track-by-changed'
+      });
+
       this.ngxsFirestoreConnect.connect(TestActionCancelPrevious, {
         to: mockFirestoreStream,
         cancelPrevious: true
@@ -126,6 +147,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamEmitted(TestActionFinishesOnStreamCompleted),
       StreamEmitted(TestActionFinishesOnFirstEmit),
       StreamEmitted(TestActionTrackByIdCancelPrevious),
+      StreamEmitted(TestActionTrackByIdCancelPreviousCancelIfTrackByChanged),
+      StreamEmitted(TestActionCancelPreviousCancelIfTrackByChanged),
       StreamEmitted(TestActionCancelPrevious),
       StreamEmitted(TestActionError)
     ])
@@ -145,6 +168,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamConnected(TestActionFinishesOnStreamCompleted),
       StreamConnected(TestActionFinishesOnFirstEmit),
       StreamConnected(TestActionTrackByIdCancelPrevious),
+      StreamConnected(TestActionTrackByIdCancelPreviousCancelIfTrackByChanged),
+      StreamConnected(TestActionCancelPreviousCancelIfTrackByChanged),
       StreamConnected(TestActionCancelPrevious),
       StreamConnected(TestActionError)
     ])
@@ -164,6 +189,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamDisconnected(TestActionFinishesOnStreamCompleted),
       StreamDisconnected(TestActionFinishesOnFirstEmit),
       StreamDisconnected(TestActionTrackByIdCancelPrevious),
+      StreamDisconnected(TestActionTrackByIdCancelPreviousCancelIfTrackByChanged),
+      StreamDisconnected(TestActionCancelPreviousCancelIfTrackByChanged),
       StreamDisconnected(TestActionCancelPrevious),
       StreamDisconnected(TestActionError)
     ])
@@ -183,6 +210,8 @@ describe('NgxsFirestoreConnect', () => {
       StreamErrored(TestActionFinishesOnStreamCompleted),
       StreamErrored(TestActionFinishesOnFirstEmit),
       StreamErrored(TestActionTrackByIdCancelPrevious),
+      StreamErrored(TestActionTrackByIdCancelPreviousCancelIfTrackByChanged),
+      StreamErrored(TestActionCancelPreviousCancelIfTrackByChanged),
       StreamErrored(TestActionCancelPrevious),
       StreamErrored(TestActionError)
     ])
@@ -556,6 +585,235 @@ describe('NgxsFirestoreConnect', () => {
             actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
+          }
+        ]);
+      }));
+    });
+
+    describe('cancelPrevious: cancel-if-track-by-changed', () => {
+      test('different trackBy id should disconnect prior', fakeAsync(() => {
+        store.dispatch(new TestActionTrackByIdCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          });
+        });
+        tick(1);
+        expect(actionEvents).toEqual([]);
+        subject.next(1);
+        tick(1);
+        const firstExpect: ActionEvent[] = [
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'connected',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          }
+        ];
+        expect(actionEvents).toEqual(firstExpect);
+        store.dispatch(new TestActionTrackByIdCancelPreviousCancelIfTrackByChanged('second')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'second'
+          });
+        });
+        subject.next(1);
+        tick(1);
+        const secondExpect: ActionEvent[] = [
+          ...firstExpect,
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'disconnected',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'connected',
+            actionPayload: 'second'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'second'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'second'
+          }
+        ];
+        expect(actionEvents).toEqual(secondExpect);
+        subject.next(2);
+        tick(1);
+        const thirdExpect: ActionEvent[] = [
+          ...secondExpect,
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'second'
+          }
+        ];
+        expect(actionEvents).toEqual(thirdExpect);
+      }));
+
+      test('same trackBy shouldnt disconnect', fakeAsync(() => {
+        store.dispatch(new TestActionTrackByIdCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          });
+        });
+        subject.next(1);
+        tick(1);
+        const firstExpect: ActionEvent[] = [
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'connected',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          }
+        ];
+        expect(actionEvents).toEqual(firstExpect);
+
+        store.dispatch(new TestActionTrackByIdCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          });
+        });
+        subject.next(2);
+        tick(1);
+
+        expect(actionEvents).toEqual([
+          ...firstExpect,
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          }
+        ]);
+      }));
+
+      test('same trackBy shouldnt disconnect when trackBy is not defined', fakeAsync(() => {
+        store.dispatch(new TestActionCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          });
+        });
+        subject.next(1);
+        tick(1);
+        const firstExpect: ActionEvent[] = [
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'connected',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          }
+        ];
+        expect(actionEvents).toEqual(firstExpect);
+
+        // dispatching same action with same payload
+        // if cancelPrevious was true, this would case a disconnect
+        store.dispatch(new TestActionCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          });
+        });
+        subject.next(1);
+        tick(1);
+
+        expect(actionEvents).toEqual([
+          ...firstExpect,
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          }
+        ]);
+      }));
+
+      test('different trackBy shouldnt disconnect when trackBy is not defined', fakeAsync(() => {
+        store.dispatch(new TestActionCancelPreviousCancelIfTrackByChanged('first')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          });
+        });
+        subject.next(1);
+        tick(1);
+        const firstExpect: ActionEvent[] = [
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'connected',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
+          },
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'first'
+          }
+        ];
+        expect(actionEvents).toEqual(firstExpect);
+
+        // dispatching same action with different payload
+        // if cancelPrevious was true, this would case a disconnect
+        store.dispatch(new TestActionCancelPreviousCancelIfTrackByChanged('second')).subscribe((_) => {
+          actionEvents.push({
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          });
+        });
+        subject.next(1);
+        tick(1);
+
+        expect(actionEvents).toEqual([
+          ...firstExpect,
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'emitted',
+            actionPayload: 'first'
           }
         ]);
       }));
