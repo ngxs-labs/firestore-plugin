@@ -43,6 +43,7 @@ export abstract class NgxsFirestore<T> {
 
   protected abstract path: string;
   protected idField: string = 'id';
+  protected metadataField: string | false = false;
   protected converter: FirestoreDataConverter<T> = {
     toFirestore: (value) => {
       return value;
@@ -124,7 +125,6 @@ export abstract class NgxsFirestore<T> {
       newValue = Object.assign({}, value);
     } else {
       id = this.createId();
-      debugger;
       newValue = Object.assign({}, value, { [this.idField]: id });
     }
 
@@ -134,7 +134,11 @@ export abstract class NgxsFirestore<T> {
   private getDataWithId<TData>(doc: QueryDocumentSnapshot<TData>) {
     const data = doc.data();
     const id = (data && data[this.idField]) || doc.id;
-    return { ...data, [this.idField]: id };
+    if (this.metadataField) {
+      return { ...data, [this.idField]: id, [this.metadataField]: doc.metadata };
+    } else {
+      return { ...data, [this.idField]: id };
+    }
   }
 
   private docSet(id: string, value: any, setOptions?: SetOptions) {
