@@ -15,7 +15,7 @@ export class NgxsFirestoreModule {
       providers: [
         {
           provide: NGXS_FIRESTORE_MODULE_OPTIONS,
-          useValue: options || ({ timeoutWriteOperations: false } as NgxsFirestoreModuleOptions)
+          useValue: { timeoutWriteOperations: false, developmentMode: false, ...options }
         },
         {
           provide: NgxsFirestorePageIdService,

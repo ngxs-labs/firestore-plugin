@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
 import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, share } from 'rxjs/operators';
 import { Observable, race, Subscription, Subject, defer, of } from 'rxjs';
@@ -7,6 +7,7 @@ import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectAll, Disconnect } from './actions';
 import { attachAction } from './attach-action';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
+import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './tokens';
 
 interface ActionTypeDef<T> {
   type: string;
@@ -46,7 +47,11 @@ export class NgxsFirestoreConnect implements OnDestroy {
   private activeFirestoreConnections: string[] = [];
   private actionsPending: string[] = [];
 
-  constructor(private store: Store, private actions: Actions) {}
+  constructor(
+    private store: Store,
+    private actions: Actions,
+    @Optional() @Inject(NGXS_FIRESTORE_MODULE_OPTIONS) private options: NgxsFirestoreModuleOptions
+  ) {}
 
   /**
    * Connect a query that will dispatch a `StreamEmitted` action on each emission.
@@ -139,20 +144,25 @@ export class NgxsFirestoreConnect implements OnDestroy {
           // remove from actionsPending once connected
           this.actionsPending.splice(this.actionsPending.indexOf(streamId({ actionType, action, trackBy })), 1);
 
-          this.store.dispatch(
-            new NgxsFirestoreConnectActions.StreamConnected(streamId({ actionType, action, trackBy }))
-          );
+          if (this.options?.developmentMode) {
+            this.store.dispatch(
+              new NgxsFirestoreConnectActions.StreamConnected(streamId({ actionType, action, trackBy }))
+            );
+          }
         }),
         // emmited
         tap((payload) => {
           const StreamEmittedClass = StreamEmitted(actionType);
           this.store.dispatch(new StreamEmittedClass(action, payload));
-          this.store.dispatch(
-            new NgxsFirestoreConnectActions.StreamEmitted({
-              id: streamId({ actionType, action, trackBy }),
-              items: payload
-            })
-          );
+
+          if (this.options?.developmentMode) {
+            this.store.dispatch(
+              new NgxsFirestoreConnectActions.StreamEmitted({
+                id: streamId({ actionType, action, trackBy }),
+                items: payload
+              })
+            );
+          }
         }),
         // completed if FirstEmit
         tapOnce(() => {
@@ -214,9 +224,12 @@ export class NgxsFirestoreConnect implements OnDestroy {
         finalize(() => {
           const StreamDisconnectedClass = StreamDisconnected(actionType);
           this.store.dispatch(new StreamDisconnectedClass(action));
-          this.store.dispatch(
-            new NgxsFirestoreConnectActions.StreamDisconnected(streamId({ actionType, action, trackBy }))
-          );
+
+          if (this.options?.developmentMode) {
+            this.store.dispatch(
+              new NgxsFirestoreConnectActions.StreamDisconnected(streamId({ actionType, action, trackBy }))
+            );
+          }
           this.activeFirestoreConnections.splice(
             this.activeFirestoreConnections.indexOf(streamId({ actionType, action, trackBy })),
             1
