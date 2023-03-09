@@ -9,6 +9,7 @@ import { Race } from '../models/race';
 export class RacesFirestore extends NgxsFirestore<Race> {
   protected path = 'races';
   idField = 'raceId';
+  metadataField = '_metadata';
 
   converter: FirestoreDataConverter<Race> = {
     toFirestore: (value) => {
