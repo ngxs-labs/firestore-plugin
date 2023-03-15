@@ -22,7 +22,12 @@
             "main": "integration/main.ts",
             "polyfills": "integration/polyfills.ts",
             "tsConfig": "integration/tsconfig.app.json",
-            "assets": ["integration/favicon.ico", "integration/assets", "integration/_redirects"],
+            "assets": [
+              "integration/favicon.ico",
+              "integration/assets",
+              "integration/_redirects",
+              "integration/manifest.webmanifest"
+            ],
             "styles": ["integration/styles.scss"],
             "scripts": [],
             "vendorChunk": true,
@@ -30,7 +35,9 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {

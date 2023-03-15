@@ -23,6 +23,7 @@ import { ClassificationsState } from './states/classifications/classifications.s
 import { PagedListComponent } from './components/paged-list/paged-list.component';
 import { AttendeesState } from './states/attendees/attendees.state';
 import { ListOnceComponent } from './components/list-once/list-once.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [AppComponent, ListComponent, OtherComponent, PagedListComponent, ListOnceComponent],
@@ -55,6 +56,12 @@ import { ListOnceComponent } from './components/list-once/list-once.component';
       name: 'Ngxs Firestore',
       disabled: environment.production,
       actionSanitizer: (action) => ({ ...action, action: null })
+    }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
     })
   ],
   providers: [],
