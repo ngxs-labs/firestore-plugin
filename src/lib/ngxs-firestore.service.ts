@@ -142,6 +142,10 @@ export abstract class NgxsFirestore<T> {
   }
 
   private docSet(id: string, value: any, setOptions?: SetOptions) {
+    if (this.metadataField) {
+      delete value[this.metadataField];
+    }
+
     if (this.isOffline()) {
       setDoc(this.docRef(id), value, {});
       return of(id);
