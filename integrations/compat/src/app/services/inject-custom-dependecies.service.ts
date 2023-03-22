@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { NgxsFirestoreCompat, NgxsFirestoreCompatAdapter } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestore, NgxsFirestoreAdapter } from '@ngxs-labs/firestore-plugin/compat';
 
 @Injectable()
 export class CustomDependency {
@@ -11,13 +11,10 @@ export class CustomDependency {
 @Injectable({
   providedIn: 'root'
 })
-export class InjectCustomDependenciesService extends NgxsFirestoreCompat<any> {
+export class InjectCustomDependenciesService extends NgxsFirestore<any> {
   protected path = 'races';
 
-  constructor(
-    @Inject(NgxsFirestoreCompatAdapter) adapter: NgxsFirestoreCompatAdapter,
-    public customeDependency: CustomDependency
-  ) {
+  constructor(@Inject(NgxsFirestoreAdapter) adapter: NgxsFirestoreAdapter, public customeDependency: CustomDependency) {
     super(adapter);
   }
 }

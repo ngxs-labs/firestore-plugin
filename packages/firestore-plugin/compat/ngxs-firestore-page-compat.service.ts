@@ -7,7 +7,7 @@ import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/fires
 import { FirestorePage } from '../src/lib/internal-types';
 
 @Injectable()
-export class NgxsFirestorePageIdCompatService {
+export class NgxsFirestorePageIdService {
   constructor(private firestore: AngularFirestore) {}
 
   createId() {
@@ -17,7 +17,7 @@ export class NgxsFirestorePageIdCompatService {
 
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageCompatService {
-  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdCompatService) {}
+  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
 
   create<T>(
     queryFn: (pageFn: QueryFn<any>) => Observable<T>,

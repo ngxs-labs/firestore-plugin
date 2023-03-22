@@ -8,7 +8,7 @@ import {
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { map, mapTo, timeoutWith } from 'rxjs/operators';
-import { NgxsFirestoreCompatAdapter } from './ngxs-firestore-compat.adapter';
+import { NgxsFirestoreAdapter } from './ngxs-firestore-compat.adapter';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
@@ -19,8 +19,8 @@ import 'firebase/compat/firestore';
  */
 
 @Injectable()
-export abstract class NgxsFirestoreCompat<T> {
-  constructor(@Inject(NgxsFirestoreCompatAdapter) protected adapter: NgxsFirestoreCompatAdapter) {}
+export abstract class NgxsFirestore<T> {
+  constructor(@Inject(NgxsFirestoreAdapter) protected adapter: NgxsFirestoreAdapter) {}
 
   protected abstract path: string;
   protected idField: string = 'id';

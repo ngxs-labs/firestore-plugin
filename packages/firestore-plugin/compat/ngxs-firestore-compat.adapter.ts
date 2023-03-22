@@ -4,7 +4,7 @@ import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from '../sr
 import { Store } from '@ngxs/store';
 
 @Injectable({ providedIn: 'root' })
-export class NgxsFirestoreCompatAdapter {
+export class NgxsFirestoreAdapter {
   constructor(
     @Inject(AngularFirestore) public firestore: AngularFirestore,
     @Inject(Store) public store: Store,

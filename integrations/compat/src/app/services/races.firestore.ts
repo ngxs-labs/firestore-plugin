@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NgxsFirestoreCompat } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestore } from '@ngxs-labs/firestore-plugin/compat';
 import { Race } from '../models/race';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
@@ -7,7 +7,7 @@ import 'firebase/compat/firestore';
 @Injectable({
   providedIn: 'root'
 })
-export class RacesFirestore extends NgxsFirestoreCompat<Race> {
+export class RacesFirestore extends NgxsFirestore<Race> {
   protected path = 'races';
   idField = 'raceId';
   metadataField = '_metadata';
