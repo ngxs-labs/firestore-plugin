@@ -4,6 +4,8 @@
   "lib": {
     "entryFile": "public-api.ts",
     "umdModuleIds": {
+      "@ngxs/store": "ngxs-store",
+      "@ngxs/store/operators": "ngxs-store-operators",
       "@ngxs-labs/firestore-plugin/compat": "ngxs-firestore-plugin-compat"
     }
   }
