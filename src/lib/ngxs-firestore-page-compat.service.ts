@@ -2,24 +2,22 @@ import { Injectable } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
-import { FieldPath, Firestore, limit as limitFn, orderBy as orderByFn, query } from '@angular/fire/firestore';
 import { GetNextPage, GetLastPage } from './actions';
-import { createId } from './ngxs-firestore.service';
-import { QueryFn } from './utils';
+import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/firestore';
 import { FirestorePage } from './internal-types';
 
 @Injectable()
-export class NgxsFirestorePageIdService {
-  constructor(private firestore: Firestore) {}
+export class NgxsFirestorePageIdCompatService {
+  constructor(private firestore: AngularFirestore) {}
 
   createId() {
-    return createId(this.firestore);
+    return this.firestore.createId();
   }
 }
 
 @Injectable({ providedIn: 'root' })
-export class NgxsFirestorePageService {
-  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
+export class NgxsFirestorePageCompatService {
+  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdCompatService) {}
 
   create<T>(
     queryFn: (pageFn: QueryFn<any>) => Observable<T>,
@@ -66,10 +64,9 @@ export class NgxsFirestorePageService {
         }),
         switchMap(({ pageId, limit }) => {
           return queryFn((ref) => {
-            return orderBy.reduce(
-              (prev, curr) => query(prev, orderByFn(curr.fieldPath, curr.directionStr || 'asc'), limitFn(limit)),
-              ref
-            );
+            return orderBy
+              .reduce((prev, curr) => prev.orderBy(curr.fieldPath, curr.directionStr || 'asc'), ref)
+              .limit(limit);
           }).pipe(
             map((results) => {
               return { results, pageId, pageSize: limit };

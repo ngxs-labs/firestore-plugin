@@ -1,0 +1,56 @@
+<div class="my-3">
+  <button [disabled]="creating$ | async" class="btn btn-primary mr-1" (click)="create()">Create</button>
+  <button [disabled]="gettingAll$ | async" class="btn btn-primary mr-1" (click)="getAll()">Get All</button>
+  <button [disabled]="gettingSingle$ | async" class="btn btn-primary mr-1" (click)="get()">Get Single</button>
+  <button [disabled]="gettingSubCollection$ | async" class="btn btn-primary mr-1" (click)="getSubCollection()">
+    Get SubCollection
+  </button>
+</div>
+<div class="my-3">
+  <button class="btn btn-primary mr-1" [disabled]="disconnecting$ | async" (click)="disconnect()">Disconnect</button>
+  <button class="btn btn-primary" [disabled]="gettingSingle$ | async" (click)="reconnect()">Reconnect</button>
+</div>
+<div class="my-3">
+  <button class="btn btn-primary mr-1" [disabled]="throwingError$ | async" (click)="throwError()">Throw Error</button>
+</div>
+<ng-container *ngIf="loaded$ | async">
+  <div>
+    <h5>Total: {{ total$ | async }}</h5>
+  </div>
+
+  <div class="mt-1" style="overflow-y: scroll;max-height: 350px;">
+    <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 21rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{ race.id }}</h5>
+        <p class="card-text">{{ race.order }}</p>
+        <p class="card-text">{{ race.name }}</p>
+        <p class="card-text">{{ race.description }}</p>
+
+        <pre>{{ race | json }}</pre>
+
+        <button (click)="update(race)" class="mr-1">Update</button>
+        <button (click)="updateIfExists(race)" class="mr-1">Update If Exists</button>
+        <button (click)="delete(race.raceId)">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-1">
+    <div
+      *ngFor="let classification of classifications$ | async"
+      class="card mr-1 mb-1 d-inline-flex"
+      style="width: 21rem;"
+    >
+      <div class="card-body">
+        <h5 class="card-title">{{ classification.id }}</h5>
+        <p class="card-text">{{ classification.order }}</p>
+        <p class="card-text">{{ classification.name }}</p>
+
+        <pre>{{ classification | json }}</pre>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="loading$ | async">
+  Loading...
+</div>
