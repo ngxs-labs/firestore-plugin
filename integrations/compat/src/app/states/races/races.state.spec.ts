@@ -2,7 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
 import { RacesState } from './races.state';
 import { RacesActions } from './races.actions';
-import { NgxsFirestoreModule, NgxsFirestorePageIdService } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreModule, NgxsFirestorePageIdService } from '@ngxs-labs/firestore-plugin/compat';
 import { BehaviorSubject } from 'rxjs';
 import { RacesFirestore } from '../../services/races.firestore';
 import { Race } from '../../models/race';

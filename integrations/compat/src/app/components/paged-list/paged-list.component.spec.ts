@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin/compat';
 import { NgxsModule } from '@ngxs/store';
 
 import { PagedListComponent } from './paged-list.component';

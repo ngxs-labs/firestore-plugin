@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
 import { ClassificationsState } from './classifications.state';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin/compat';
 import { BehaviorSubject } from 'rxjs';
 import { ClassificationsActions } from './classifications.actions';
 import { ClassificationsFirestore } from '../../services/classifications.firestore';
