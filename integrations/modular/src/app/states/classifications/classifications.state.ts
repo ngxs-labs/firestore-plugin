@@ -1,8 +1,8 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { ClassificationsActions } from './classifications.actions';
 import { NgxsFirestoreConnect, Emitted, StreamEmitted } from '@ngxs-labs/firestore-plugin';
-import { Classification } from 'integration/app/models/classification';
-import { ClassificationsFirestore } from 'integration/app/services/classifications.firestore';
+import { Classification } from './../../models/classification';
+import { ClassificationsFirestore } from './../../services/classifications.firestore';
 import { iif, insertItem, patch, updateItem } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
 

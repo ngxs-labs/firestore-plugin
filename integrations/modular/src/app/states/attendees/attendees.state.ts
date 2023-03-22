@@ -3,8 +3,8 @@ import { AttendeesActions } from './attendees.actions';
 import { NgxsFirestoreConnect, Emitted, StreamEmitted, NgxsFirestorePageService } from '@ngxs-labs/firestore-plugin';
 import { patch } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
-import { Attendee } from 'integration/app/models/attendee';
-import { AttendeesFirestore } from 'integration/app/services/attendees.firestore';
+import { Attendee } from './../../models/attendee';
+import { AttendeesFirestore } from './../../services/attendees.firestore';
 
 export interface AttendeesStateModel {
   attendees: Attendee[];

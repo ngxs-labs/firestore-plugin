@@ -4,8 +4,8 @@ import { ClassificationsState } from './classifications.state';
 import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { BehaviorSubject } from 'rxjs';
 import { ClassificationsActions } from './classifications.actions';
-import { Classification } from 'integration/app/models/classification';
-import { ClassificationsFirestore } from 'integration/app/services/classifications.firestore';
+import { Classification } from './../../models/classification';
+import { ClassificationsFirestore } from './../../services/classifications.firestore';
 
 describe('Classifications State', () => {
   let store: Store;

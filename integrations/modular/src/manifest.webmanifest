@@ -1,6 +1,6 @@
 {
-  "name": "integration",
-  "short_name": "integration",
+  "name": "modular",
+  "short_name": "modular",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

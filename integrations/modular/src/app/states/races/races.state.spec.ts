@@ -2,10 +2,10 @@ import { TestBed, async } from '@angular/core/testing';
 import { NgxsModule, Store } from '@ngxs/store';
 import { RacesState } from './races.state';
 import { RacesActions } from './races.actions';
-import { RacesFirestore } from 'integration/app/services/races.firestore';
+import { RacesFirestore } from './../../services/races.firestore';
 import { NgxsFirestoreModule, NgxsFirestorePageIdService } from '@ngxs-labs/firestore-plugin';
 import { BehaviorSubject } from 'rxjs';
-import { Race } from 'integration/app/models/race';
+import { Race } from './../../models/race';
 
 describe('Races State', () => {
   let store: Store;

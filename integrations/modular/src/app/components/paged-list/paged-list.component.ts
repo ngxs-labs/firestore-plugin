@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';
 import { GetLastPage, GetNextPage } from '@ngxs-labs/firestore-plugin';
 import { Store } from '@ngxs/store';
-import { AttendeesActions } from 'integration/app/states/attendees/attendees.actions';
-import { AttendeesState } from 'integration/app/states/attendees/attendees.state';
-import { RacesActions } from 'integration/app/states/races/races.actions';
-import { RacesState } from 'integration/app/states/races/races.state';
+import { AttendeesActions } from './../../states/attendees/attendees.actions';
+import { AttendeesState } from './../../states/attendees/attendees.state';
+import { RacesActions } from './../../states/races/races.actions';
+import { RacesState } from './../../states/races/races.state';
 
 @Component({
   selector: 'app-paged-list',
