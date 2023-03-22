@@ -1,6 +1,6 @@
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Inject, Injectable, Optional } from '@angular/core';
-import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './tokens';
+import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from '../src/lib/tokens';
 import { Store } from '@ngxs/store';
 
 @Injectable({ providedIn: 'root' })

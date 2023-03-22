@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { defer, Observable } from 'rxjs';
 import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
-import { GetNextPage, GetLastPage } from './actions';
+import { GetNextPage, GetLastPage } from '../src/lib/actions';
 import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/firestore';
-import { FirestorePage } from './internal-types';
+import { FirestorePage } from '../src/lib/internal-types';
 
 @Injectable()
 export class NgxsFirestorePageIdCompatService {

@@ -78,20 +78,20 @@
       }
     },
     "ngxs-firestore": {
-      "root": "src",
-      "sourceRoot": "src",
+      "root": "packages/firestore-plugin",
+      "sourceRoot": "packages/firestore-plugin/src",
       "projectType": "library",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "src/tsconfig.lib.json",
-            "project": "src/ng-package.json"
+            "tsConfig": "packages/firestore-plugin/src/tsconfig.lib.json",
+            "project": "packages/firestore-plugin/src/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "src/tsconfig.lib.prod.json"
+              "tsConfig": "packages/firestore-plugin/src/tsconfig.lib.prod.json"
             }
           }
         }

@@ -10,9 +10,9 @@ import {
   StreamEmitted,
   StreamDisconnected,
   StreamErrored,
-  Errored,
-  NgxsFirestorePageCompatService
+  Errored
 } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestorePageCompatService } from '@ngxs-labs/firestore-plugin/compat';
 import { Race } from './../../models/race';
 import { RacesFirestore } from './../../services/races.firestore';
 import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';

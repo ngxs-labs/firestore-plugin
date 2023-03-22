@@ -13,7 +13,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 import { NgxsModule } from '@ngxs/store';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreCompatModule } from '@ngxs-labs/firestore-plugin/compat';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { RacesState } from './states/races/races.state';
@@ -47,7 +47,7 @@ import { ListOnceComponent } from './components/list-once/list-once.component';
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production
     }),
-    NgxsFirestoreModule.forRoot({
+    NgxsFirestoreCompatModule.forRoot({
       timeoutWriteOperations: 1000
     }),
     NgxsActionsExecutingModule.forRoot(),

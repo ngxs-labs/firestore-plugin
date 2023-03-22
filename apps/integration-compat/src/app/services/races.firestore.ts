@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NgxsFirestoreCompat } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreCompat } from '@ngxs-labs/firestore-plugin/compat';
 import { Race } from '../models/race';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';

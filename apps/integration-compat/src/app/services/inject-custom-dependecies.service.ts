@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { NgxsFirestoreCompat, NgxsFirestoreCompatAdapter } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreCompat, NgxsFirestoreCompatAdapter } from '@ngxs-labs/firestore-plugin/compat';
 
 @Injectable()
 export class CustomDependency {

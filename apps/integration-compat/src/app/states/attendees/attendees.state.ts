@@ -1,11 +1,7 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { AttendeesActions } from './attendees.actions';
-import {
-  NgxsFirestoreConnect,
-  Emitted,
-  StreamEmitted,
-  NgxsFirestorePageCompatService
-} from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestoreConnect, Emitted, StreamEmitted } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestorePageCompatService } from '@ngxs-labs/firestore-plugin/compat';
 import { patch } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
 import { Attendee } from '../../models/attendee';
