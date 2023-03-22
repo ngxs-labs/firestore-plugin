@@ -1,4 +1,4 @@
-import { Race } from './../../models/race';
+import { Race } from '../../models/race';
 
 namespace RacesActionsPayloads {
   export type Update = Partial<Race>;

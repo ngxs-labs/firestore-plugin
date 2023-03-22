@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { RacesActions } from './../../states/races/races.actions';
-import { RacesState } from './../../states/races/races.state';
-import { ClassificationsState } from './../../states/classifications/classifications.state';
-import { ClassificationsActions } from './../../states/classifications/classifications.actions';
-import { Race } from './../../models/race';
+import { RacesActions } from '../../states/races/races.actions';
+import { RacesState } from '../../states/races/races.state';
+import { ClassificationsState } from '../../states/classifications/classifications.state';
+import { ClassificationsActions } from '../../states/classifications/classifications.actions';
+import { Race } from '../../models/race';
 import { Chance } from 'chance';
 import { map } from 'rxjs/operators';
 import { actionsExecuting } from '@ngxs-labs/actions-executing';

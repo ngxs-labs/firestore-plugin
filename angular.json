@@ -1,9 +1,9 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "apps",
+  "newProjectRoot": "integrations",
   "projects": {
-    "integration": {
+    "modular": {
       "root": "",
       "sourceRoot": "integration",
       "projectType": "application",
@@ -97,7 +97,7 @@
         }
       }
     },
-    "integration-compat": {
+    "compat": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -107,21 +107,21 @@
           "strict": true
         }
       },
-      "root": "apps/integration-compat",
-      "sourceRoot": "apps/integration-compat/src",
+      "root": "integrations/compat",
+      "sourceRoot": "integrations/compat/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/integration-compat",
-            "index": "apps/integration-compat/src/index.html",
-            "main": "apps/integration-compat/src/main.ts",
-            "polyfills": "apps/integration-compat/src/polyfills.ts",
-            "tsConfig": "apps/integration-compat/tsconfig.app.json",
+            "outputPath": "dist/integrations/compat",
+            "index": "integrations/compat/src/index.html",
+            "main": "integrations/compat/src/main.ts",
+            "polyfills": "integrations/compat/src/polyfills.ts",
+            "tsConfig": "integrations/compat/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/integration-compat/src/favicon.ico", "apps/integration-compat/src/assets"],
-            "styles": ["apps/integration-compat/src/styles.scss"],
+            "assets": ["integrations/compat/src/favicon.ico", "integrations/compat/src/assets"],
+            "styles": ["integrations/compat/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -140,8 +140,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "apps/integration-compat/src/environments/environment.ts",
-                  "with": "apps/integration-compat/src/environments/environment.prod.ts"
+                  "replace": "integrations/compat/src/environments/environment.ts",
+                  "with": "integrations/compat/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -161,10 +161,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "integration-compat:build:production"
+              "browserTarget": "compat:build:production"
             },
             "development": {
-              "browserTarget": "integration-compat:build:development"
+              "browserTarget": "compat:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -172,7 +172,7 @@
       }
     }
   },
-  "defaultProject": "integration",
+  "defaultProject": "modular",
   "cli": {
     "analytics": false
   }
