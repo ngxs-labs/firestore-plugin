@@ -3,7 +3,7 @@
   "scripts": {
     "start": "ng serve",
     "build": "ng build ngxs-firestore --configuration production && yarn copy-readme",
-    "build-integration": "ng build integration --configuration production",
+    "build-integration": "ng build modular --configuration production",
     "copy-readme": "ts-node --project tsconfig.tools.json ./tools/copy-readme",
     "test": "jest --config ./jest.config.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config ./jest.config.js",
