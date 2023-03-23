@@ -12,12 +12,12 @@
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "packages/firestore-plugin/src/tsconfig.lib.json",
-            "project": "packages/firestore-plugin/src/ng-package.json"
+            "tsConfig": "packages/firestore-plugin/tsconfig.lib.json",
+            "project": "packages/firestore-plugin/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "packages/firestore-plugin/src/tsconfig.lib.prod.json"
+              "tsConfig": "packages/firestore-plugin/tsconfig.lib.prod.json"
             }
           }
         }

@@ -1,7 +1,7 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/lib",
+    "outDir": "../../out-tsc/lib",
     "declarationMap": true,
     "target": "es2015",
     "declaration": true,
@@ -16,5 +16,5 @@
     "strictInjectionParameters": true,
     "enableResourceInlining": true
   },
-  "exclude": ["src/test.ts", "**/*.spec.ts"]
+  "exclude": ["**/*.spec.ts"]
 }
