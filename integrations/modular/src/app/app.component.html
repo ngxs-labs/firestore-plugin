@@ -1,0 +1,26 @@
+<nav class="navbar navbar-light navbar-expand-lg  bg-light">
+  <div class="collapse navbar-collapse">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link">FIRESTORE MODULAR</a>
+      <a class="nav-item nav-link" [routerLink]="['/list']" routerLinkActive="active">List</a>
+      <a class="nav-item nav-link" [routerLink]="['/list-once']" routerLinkActive="active">List Once</a>
+      <a class="nav-item nav-link" [routerLink]="['/other']" routerLinkActive="active">Other page</a>
+      <a class="nav-item nav-link" [routerLink]="['/paged-list']" routerLinkActive="active">Paged List</a>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="ngxsFirestoreState$ | async; let ngxsFirestoreState"
+  class="fixed-bottom bg-info p-3"
+  style="max-height:200px;overflow-y:auto;"
+>
+  <h2>NGXS Firestore:</h2>
+  <pre>{{ ngxsFirestoreState | json }}</pre>
+</div>

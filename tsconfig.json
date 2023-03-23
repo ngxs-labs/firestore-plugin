@@ -15,7 +15,8 @@
     "module": "es2020",
     "typeRoots": ["node_modules/@types"],
     "paths": {
-      "@ngxs-labs/firestore-plugin": ["src/public-api.ts"]
+      "@ngxs-labs/firestore-plugin": ["packages/firestore-plugin/src/public-api.ts"],
+      "@ngxs-labs/firestore-plugin/compat": ["packages/firestore-plugin/compat/src/public-api.ts"]
     }
   }
 }

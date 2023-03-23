@@ -1,13 +1,13 @@
 {
   "packageFiles": [
     {
-      "filename": "src/package.json",
+      "filename": "packages/firestore-plugin/package.json",
       "type": "json"
     }
   ],
   "bumpFiles": [
     {
-      "filename": "src/package.json",
+      "filename": "packages/firestore-plugin/package.json",
       "type": "json"
     }
   ]

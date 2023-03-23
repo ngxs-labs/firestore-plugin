@@ -1,0 +1,62 @@
+import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
+import { AttendeesActions } from './attendees.actions';
+import { NgxsFirestoreConnect, Emitted, StreamEmitted } from '@ngxs-labs/firestore-plugin';
+import { NgxsFirestorePageCompatService } from '@ngxs-labs/firestore-plugin/compat';
+import { patch } from '@ngxs/store/operators';
+import { Injectable } from '@angular/core';
+import { Attendee } from '../../models/attendee';
+import { AttendeesFirestore } from '../../services/attendees.firestore';
+
+export interface AttendeesStateModel {
+  attendees: Attendee[];
+  pageId: string;
+}
+
+@State<AttendeesStateModel>({
+  name: 'attendees',
+  defaults: {
+    attendees: [],
+    pageId: ''
+  }
+})
+@Injectable()
+export class AttendeesState implements NgxsOnInit {
+  @Selector() static attendees(state: AttendeesStateModel) {
+    return state.attendees;
+  }
+
+  @Selector() static pageId(state: AttendeesStateModel) {
+    return state.pageId;
+  }
+
+  constructor(
+    private attendeesFS: AttendeesFirestore,
+    private ngxsFirestoreConnect: NgxsFirestoreConnect,
+    private nxgsFirestorePage: NgxsFirestorePageCompatService
+  ) {}
+
+  ngxsOnInit(ctx: StateContext<AttendeesStateModel>) {
+    this.ngxsFirestoreConnect.connect(AttendeesActions.GetPages, {
+      to: () => {
+        const obs$ = this.nxgsFirestorePage.create(
+          (pageFn) =>
+            this.attendeesFS.collection$((ref) => {
+              return pageFn(ref);
+            }),
+          5,
+          [{ fieldPath: 'id' }]
+        );
+
+        return obs$;
+      }
+    });
+  }
+
+  @Action(StreamEmitted(AttendeesActions.GetPages))
+  getPageEmitted(
+    ctx: StateContext<AttendeesStateModel>,
+    { action, payload }: Emitted<AttendeesActions.GetPages, { results: Attendee[]; pageId: string }>
+  ) {
+    ctx.setState(patch({ attendees: payload.results || [], pageId: payload.pageId }));
+  }
+}

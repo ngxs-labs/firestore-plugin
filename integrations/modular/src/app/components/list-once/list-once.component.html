@@ -1,0 +1,21 @@
+<div class="my-3">
+  <button [disabled]="loading$ | async" class="btn btn-primary mr-1" (click)="get()">Get Once</button>
+  <button [disabled]="loading$ | async" class="btn btn-primary mr-1" (click)="getAll()">Get All Once</button>
+</div>
+<ng-container *ngIf="loaded$ | async">
+  <div class="mt-1" style="overflow-y: scroll;max-height: 350px;">
+    <div *ngFor="let race of races$ | async" class="card mr-1 mb-1 d-inline-flex" style="width: 21rem;">
+      <div class="card-body">
+        <h5 class="card-title">{{ race.id }}</h5>
+        <p class="card-text">{{ race.order }}</p>
+        <p class="card-text">{{ race.name }}</p>
+        <p class="card-text">{{ race.description }}</p>
+
+        <pre>{{ race | json }}</pre>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<div *ngIf="loading$ | async">
+  Loading...
+</div>
