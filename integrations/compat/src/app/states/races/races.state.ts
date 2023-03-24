@@ -12,7 +12,7 @@ import {
   StreamErrored,
   Errored
 } from '@ngxs-labs/firestore-plugin';
-import { NgxsFirestorePageCompatService } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestorePageService } from '@ngxs-labs/firestore-plugin/compat';
 import { Race } from '../../models/race';
 import { RacesFirestore } from '../../services/races.firestore';
 import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
@@ -47,7 +47,7 @@ export class RacesState implements NgxsOnInit {
   constructor(
     private racesFS: RacesFirestore,
     private ngxsFirestoreConnect: NgxsFirestoreConnect,
-    private ngxsFirestorePage: NgxsFirestorePageCompatService
+    private ngxsFirestorePage: NgxsFirestorePageService
   ) {}
 
   ngxsOnInit(_ctx: StateContext<RacesStateModel>) {

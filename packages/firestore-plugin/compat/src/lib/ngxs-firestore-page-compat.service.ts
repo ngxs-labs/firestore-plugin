@@ -16,7 +16,7 @@ export class NgxsFirestorePageIdService {
 }
 
 @Injectable({ providedIn: 'root' })
-export class NgxsFirestorePageCompatService {
+export class NgxsFirestorePageService {
   constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
 
   create<T>(

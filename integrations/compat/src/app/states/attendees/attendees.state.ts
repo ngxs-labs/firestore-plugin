@@ -1,7 +1,7 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { AttendeesActions } from './attendees.actions';
 import { NgxsFirestoreConnect, Emitted, StreamEmitted } from '@ngxs-labs/firestore-plugin';
-import { NgxsFirestorePageCompatService } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestorePageService } from '@ngxs-labs/firestore-plugin/compat';
 import { patch } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
 import { Attendee } from '../../models/attendee';
@@ -32,7 +32,7 @@ export class AttendeesState implements NgxsOnInit {
   constructor(
     private attendeesFS: AttendeesFirestore,
     private ngxsFirestoreConnect: NgxsFirestoreConnect,
-    private nxgsFirestorePage: NgxsFirestorePageCompatService
+    private nxgsFirestorePage: NgxsFirestorePageService
   ) {}
 
   ngxsOnInit(ctx: StateContext<AttendeesStateModel>) {
