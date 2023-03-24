@@ -15,11 +15,10 @@
 We've introduced a breaking change in order to support firebase v9. You can find detailed compatibility between
 @angular/fire, angular and firebase [here](https://github.com/angular/angularfire/blob/master/README.md)
 
-| Angular | Firebase            | AngularFire                                                                  | @ngxs-labs/firestore-plugin |
-| ------- | ------------------- | ---------------------------------------------------------------------------- | --------------------------- |
-| 12      | 9 (Modular Version) | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions) | 1.1.x                       |
-| 12      | 9                   | [^7.0](https://github.com/angular/angularfire#angular-and-firebase-versions) | 1.0.x                       |
-| 11      | 8                   | 6                                                                            | 0.x                         |
+| Angular | Firebase | AngularFire                                                                   | @ngxs-labs/firestore-plugin |
+| ------- | -------- | ----------------------------------------------------------------------------- | --------------------------- |
+| >=12    | 9        | [>=7.0](https://github.com/angular/angularfire#angular-and-firebase-versions) | 1.2.x                       |
+| 11      | 8        | 6                                                                             | 0.x                         |
 
 If you are using Firebase modular version check [here](docs/FIREBASE_MODULAR.md).
 
@@ -57,28 +56,45 @@ npm install --save @ngxs-labs/firestore-plugin
 yarn add @ngxs-labs/firestore-plugin
 ```
 
-In your `app.module.ts` include the plugin, note that we also include `AngularFireModule` and `NgxsModule`, as they are
+In your `app.module.ts` include the plugin, you will also need to include `@angular/fire` and `NgxsModule`, as they are
 peer dependencies for the plugin.
+
+### Firebase (Modular)
+
+```ts
+import { NgxsModule } from '@ngxs/store';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+
+@NgModule({
+  imports: [
+    provideFirebaseApp(() => initializeApp({ ... })),
+    provideFirestore(() => getFirestore()),
+    NgxsModule.forRoot(),
+    NgxsFirestoreModule.forRoot()
+  ],
+  ...
+})
+export class AppModule { }
+```
+
+### Firebase (Compat)
 
 ```ts
 //...
-import { AngularFireModule } from '@angular/fire';
 import { NgxsModule } from '@ngxs/store';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin/compat';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 @NgModule({
   declarations: [AppComponent, ListComponent],
   imports: [
     //...
     AngularFireModule.initializeApp(environment.firebase),
-    NgxsModule
-      .forRoot
-      //...
-      (),
-    NgxsLoggerPluginModule.forRoot(),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
+    AngularFirestoreModule,
+    NgxsModule.forRoot(),
     NgxsFirestoreModule.forRoot()
   ]
   //...
@@ -93,6 +109,8 @@ collection.
 ```ts
 //...
 import { NgxsFirestore } from '@ngxs-labs/firestore-plugin';
+// or if you are using firebase compat
+import { NgxsFirestore } from '@ngxs-labs/firestore-plugin/compat';
 
 @Injectable({
   providedIn: 'root'
@@ -312,6 +330,20 @@ export class RacesFirestore extends NgxsFirestore<Race> {
 }
 ```
 
+You can also configure if you want to retrieve the
+[metadata from firestore document](https://firebase.google.com/docs/firestore/manage-data/enable-offline).
+
+Enabling fetching metadata, you will get `fromCache` and `hasPendingWrites` fields that can be useful to inform users if
+data is being read from the server or writes have already been commited to the database.
+
+You can disable `metadata` setting it to `false`.
+
+```ts
+export class RacesFirestore extends NgxsFirestore<Race> {
+  metadataField = '_metadata';
+}
+```
+
 ### Retrieving data from subcollections
 
 When you need to pull data from a subcollection you can create a specific Firestore service for the subcollection. Let's
@@ -377,3 +409,16 @@ size pulled when dispatched.
 
 This approach does not support paging queries providing where to start getting results from, but it is a simple way to
 limit queries and still be connected with the NGXS store.
+
+### @angular/fire - firebase.js compatibility
+
+In version 1.2.x the plugin will include two `NgxsFirestore` to allow compatibility with firebase compat and modular.
+
+The service name will remain the same but the compat version will be exported under
+`@ngxs-labs/firestore-plugin/compat`.
+
+The compat submodule will also export `NgxsFirestoreAdapter`, `NgxsFirestorePageService`, `NgxsFirestorePageIdService`
+and `NgxsFirestoreModule`.
+
+If you intend to keep using compat version for a while, make sure you are using the correct import
+`@ngxs-labs/firestore-plugin/compat`.
