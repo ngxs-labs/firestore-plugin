@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/ngxs-labs/firestore-plugin/compare/v1.1.0...v1.2.0) (2023-03-26)
+
+### Features
+
+- cancelPrevious 'cancel-if-track-by-changed'
+  ([c72d334](https://github.com/ngxs-labs/firestore-plugin/commit/c72d334ae48a3d34a8f4904a78af173b7866964d))
+- compat integration and services
+  ([89150e5](https://github.com/ngxs-labs/firestore-plugin/commit/89150e51c7424dfa4724f5dd01443183cdd83c5b))
+- include metadata field
+  ([6f0159b](https://github.com/ngxs-labs/firestore-plugin/commit/6f0159b5ccfb4f0779937a5d8dda6bdf895b4e59))
+- make integration app a pwa
+  ([bd25591](https://github.com/ngxs-labs/firestore-plugin/commit/bd25591dc19bea2643e2eb01b230bbd45cda3261))
+- split in package subfolders
+  ([12bd4f7](https://github.com/ngxs-labs/firestore-plugin/commit/12bd4f78582a68e46561c999cfb2bfc00c7c4189))
+- use developmentMode option to turn on/off connection tracking
+  ([d55df81](https://github.com/ngxs-labs/firestore-plugin/commit/d55df81f267d547f4734e57a2a0b32b0dacda470))
+
+### Bug Fixes
+
+- build compat namespace
+  ([9ed73ba](https://github.com/ngxs-labs/firestore-plugin/commit/9ed73baf03f853708c759fc95a3b3cb873a4d0be))
+- delete metadata before saving
+  ([35eddde](https://github.com/ngxs-labs/firestore-plugin/commit/35edddef0d14fbbdb03466302eac7050f43e91d9))
+- development mode optional
+  ([ae35511](https://github.com/ngxs-labs/firestore-plugin/commit/ae355111af93d2ff44b824ff4b7981fc5ea69ce6))
+- export from compat public api
+  ([1bc659f](https://github.com/ngxs-labs/firestore-plugin/commit/1bc659fc2e48d2a5ac2d99a4e90739a3c6d75e54))
+- path ([559abc0](https://github.com/ngxs-labs/firestore-plugin/commit/559abc0b9ae0d1b8d7de2213a714fc3c5a8f24bc))
+- path ([0bd96de](https://github.com/ngxs-labs/firestore-plugin/commit/0bd96deeba27075a6a20938db734cfcd4606918f))
+- remove unused
+  ([edf67ae](https://github.com/ngxs-labs/firestore-plugin/commit/edf67ae6f51e23788c22b7999a205e91ff5d6dbd))
+- rename firestore page compat
+  ([df852d6](https://github.com/ngxs-labs/firestore-plugin/commit/df852d69f8fdcf81f5e56b726e8ca7c5661275a9))
+- spelling error on ngxsFirestoreConnections
+  ([ba009a7](https://github.com/ngxs-labs/firestore-plugin/commit/ba009a770906aa52a4e4d93f29746ced14999adc))
+- umd modules ids
+  ([8b20326](https://github.com/ngxs-labs/firestore-plugin/commit/8b20326ef60633d246a7654d99c03abe3b1120c1))
+- use compat imports
+  ([4a37704](https://github.com/ngxs-labs/firestore-plugin/commit/4a377045a117f4295e00a733c86f5448ecf850ed))
+
 ## [1.1.0](https://github.com/ngxs-labs/firestore-plugin/compare/v1.0.0...v1.1.0) (2022-11-02)
 
 ### Features
