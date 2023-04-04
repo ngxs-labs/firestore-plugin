@@ -2163,10 +2163,10 @@
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-12.2.16.tgz#262fe1f8e75453ff6bcb01693af4838737ce45f3"
   integrity sha512-Y2wYX0ybpTYCuSXrG7+3FAtL4dSa7D1vMxymeJEmPTf5QcFTbllwcGQ82Q9lzTn3UDxvt6ZqAYfmWZHGp2GQ9w==
 
-"@ngxs-labs/actions-executing@^0.1.8":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@ngxs-labs/actions-executing/-/actions-executing-0.1.9.tgz#f9259758d00d983f3cfbfdf4ffcef4342090f275"
-  integrity sha512-ymw3SAz0hMo9QXHek/PstG/ut2sYxgpT8Dzd8r4eFNLE3CkGFhDmfcXgCErDenUkmau1/igslCgfjYVS9gXKbQ==
+"@ngxs-labs/actions-executing@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@ngxs-labs/actions-executing/-/actions-executing-1.0.5.tgz#bc7f524853291ced12baedf603868af05c6d1d0a"
+  integrity sha512-ZLIssB58I4HGh3oJUzwkWILf//5Vm2jd6Va/m4612yY9ir6JwULNwdlcgwlsJ0z17xN1MMZz2izJ35Ia+jsf5w==
   dependencies:
     tslib "^2.0.0"
 
@@ -2177,19 +2177,19 @@
   dependencies:
     tslib "^1.9.0"
 
-"@ngxs/logger-plugin@^3.7.2":
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/@ngxs/logger-plugin/-/logger-plugin-3.7.3.tgz#aa76f6243a351a83056d234028b5aec84bd559ae"
-  integrity sha512-jLNwq5hJw7W0nS7J215L1k+94jOaiI2kH41sOaN64ycuUx15FiMNJgOIj2ZqSTIaxNlacPWzcG3tZGr/FZ5Lzg==
+"@ngxs/logger-plugin@^3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/logger-plugin/-/logger-plugin-3.8.0.tgz#a37433926ed99ebf628483af35523c98e5b98ed5"
+  integrity sha512-jQX7kKAZdTbwlX6pFIENvNRrwbS/B/Insh7v4TX57xQ+BiJFZIQEazYm3QIO02drRl1vMZLbLD3324lfozGnQA==
   dependencies:
-    tslib "^1.9.0"
+    tslib "^2.2.0"
 
-"@ngxs/store@^3.7.6":
-  version "3.7.6"
-  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-3.7.6.tgz#567190b17e1111ec7f9bcc451c99bbdac82c950a"
-  integrity sha512-ljnrkVrO/HmDakQImWr9G2NbpbNd8MjoPI3Ad2GsIbK/Ey4psEyMGgg6jcaMyhDfDAs2Z69Q+5TVJS0GV4euMw==
+"@ngxs/store@^3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-3.8.0.tgz#2bf76d326c5d91763cf747ca8be152254ea3543c"
+  integrity sha512-ZIVM2ftudeB3VSjULJjb31RS3WKYVgs/67IHdDjukn1S0X8ZRk07QNH6cUCfUB5h345sMLCwliwVuqh+IXbYSw==
   dependencies:
-    tslib "^1.9.0"
+    tslib "^2.2.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"

@@ -30,7 +30,7 @@ export class NgxsFirestorePageService {
       return this.actions$.pipe(
         ofActionDispatched(GetNextPage, GetLastPage),
         startWith('INIT'),
-        map((action) => {
+        map((action: 'INIT' | GetNextPage | GetLastPage) => {
           const actionType = <'GetNextPage' | 'GetLastPage'>getActionTypeFromInstance(action);
           const payload = action === 'INIT' ? this.pageId.createId() : action.payload;
           return { payload, actionType: actionType || 'GetNextPage' };
