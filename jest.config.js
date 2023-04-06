@@ -10,13 +10,12 @@ module.exports = {
   preset: 'jest-preset-angular',
   rootDir: path.resolve('.'),
   testMatch: ['<rootDir>/**/*.spec.ts'],
-  collectCoverageFrom: ['<rootDir>/**/*.ts'],
+  collectCoverageFrom: ['<rootDir>/integrations/**/*.ts', '<rootDir>/packages/**/*.ts'],
   setupFilesAfterEnv: ['<rootDir>/setupJest.ts'],
-  coverageReporters: ['json', 'lcovonly', 'lcov', 'text', 'html'],
-  coveragePathIgnorePatterns: ['/node_modules/'],
+  coveragePathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist/', '<rootDir>/.angular/'],  
   globalSetup: 'jest-preset-angular/global-setup',
   bail: true,
   moduleNameMapper,
-  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/', '<rootDir>/.angular/'],
   modulePaths: ['<rootDir>']
 };
