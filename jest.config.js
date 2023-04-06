@@ -14,18 +14,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/setupJest.ts'],
   coverageReporters: ['json', 'lcovonly', 'lcov', 'text', 'html'],
   coveragePathIgnorePatterns: ['/node_modules/'],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.json',
-      allowSyntheticDefaultImports: true,
-      diagnostics: true,
-      stringifyContentPathRegex: '\\.html$',
-      astTransformers: [
-        'jest-preset-angular/build/InlineFilesTransformer',
-        'jest-preset-angular/build/StripStylesTransformer'
-      ]
-    }
-  },
+  globalSetup: 'jest-preset-angular/global-setup',
   bail: true,
   moduleNameMapper,
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
