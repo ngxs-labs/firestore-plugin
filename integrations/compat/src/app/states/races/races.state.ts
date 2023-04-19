@@ -63,7 +63,7 @@ export class RacesState implements NgxsOnInit {
     this.ngxsFirestoreConnect.connect(RacesActions.GetPages, {
       to: () => {
         const obs$ = this.ngxsFirestorePage.create(
-          (pageFn) => this.racesFS.collection$((ref) => pageFn(ref).where('s', '>=', 's')),
+          (pageFn) => this.racesFS.collection$((ref) => pageFn(ref).where('title', '>=', 's')),
           5,
           [{ fieldPath: 'title' }]
         );
