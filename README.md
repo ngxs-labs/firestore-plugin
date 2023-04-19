@@ -417,8 +417,8 @@ In version 1.2.x the plugin will include two `NgxsFirestore` to allow compatibil
 The service name will remain the same but the compat version will be exported under
 `@ngxs-labs/firestore-plugin/compat`.
 
-The compat submodule will also export `NgxsFirestoreAdapter`, `NgxsFirestorePageService`, `NgxsFirestorePageIdService`
-and `NgxsFirestoreModule`.
+The compat submodule will also export `NgxsFirestoreAdapter`, `NgxsFirestorePageService` and
+`NgxsFirestorePageIdService`.
 
 If you intend to keep using compat version for a while, make sure you are using the correct import
 `@ngxs-labs/firestore-plugin/compat`.

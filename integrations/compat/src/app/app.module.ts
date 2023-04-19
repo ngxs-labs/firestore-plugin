@@ -13,7 +13,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 import { NgxsModule } from '@ngxs/store';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { RacesState } from './states/races/races.state';
