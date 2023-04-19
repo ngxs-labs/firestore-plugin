@@ -70,7 +70,9 @@ export abstract class NgxsFirestore<T> {
 
   public collection$(queryFn: QueryFn = (ref) => ref): Observable<T[]> {
     return this.adapter.firestore
-      .collection<T>(this.collectionRef(queryFn))
+      .collection<T>(this.path, (ref) => {
+        return queryFn(ref.withConverter(this.converter));
+      })
       .snapshotChanges()
       .pipe(
         map((docSnapshots: DocumentChangeAction<T>[]) =>
@@ -164,10 +166,6 @@ export abstract class NgxsFirestore<T> {
 
   private docRef(id: string) {
     return this.adapter.firestore.doc(`${this.path}/${id}`).ref.withConverter(this.converter);
-  }
-
-  private collectionRef(queryFn = (ref) => ref) {
-    return this.adapter.firestore.collection(`${this.path}`, queryFn).ref.withConverter(this.converter);
   }
 
   private isOffline() {
