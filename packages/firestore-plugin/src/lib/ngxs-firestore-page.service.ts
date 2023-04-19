@@ -8,7 +8,7 @@ import { createId } from './ngxs-firestore.service';
 import { QueryFn } from './utils';
 import { FirestorePage } from './internal-types';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageIdService {
   constructor(private firestore: Firestore) {}
 
@@ -65,6 +65,7 @@ export class NgxsFirestorePageService {
           return !skip;
         }),
         switchMap(({ pageId, limit }) => {
+          debugger;
           return queryFn((ref) => {
             return orderBy.reduce(
               (prev, curr) => query(prev, orderByFn(curr.fieldPath, curr.directionStr || 'asc'), limitFn(limit)),

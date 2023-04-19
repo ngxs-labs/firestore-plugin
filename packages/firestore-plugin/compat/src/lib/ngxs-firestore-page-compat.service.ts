@@ -6,7 +6,7 @@ import { GetNextPage, GetLastPage } from '../../../src/lib/actions';
 import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/firestore';
 import { FirestorePage } from '../../../src/lib/internal-types';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageIdService {
   constructor(private firestore: AngularFirestore) {}
 

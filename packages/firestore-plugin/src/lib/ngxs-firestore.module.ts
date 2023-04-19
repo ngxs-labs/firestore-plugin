@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsFirestoreState } from './ngxs-firestore.state';
 import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './tokens';
-import { NgxsFirestorePageIdService } from './ngxs-firestore-page.service';
 
 @NgModule({
   imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreState])]
@@ -16,10 +15,6 @@ export class NgxsFirestoreModule {
         {
           provide: NGXS_FIRESTORE_MODULE_OPTIONS,
           useValue: { timeoutWriteOperations: false, developmentMode: false, ...options }
-        },
-        {
-          provide: NgxsFirestorePageIdService,
-          useClass: NgxsFirestorePageIdService
         }
       ]
     };
