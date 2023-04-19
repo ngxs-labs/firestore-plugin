@@ -40,6 +40,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["chance"],
             "outputPath": "dist/integrations/compat",
             "index": "integrations/compat/src/index.html",
             "main": "integrations/compat/src/main.ts",
@@ -115,6 +116,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/modular",
+            "allowedCommonJsDependencies": ["chance"],
             "index": "integrations/modular/src/index.html",
             "main": "integrations/modular/src/main.ts",
             "polyfills": "integrations/modular/src/polyfills.ts",
