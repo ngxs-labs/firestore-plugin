@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ListComponent } from './list.component';
 import { Store, NgxsModule } from '@ngxs/store';
-import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin/compat';
+import { NgxsFirestoreModule } from '@ngxs-labs/firestore-plugin';
 import { Subject } from 'rxjs';
 
 describe('ListComponent', () => {
