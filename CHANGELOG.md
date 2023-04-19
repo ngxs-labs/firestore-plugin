@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.2...v1.2.3) (2023-04-19)
+
+### Bug Fixes
+
+- provide pageIdService in 'root'
+  ([dcb5653](https://github.com/ngxs-labs/firestore-plugin/commit/dcb5653c180d11d7f669e638ffff650aba9afd1e))
+- query ([5942c59](https://github.com/ngxs-labs/firestore-plugin/commit/5942c59039ddfb1f69ac69bf5d81bf7baf54f61a))
+- remove collectionRef
+  ([cb8ecad](https://github.com/ngxs-labs/firestore-plugin/commit/cb8ecadcad00dcbd76899ff8343185e10993d714))
+- remove NgxsFirestoreCompatModule
+  ([224f094](https://github.com/ngxs-labs/firestore-plugin/commit/224f094d10a02129041a7a0b9c8559d08decb1a5))
+- styles imprts
+  ([6c57846](https://github.com/ngxs-labs/firestore-plugin/commit/6c57846539d959dc763957aa6ab0bb9badbbb96e))
+
 ### [1.2.2](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.1...v1.2.2) (2023-04-04)
 
 ### [1.2.1](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.0...v1.2.1) (2023-04-04)
