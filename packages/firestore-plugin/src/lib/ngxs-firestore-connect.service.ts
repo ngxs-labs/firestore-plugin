@@ -76,7 +76,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
   ) {
     const connectedActionFinishesOn = opts.connectedActionFinishesOn || 'FirstEmit';
     const trackBy = opts.trackBy || defaultTrackBy;
-    const cancelPrevious = opts.cancelPrevious;
+    const cancelPrevious = opts.cancelPrevious || false;
 
     interface CompletedHandler {
       actionCompletedHandlerSubject: Subject<unknown>;
@@ -99,7 +99,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
       const completed$ = actionCompletedHandlerSubject.asObservable().pipe(take(1));
 
-      if (cancelPrevious) {
+      if (cancelPrevious === true) {
         return completed$;
       }
 

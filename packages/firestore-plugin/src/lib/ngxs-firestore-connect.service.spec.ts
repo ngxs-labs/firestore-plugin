@@ -710,6 +710,11 @@ describe('NgxsFirestoreConnect', () => {
           ...firstExpect,
           {
             actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          },
+          {
+            actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',
             actionPayload: 'first'
           }
@@ -761,6 +766,11 @@ describe('NgxsFirestoreConnect', () => {
           ...firstExpect,
           {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          },
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',
             actionPayload: 'first'
           }
@@ -810,6 +820,11 @@ describe('NgxsFirestoreConnect', () => {
 
         expect(actionEvents).toEqual([
           ...firstExpect,
+          {
+            actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          },
           {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',

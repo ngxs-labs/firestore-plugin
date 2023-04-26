@@ -65,7 +65,6 @@ export class NgxsFirestorePageService {
           return !skip;
         }),
         switchMap(({ pageId, limit }) => {
-          debugger;
           return queryFn((ref) => {
             return orderBy.reduce(
               (prev, curr) => query(prev, orderByFn(curr.fieldPath, curr.directionStr || 'asc'), limitFn(limit)),
