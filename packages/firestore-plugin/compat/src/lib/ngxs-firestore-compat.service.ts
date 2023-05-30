@@ -22,7 +22,7 @@ export abstract class NgxsFirestore<T> {
   protected idField: string = 'id';
   protected metadataField: string | false = false;
   protected timeoutWriteOperations: number | false = false;
-  protected disableNetwork: false = false;
+  protected disableNetwork: boolean = false;
   protected converter: firebase.firestore.FirestoreDataConverter<T> = {
     toFirestore: (value) => {
       return value as DocumentData;

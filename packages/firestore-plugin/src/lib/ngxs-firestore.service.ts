@@ -40,7 +40,7 @@ export abstract class NgxsFirestore<T> {
   protected idField = 'id';
   protected metadataField: string | false = false;
   protected timeoutWriteOperations: number | false = false;
-  protected disableNetwork: false = false;
+  protected disableNetwork: boolean = false;
   protected converter: FirestoreDataConverter<T> = {
     toFirestore: (value) => {
       return value as DocumentData;
