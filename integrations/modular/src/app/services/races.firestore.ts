@@ -20,11 +20,11 @@ export class RacesFirestore extends NgxsFirestore<Race> {
     fromFirestore: (snapshot, options) => {
       const data = snapshot.data(options);
 
-      return <Race>{ ...data, testProp: data.id + data.title };
+      return <Race>{ ...data, testProp: data['id'] + data['title'] };
     }
   };
 
-  updateIfExists(id, data) {
+  updateIfExists(id: string, data: Race) {
     const docRef = doc(this.adapter.firestore, `${this.path}/${id}`).withConverter(this.converter);
     return updateDoc(docRef, data);
   }

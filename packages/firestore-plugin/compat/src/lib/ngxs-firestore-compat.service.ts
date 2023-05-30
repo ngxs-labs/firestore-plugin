@@ -3,7 +3,9 @@ import {
   QueryDocumentSnapshot,
   Action,
   DocumentSnapshot,
-  DocumentChangeAction
+  DocumentChangeAction,
+  DocumentData,
+  DocumentReference
 } from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
@@ -11,12 +13,6 @@ import { map, mapTo, timeoutWith } from 'rxjs/operators';
 import { NgxsFirestoreAdapter } from './ngxs-firestore-compat.adapter';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-
-/**
- * Changes the behavior of a set() call to only replace the values specified
- * in its data argument. Fields omitted from the set() call remain
- * untouched.
- */
 
 @Injectable()
 export abstract class NgxsFirestore<T> {
@@ -27,7 +23,7 @@ export abstract class NgxsFirestore<T> {
   protected metadataField: string | false = false;
   protected converter: firebase.firestore.FirestoreDataConverter<T> = {
     toFirestore: (value) => {
-      return value;
+      return value as DocumentData;
     },
     fromFirestore: (snapshot, options) => {
       return { ...(<T>snapshot.data(options)) };
@@ -38,9 +34,9 @@ export abstract class NgxsFirestore<T> {
     return this.adapter.firestore.createId();
   }
 
-  public doc$(id: string): Observable<T> {
+  public doc$(id: string): Observable<T | undefined> {
     return this.adapter.firestore
-      .doc<T>(this.docRef(id))
+      .doc<T>(this.docRef(id) as any)
       .snapshotChanges()
       .pipe(
         map((docSnapshot: Action<DocumentSnapshot<T>>) => {
@@ -53,9 +49,12 @@ export abstract class NgxsFirestore<T> {
       );
   }
 
-  public docOnce$(id: string, getOptions: firebase.firestore.GetOptions = { source: 'default' }): Observable<T> {
+  public docOnce$(
+    id: string,
+    getOptions: firebase.firestore.GetOptions = { source: 'default' }
+  ): Observable<T | undefined> {
     return this.adapter.firestore
-      .doc<T>(this.docRef(id))
+      .doc<T>(this.docRef(id) as any)
       .get(getOptions)
       .pipe(
         map((docSnapshot) => {
@@ -71,7 +70,7 @@ export abstract class NgxsFirestore<T> {
   public collection$(queryFn: QueryFn = (ref) => ref): Observable<T[]> {
     return this.adapter.firestore
       .collection<T>(this.path, (ref) => {
-        return queryFn(ref.withConverter(this.converter));
+        return queryFn(ref.withConverter(this.converter) as any);
       })
       .snapshotChanges()
       .pipe(
@@ -89,7 +88,7 @@ export abstract class NgxsFirestore<T> {
   ): Observable<T[]> {
     return this.adapter.firestore
       .collection<T>(this.path, (ref) => {
-        return queryFn(ref.withConverter(this.converter));
+        return queryFn(ref.withConverter(this.converter) as any);
       })
       .get(getOptions)
       .pipe(
@@ -119,8 +118,8 @@ export abstract class NgxsFirestore<T> {
     let id;
     let newValue;
 
-    if (Object.keys(value).includes(this.idField) && !!value[this.idField]) {
-      id = value[this.idField];
+    if (Object.keys(value).includes(this.idField) && !!(<any>value)[this.idField]) {
+      id = (<any>value)[this.idField];
       newValue = Object.assign({}, value);
     } else {
       id = this.createId();
@@ -130,21 +129,21 @@ export abstract class NgxsFirestore<T> {
     return this.docSet(id, newValue, setOptions);
   }
 
-  private getDataWithId<TData>(doc: QueryDocumentSnapshot<TData>) {
+  private getDataWithId<TData>(doc: firebase.firestore.QueryDocumentSnapshot<TData> | QueryDocumentSnapshot<TData>): T {
     const data = doc.data();
-    const id = (data && data[this.idField]) || doc.id;
+    const id = (data && (<any>data)[this.idField]) || doc.id;
     if (this.metadataField) {
-      return { ...data, [this.idField]: id, [this.metadataField]: doc.metadata };
+      return ({ ...data, [this.idField]: id, [this.metadataField]: doc.metadata } as unknown) as T;
     } else {
-      return { ...data, [this.idField]: id };
+      return ({ ...data, [this.idField]: id } as unknown) as T;
     }
   }
 
   private doc(id: string) {
-    return this.adapter.firestore.doc(this.docRef(id));
+    return this.adapter.firestore.doc(this.docRef(id) as DocumentReference);
   }
 
-  private docSet(id: string, value: any, setOptions?: firebase.firestore.SetOptions) {
+  private docSet(id: string, value: any, setOptions: firebase.firestore.SetOptions = { merge: true }) {
     if (this.metadataField) {
       delete value[this.metadataField];
     }

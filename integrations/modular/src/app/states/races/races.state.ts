@@ -161,12 +161,12 @@ export class RacesState implements NgxsOnInit {
 
   @Action(RacesActions.Update)
   update({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
-    return this.racesFS.update$(payload.raceId, payload);
+    return this.racesFS.update$(payload.raceId!, payload);
   }
 
   @Action(RacesActions.UpdateIfExists)
   updateIfExists({ patchState, dispatch }: StateContext<RacesStateModel>, { payload }: RacesActions.Update) {
-    return this.racesFS.updateIfExists(payload.raceId, payload);
+    return this.racesFS.updateIfExists(payload.raceId!, payload as Race);
   }
 
   @Action(RacesActions.Delete)

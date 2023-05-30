@@ -26,7 +26,7 @@ function streamId(opts: { actionType: ActionType; action: any; trackBy: (action:
   return id;
 }
 
-function tapOnce<T>(fn: (value) => void) {
+function tapOnce<T>(fn: (value: any) => void) {
   return (source: Observable<any>) =>
     defer(() => {
       let first = true;
@@ -133,7 +133,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
       })
     );
 
-    const firestoreStreamHandler$ = (action) => {
+    const firestoreStreamHandler$ = (action: T) => {
       const streamFn = opts.to;
       return streamFn(action).pipe(
         // connected
@@ -217,6 +217,8 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 return dispatchedActionStreamId === streamId({ actionType, action, trackBy });
               } else if (cancelPrevious === 'cancel-if-track-by-changed') {
                 return dispatchedActionStreamId !== streamId({ actionType, action, trackBy });
+              } else {
+                return false;
               }
             })
           )

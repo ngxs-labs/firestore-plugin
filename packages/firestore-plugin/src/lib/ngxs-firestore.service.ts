@@ -14,7 +14,8 @@ import {
   QueryDocumentSnapshot,
   setDoc,
   SetOptions,
-  Firestore
+  Firestore,
+  DocumentData
 } from '@angular/fire/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
@@ -31,22 +32,16 @@ export function createId(firestore: Firestore) {
   return doc(collection(firestore, '_')).id;
 }
 
-/**
- * Changes the behavior of a set() call to only replace the values specified
- * in its data argument. Fields omitted from the set() call remain
- * untouched.
- */
-
 @Injectable()
 export abstract class NgxsFirestore<T> {
   constructor(@Inject(NgxsFirestoreAdapter) protected adapter: NgxsFirestoreAdapter) {}
 
   protected abstract path: string;
-  protected idField: string = 'id';
+  protected idField = 'id';
   protected metadataField: string | false = false;
   protected converter: FirestoreDataConverter<T> = {
     toFirestore: (value) => {
-      return value;
+      return value as DocumentData;
     },
     fromFirestore: (snapshot, options) => {
       return { ...(<T>snapshot.data(options)) };
@@ -57,7 +52,7 @@ export abstract class NgxsFirestore<T> {
     return createId(this.adapter.firestore);
   }
 
-  public doc$(id: string): Observable<T> {
+  public doc$(id: string): Observable<T | undefined> {
     return docSnapshots(this.docRef(id)).pipe(
       map((docSnapshot) => {
         if (docSnapshot.exists()) {
@@ -69,7 +64,7 @@ export abstract class NgxsFirestore<T> {
     );
   }
 
-  public docOnce$(id: string, { source }: GetOptions = { source: 'default' }): Observable<T> {
+  public docOnce$(id: string, { source }: GetOptions = { source: 'default' }): Observable<T | undefined> {
     const getDocFn = source === 'cache' ? getDocFromCache : source === 'server' ? getDocFromServer : getDoc;
     return from(getDocFn(this.docRef(id))).pipe(
       map((docSnapshot) => {
@@ -120,8 +115,8 @@ export abstract class NgxsFirestore<T> {
     let id;
     let newValue;
 
-    if (Object.keys(value).includes(this.idField) && !!value[this.idField]) {
-      id = value[this.idField];
+    if (Object.keys(value).includes(this.idField) && !!(<any>value)[this.idField]) {
+      id = (<any>value)[this.idField];
       newValue = Object.assign({}, value);
     } else {
       id = this.createId();
@@ -133,7 +128,7 @@ export abstract class NgxsFirestore<T> {
 
   private getDataWithId<TData>(doc: QueryDocumentSnapshot<TData>) {
     const data = doc.data();
-    const id = (data && data[this.idField]) || doc.id;
+    const id = (data && (<any>data)[this.idField]) || doc.id;
     if (this.metadataField) {
       return { ...data, [this.idField]: id, [this.metadataField]: doc.metadata };
     } else {
@@ -141,7 +136,7 @@ export abstract class NgxsFirestore<T> {
     }
   }
 
-  private docSet(id: string, value: any, setOptions?: SetOptions) {
+  private docSet(id: string, value: any, setOptions: SetOptions = { merge: true }) {
     if (this.metadataField) {
       delete value[this.metadataField];
     }

@@ -12,7 +12,7 @@ export class ClassificationsFirestore extends NgxsFirestore<Race> {
     return `races/${this.raceId}/classifications`;
   }
 
-  public setRaceId(raceId) {
+  public setRaceId(raceId: string) {
     this._raceId = raceId;
   }
 

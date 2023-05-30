@@ -17,6 +17,16 @@
     "paths": {
       "@ngxs-labs/firestore-plugin": ["packages/firestore-plugin/src/public-api.ts"],
       "@ngxs-labs/firestore-plugin/compat": ["packages/firestore-plugin/compat/src/public-api.ts"]
-    }
+    },
+    "forceConsistentCasingInFileNames": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": false
   }
 }

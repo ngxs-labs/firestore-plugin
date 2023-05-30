@@ -3,8 +3,10 @@ import { defer, Observable } from 'rxjs';
 import { filter, map, startWith, switchMap } from 'rxjs/operators';
 import { Actions, getActionTypeFromInstance, ofActionDispatched } from '@ngxs/store';
 import { GetNextPage, GetLastPage } from '../../../src/lib/actions';
-import { AngularFirestore, FieldPath, QueryFn } from '@angular/fire/compat/firestore';
+import { AngularFirestore, QueryFn, FieldPath } from '@angular/fire/compat/firestore';
 import { FirestorePage } from '../../../src/lib/internal-types';
+
+type OrderBy = { fieldPath: string | FieldPath; directionStr?: 'desc' | 'asc' };
 
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageIdService {
@@ -22,14 +24,14 @@ export class NgxsFirestorePageService {
   create<T>(
     queryFn: (pageFn: QueryFn<any>) => Observable<T>,
     size: number,
-    orderBy: { fieldPath: string | FieldPath; directionStr?: 'desc' | 'asc' }[]
+    orderBy: OrderBy[]
   ): Observable<{ results: T; pageId: string }> {
     return defer(() => {
       const pages: FirestorePage[] = [];
 
       return this.actions$.pipe(
         ofActionDispatched(GetNextPage, GetLastPage),
-        startWith('INIT'),
+        startWith('INIT' as 'INIT'),
         map((action: 'INIT' | GetNextPage | GetLastPage) => {
           const actionType = <'GetNextPage' | 'GetLastPage'>getActionTypeFromInstance(action);
           const payload = action === 'INIT' ? this.pageId.createId() : action.payload;
@@ -65,7 +67,9 @@ export class NgxsFirestorePageService {
         switchMap(({ pageId, limit }) => {
           return queryFn((ref) => {
             return orderBy
-              .reduce((prev, curr) => prev.orderBy(curr.fieldPath, curr.directionStr || 'asc'), ref)
+              .reduce((prev: any, curr) => {
+                return prev.orderBy(curr.fieldPath, curr.directionStr || 'asc');
+              }, ref)
               .limit(limit);
           }).pipe(
             map((results) => {

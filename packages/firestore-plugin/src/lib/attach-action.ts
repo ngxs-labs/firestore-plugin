@@ -22,7 +22,7 @@ export function attachAction<S, A>(
     return fn(_state, _action);
   };
 
-  Action(action, options)({ constructor: storeClass }, methodName, null);
+  Action(action, options)({ constructor: storeClass }, methodName, null as any);
 }
 
 const getActionMethodName = (action: ActionType) => {
