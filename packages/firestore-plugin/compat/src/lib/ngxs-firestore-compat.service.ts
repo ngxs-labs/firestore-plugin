@@ -21,6 +21,8 @@ export abstract class NgxsFirestore<T> {
   protected abstract path: string;
   protected idField: string = 'id';
   protected metadataField: string | false = false;
+  protected timeoutWriteOperations: number | false = false;
+  protected disableNetwork: false = false;
   protected converter: firebase.firestore.FirestoreDataConverter<T> = {
     toFirestore: (value) => {
       return value as DocumentData;
@@ -148,16 +150,15 @@ export abstract class NgxsFirestore<T> {
       delete value[this.metadataField];
     }
 
-    if (this.isOffline()) {
+    const disableNetwork = this.adapter.options?.disableNetwork || this.disableNetwork;
+    if (this.isOffline() || disableNetwork) {
       this.doc(id).set(value, setOptions);
       return of(id);
     }
 
-    if (this.adapter.options && this.adapter.options.timeoutWriteOperations) {
-      return from(this.doc(id).set(value, setOptions)).pipe(
-        timeoutWith(this.adapter.options.timeoutWriteOperations, of(id)),
-        mapTo(id)
-      );
+    const timeoutWriteOperations = this.adapter.options?.timeoutWriteOperations || this.timeoutWriteOperations;
+    if (timeoutWriteOperations) {
+      return from(this.doc(id).set(value, setOptions)).pipe(timeoutWith(timeoutWriteOperations, of(id)), mapTo(id));
     } else {
       return from(this.doc(id).set(value, setOptions)).pipe(mapTo(id));
     }
