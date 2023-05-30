@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.5](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.4...v1.2.5) (2023-05-30)
+
+### Features
+
+- disable network config
+  ([cd6a403](https://github.com/ngxs-labs/firestore-plugin/commit/cd6a403ede374a3474c9de87fb8bc501af13b08a))
+
 ### [1.2.4](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.3...v1.2.4) (2023-04-26)
 
 ### Bug Fixes
