@@ -35,20 +35,26 @@ describe('NgxsFirestorePage', () => {
     static type = 'MAX PAGE SIZE TEST ACTION GET PAGES';
   }
 
+  type TestStateModel = {
+    pageId: string;
+    pageSize: number;
+    results: string[];
+  };
+
   @State({
     name: 'test'
   })
   @Injectable()
   class TestState implements NgxsOnInit {
-    @Selector() static pageId(state) {
+    @Selector() static pageId(state: TestStateModel) {
       return state.pageId;
     }
 
-    @Selector() static pageSize(state) {
+    @Selector() static pageSize(state: TestStateModel) {
       return state.pageSize;
     }
 
-    @Selector() static results(state) {
+    @Selector() static results(state: TestStateModel) {
       return state.results;
     }
 
@@ -60,32 +66,34 @@ describe('NgxsFirestorePage', () => {
     ngxsOnInit() {
       this.ngxsFirestoreConnect.connect(TestActionGetPages, {
         to: () =>
-          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref) => pageFn(ref)), 5, [
+          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref: any) => pageFn(ref)), 5, [
             { fieldPath: 'title' }
           ])
       });
     }
 
     @Action(StreamEmitted(TestActionGetPages))
-    getPageEmitted(ctx: StateContext<any>, { action, payload }: Emitted<TestActionGetPages, Page<any>>) {
+    getPageEmitted(ctx: StateContext<TestStateModel>, { action, payload }: Emitted<TestActionGetPages, Page<string>>) {
       ctx.setState(patch({ results: payload.results || [], pageId: payload.pageId, pageSize: payload.pageSize }));
     }
   }
+
+  type AnotherTestStateModel = TestStateModel;
 
   @State({
     name: 'another_test'
   })
   @Injectable()
   class AnotherTestState implements NgxsOnInit {
-    @Selector() static pageId(state) {
+    @Selector() static pageId(state: AnotherTestStateModel) {
       return state.pageId;
     }
 
-    @Selector() static pageSize(state) {
+    @Selector() static pageSize(state: AnotherTestStateModel) {
       return state.pageSize;
     }
 
-    @Selector() static results(state) {
+    @Selector() static results(state: AnotherTestStateModel) {
       return state.results;
     }
 
@@ -97,32 +105,37 @@ describe('NgxsFirestorePage', () => {
     ngxsOnInit() {
       this.ngxsFirestoreConnect.connect(AnotherTestActionGetPages, {
         to: () =>
-          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref) => pageFn(ref)), 5, [
+          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref: any) => pageFn(ref)), 5, [
             { fieldPath: 'title' }
           ])
       });
     }
 
     @Action(StreamEmitted(AnotherTestActionGetPages))
-    getPageEmitted(ctx: StateContext<any>, { action, payload }: Emitted<TestActionGetPages, Page<any>>) {
+    getPageEmitted(
+      ctx: StateContext<AnotherTestStateModel>,
+      { action, payload }: Emitted<TestActionGetPages, Page<string>>
+    ) {
       ctx.setState(patch({ results: payload.results || [], pageId: payload.pageId, pageSize: payload.pageSize }));
     }
   }
+
+  type MaxPageSizeTestStateModel = TestStateModel;
 
   @State({
     name: 'max_page_size_test'
   })
   @Injectable()
   class MaxPageSizeTestState implements NgxsOnInit {
-    @Selector() static pageId(state) {
+    @Selector() static pageId(state: MaxPageSizeTestStateModel) {
       return state.pageId;
     }
 
-    @Selector() static pageSize(state) {
+    @Selector() static pageSize(state: MaxPageSizeTestStateModel) {
       return state.pageSize;
     }
 
-    @Selector() static results(state) {
+    @Selector() static results(state: MaxPageSizeTestStateModel) {
       return state.results;
     }
 
@@ -134,14 +147,17 @@ describe('NgxsFirestorePage', () => {
     ngxsOnInit() {
       this.ngxsFirestoreConnect.connect(MaxPageSizeTestActionGetPages, {
         to: () =>
-          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref) => pageFn(ref)), 5000, [
+          this.ngxsFirestorePage.create((pageFn) => mockFirestoreStream((ref: any) => pageFn(ref)), 5000, [
             { fieldPath: 'title' }
           ])
       });
     }
 
     @Action(StreamEmitted(MaxPageSizeTestActionGetPages))
-    getPageEmitted(ctx: StateContext<any>, { action, payload }: Emitted<MaxPageSizeTestActionGetPages, Page<any>>) {
+    getPageEmitted(
+      ctx: StateContext<MaxPageSizeTestStateModel>,
+      { action, payload }: Emitted<MaxPageSizeTestActionGetPages, Page<string>>
+    ) {
       ctx.setState(patch({ results: payload.results || [], pageId: payload.pageId, pageSize: payload.pageSize }));
     }
   }
@@ -261,8 +277,8 @@ describe('NgxsFirestorePage', () => {
     tick(1);
     expect(store.selectSnapshot(TestState.pageId)).toEqual('firstId');
     expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
-    expect(store.selectSnapshot(AnotherTestState.pageId)).toEqual(undefined);
-    expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(undefined);
+    expect(store.selectSnapshot(AnotherTestState.pageId)).toBeUndefined();
+    expect(store.selectSnapshot(AnotherTestState.pageSize)).toBeUndefined();
 
     store.dispatch(new AnotherTestActionGetPages()).subscribe((_) => {});
     tick(1);

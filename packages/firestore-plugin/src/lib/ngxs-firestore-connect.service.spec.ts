@@ -30,7 +30,7 @@ type EventType =
   | 'errored';
 
 type ActionEvent = {
-  actionType: string;
+  actionType: string | undefined;
   eventType: EventType;
   actionPayload?: any;
   actionError?: any;
@@ -250,7 +250,7 @@ describe('NgxsFirestoreConnect', () => {
   });
 
   describe('NgxsFirestoreConnect', () => {
-    let actionReceived;
+    let actionReceived: string | undefined;
 
     beforeEach(() => {
       actionReceived = '';
@@ -394,7 +394,7 @@ describe('NgxsFirestoreConnect', () => {
     });
 
     describe('ASYNC', () => {
-      let subject;
+      let subject: Subject<number>;
 
       beforeEach(() => {
         subject = new Subject();
@@ -444,7 +444,7 @@ describe('NgxsFirestoreConnect', () => {
   });
 
   describe('Multiple Action Dispatch Handling', () => {
-    let subject;
+    let subject: Subject<number>;
 
     beforeEach(() => {
       subject = new Subject();
@@ -537,7 +537,11 @@ describe('NgxsFirestoreConnect', () => {
         tick(1);
         expect(actionEvents).toEqual([
           ...secondExpect,
-          { actionType: TestActionTrackByIdCancelPrevious.type, eventType: 'disconnected', actionPayload: 'first' }
+          {
+            actionType: TestActionTrackByIdCancelPrevious.type,
+            eventType: 'disconnected',
+            actionPayload: 'first'
+          } as ActionEvent
         ]);
       }));
 
@@ -578,14 +582,18 @@ describe('NgxsFirestoreConnect', () => {
             actionType: TestActionCancelPrevious.type,
             eventType: 'disconnected',
             actionPayload: undefined
-          },
-          { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
-          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
+          } as ActionEvent,
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'connected',
+            actionPayload: undefined
+          } as ActionEvent,
+          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined } as ActionEvent,
           {
             actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
-          }
+          } as ActionEvent
         ]);
       }));
     });
@@ -712,12 +720,12 @@ describe('NgxsFirestoreConnect', () => {
             actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
-          },
+          } as ActionEvent,
           {
             actionType: TestActionTrackByIdCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',
             actionPayload: 'first'
-          }
+          } as ActionEvent
         ]);
       }));
 
@@ -768,12 +776,12 @@ describe('NgxsFirestoreConnect', () => {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
-          },
+          } as ActionEvent,
           {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',
             actionPayload: 'first'
-          }
+          } as ActionEvent
         ]);
       }));
 
@@ -824,12 +832,12 @@ describe('NgxsFirestoreConnect', () => {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'action-completed',
             actionPayload: 'secondDispatch'
-          },
+          } as ActionEvent,
           {
             actionType: TestActionCancelPreviousCancelIfTrackByChanged.type,
             eventType: 'emitted',
             actionPayload: 'first'
-          }
+          } as ActionEvent
         ]);
       }));
     });
