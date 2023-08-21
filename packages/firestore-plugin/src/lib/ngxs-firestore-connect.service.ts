@@ -126,7 +126,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
       }),
       // filter actions dispatched on same tick
       filter((action) => {
-        return !this.actionsPending.includes(streamId({ actionType, action, trackBy }));
+        return cancelPrevious === true || !this.actionsPending.includes(streamId({ actionType, action, trackBy }));
       }),
       tap((action) => {
         this.actionsPending.push(streamId({ actionType, action, trackBy }));

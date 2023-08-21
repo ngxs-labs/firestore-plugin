@@ -17,8 +17,9 @@ import { BehaviorSubject, from, Subject, throwError } from 'rxjs';
 import { Emitted, Connected, Disconnected, Errored } from './types';
 import { StreamEmitted, StreamConnected, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { DisconnectAll, Disconnect } from './actions';
-import { tap } from 'rxjs/operators';
+import { delay, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
+import { NgxsActionsExecutingModule, actionsExecuting } from '@ngxs-labs/actions-executing';
 
 type EventType =
   | 'emitted'
@@ -231,7 +232,8 @@ describe('NgxsFirestoreConnect', () => {
       imports: [
         //
         NgxsModule.forRoot([TestState]),
-        NgxsFirestoreModule.forRoot()
+        NgxsFirestoreModule.forRoot(),
+        NgxsActionsExecutingModule
       ]
     });
     store = TestBed.inject(Store);
@@ -292,6 +294,7 @@ describe('NgxsFirestoreConnect', () => {
         expect(events).toEqual(['connected', 'emitted', 'disconnected']);
       });
     });
+
     describe('Dispatched as instance', () => {
       test('should connect and emit', () => {
         store.dispatch(new TestAction());
@@ -595,6 +598,74 @@ describe('NgxsFirestoreConnect', () => {
             actionPayload: 'secondDispatch'
           } as ActionEvent
         ]);
+      }));
+
+      test('should complete all actions when multiple are fired before they get completed', fakeAsync(() => {
+        subject = new Subject();
+        mockFirestoreStream.mockImplementation(() => subject.asObservable().pipe(delay(1)));
+
+        store.dispatch(new TestActionCancelPrevious()).subscribe(() => {
+          actionEvents.push({
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'firstDispatch'
+          });
+        });
+
+        expect(
+          store.selectSnapshot(actionsExecuting([TestActionCancelPrevious]))?.[TestActionCancelPrevious.type]
+        ).toBe(1);
+
+        store.dispatch(new TestActionCancelPrevious()).subscribe(() => {
+          actionEvents.push({
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          });
+        });
+
+        expect(
+          store.selectSnapshot(actionsExecuting([TestActionCancelPrevious]))?.[TestActionCancelPrevious.type]
+        ).toBe(2);
+
+        store.dispatch(new TestActionCancelPrevious()).subscribe(() => {
+          actionEvents.push({
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'thirdDispatch'
+          });
+        });
+
+        expect(
+          store.selectSnapshot(actionsExecuting([TestActionCancelPrevious]))?.[TestActionCancelPrevious.type]
+        ).toBe(3);
+
+        subject.next(1);
+        tick(1);
+
+        expect(
+          store.selectSnapshot(actionsExecuting([TestActionCancelPrevious]))?.[TestActionCancelPrevious.type]
+        ).toBe(undefined);
+
+        const firstExpect: ActionEvent[] = [
+          { actionType: TestActionCancelPrevious.type, eventType: 'disconnected', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'disconnected', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
+          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'firstDispatch' },
+          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'secondDispatch' },
+          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'thirdDispatch' }
+        ];
+        expect(actionEvents).toEqual(firstExpect);
+
+        subject.next(1);
+        tick(1);
+
+        const secondExpect: ActionEvent[] = [
+          ...firstExpect,
+          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined }
+        ];
+        expect(actionEvents).toEqual(secondExpect);
       }));
     });
 
