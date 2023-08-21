@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.8](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.7...v1.2.8) (2023-08-21)
+
+### Bug Fixes
+
+- mulitple actions fired before they emit were not getting completed
+  ([14b23ac](https://github.com/ngxs-labs/firestore-plugin/commit/14b23ac6df62346a962c5cf9202ecabe34ee53e7))
+
 ### [1.2.7](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.6...v1.2.7) (2023-06-07)
 
 ### [1.2.6](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.5...v1.2.6) (2023-05-30)
