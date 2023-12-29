@@ -30,16 +30,13 @@ import { ServiceWorkerModule } from '@angular/service-worker';
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot(
-      [
-        { path: 'list', component: ListComponent },
-        { path: 'list-once', component: ListOnceComponent },
-        { path: 'paged-list', component: PagedListComponent },
-        { path: 'other', component: OtherComponent },
-        { path: '', redirectTo: '/list', pathMatch: 'full' }
-      ],
-      { relativeLinkResolution: 'legacy' }
-    ),
+    RouterModule.forRoot([
+      { path: 'list', component: ListComponent },
+      { path: 'list-once', component: ListOnceComponent },
+      { path: 'paged-list', component: PagedListComponent },
+      { path: 'other', component: OtherComponent },
+      { path: '', redirectTo: '/list', pathMatch: 'full' }
+    ]),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {

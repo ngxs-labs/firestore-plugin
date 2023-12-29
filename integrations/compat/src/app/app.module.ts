@@ -29,16 +29,13 @@ import { ListOnceComponent } from './components/list-once/list-once.component';
   imports: [
     BrowserModule,
     FormsModule,
-    RouterModule.forRoot(
-      [
-        { path: 'list', component: ListComponent },
-        { path: 'list-once', component: ListOnceComponent },
-        { path: 'paged-list', component: PagedListComponent },
-        { path: 'other', component: OtherComponent },
-        { path: '', redirectTo: '/list', pathMatch: 'full' }
-      ],
-      { relativeLinkResolution: 'legacy' }
-    ),
+    RouterModule.forRoot([
+      { path: 'list', component: ListComponent },
+      { path: 'list-once', component: ListOnceComponent },
+      { path: 'paged-list', component: PagedListComponent },
+      { path: 'other', component: OtherComponent },
+      { path: '', redirectTo: '/list', pathMatch: 'full' }
+    ]),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
