@@ -26,6 +26,6 @@ export class RacesFirestore extends NgxsFirestore<Race> {
 
   updateIfExists(id: string, data: Race) {
     const docRef = doc(this.adapter.firestore, `${this.path}/${id}`).withConverter(this.converter);
-    return updateDoc(docRef, data);
+    return updateDoc(docRef, data as any);
   }
 }
