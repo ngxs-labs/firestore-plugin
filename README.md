@@ -57,7 +57,7 @@ yarn add @ngxs-labs/firestore-plugin
 ```
 
 In your `app.module.ts` include the plugin, you will also need to include `@angular/fire` and `NgxsModule`, as they are
-peer dependencies for the plugin.
+peer dependencies for the plugin. Make sure also you have installed `firebase` library as well.
 
 ### Firebase (Modular)
 
