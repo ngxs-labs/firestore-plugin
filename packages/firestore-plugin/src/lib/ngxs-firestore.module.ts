@@ -8,7 +8,7 @@ import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './tok
   imports: [CommonModule, NgxsModule.forFeature([NgxsFirestoreState])]
 })
 export class NgxsFirestoreModule {
-  public static forRoot(options?: NgxsFirestoreModuleOptions): ModuleWithProviders<NgxsFirestoreModule> {
+  public static forRoot(options?: Partial<NgxsFirestoreModuleOptions>): ModuleWithProviders<NgxsFirestoreModule> {
     return {
       ngModule: NgxsFirestoreModule,
       providers: [

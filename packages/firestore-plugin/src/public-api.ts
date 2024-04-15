@@ -1,4 +1,5 @@
 export * from './lib/ngxs-firestore.module';
+export * from './lib/ngxs-firestore.standalone';
 export * from './lib/ngxs-firestore.service';
 export * from './lib/ngxs-firestore-page.service';
 export * from './lib/ngxs-firestore-connect.service';
