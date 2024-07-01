@@ -366,6 +366,13 @@ describe('NgxsFirestoreConnect', () => {
       expect(events).toEqual(['connected', 'emitted', 'disconnected']);
     });
 
+    test('should disconnect with NO payload', () => {
+      store.dispatch(new TestActionWithPayload(payload));
+      expect(events).toEqual(['connected', 'emitted']);
+      store.dispatch(new Disconnect(TestActionWithPayload));
+      expect(events).toEqual(['connected', 'emitted', 'disconnected']);
+    });
+
     test('should NOT disconnect with other payload', () => {
       store.dispatch(new TestActionWithPayload(payload));
       expect(events).toEqual(['connected', 'emitted']);
