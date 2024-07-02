@@ -38,18 +38,20 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "allowedCommonJsDependencies": ["chance"],
-            "outputPath": "dist/integrations/compat",
+            "outputPath": {
+              "base": "dist/integrations/compat"
+            },
             "index": "integrations/compat/src/index.html",
-            "main": "integrations/compat/src/main.ts",
-            "polyfills": "integrations/compat/src/polyfills.ts",
+            "polyfills": ["integrations/compat/src/polyfills.ts"],
             "tsConfig": "integrations/compat/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["integrations/compat/src/favicon.ico", "integrations/compat/src/assets"],
             "styles": ["integrations/compat/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "browser": "integrations/compat/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -74,9 +76,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -113,13 +113,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/modular",
+            "outputPath": {
+              "base": "dist/modular"
+            },
             "allowedCommonJsDependencies": ["chance"],
             "index": "integrations/modular/src/index.html",
-            "main": "integrations/modular/src/main.ts",
-            "polyfills": "integrations/modular/src/polyfills.ts",
+            "polyfills": ["integrations/modular/src/polyfills.ts"],
             "tsConfig": "integrations/modular/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -129,7 +130,8 @@
               "integrations/modular/src/manifest.webmanifest"
             ],
             "styles": ["integrations/modular/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "browser": "integrations/modular/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -154,9 +156,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true

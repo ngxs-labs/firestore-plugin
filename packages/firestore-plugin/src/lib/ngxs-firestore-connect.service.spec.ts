@@ -598,7 +598,11 @@ describe('NgxsFirestoreConnect', () => {
             eventType: 'connected',
             actionPayload: undefined
           } as ActionEvent,
-          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined } as ActionEvent,
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'emitted',
+            actionPayload: undefined
+          } as ActionEvent,
           {
             actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
@@ -659,8 +663,16 @@ describe('NgxsFirestoreConnect', () => {
           { actionType: TestActionCancelPrevious.type, eventType: 'disconnected', actionPayload: undefined },
           { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
           { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
-          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'firstDispatch' },
-          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'secondDispatch' },
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'firstDispatch'
+          },
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          },
           { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'thirdDispatch' }
         ];
         expect(actionEvents).toEqual(firstExpect);
