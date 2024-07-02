@@ -26,6 +26,14 @@ export namespace RacesActions {
     public static readonly type = '[Races] GetPages';
   }
 
+  export class GetByField {
+    public static readonly type = '[Races] GetByField';
+  }
+
+  export class CollectionGroup {
+    public static readonly type = '[Races] CollectionGroup';
+  }
+
   export class Create {
     public static readonly type = '[Races] Create';
     constructor(public payload: RacesActionsPayloads.Create) {}

@@ -73,9 +73,13 @@ export class RacesState implements NgxsOnInit {
       }
     });
 
-    this.ngxsFirestoreConnect.connect(RacesActions.Error, {
+    this.ngxsFirestoreConnect.connect(RacesActions.GetByField, {
       to: () =>
         this.racesFS.collection$((ref) => query(ref, where('aaa', '==', 0), where('bbb', '==', 0), orderBy('aaa')))
+    });
+
+    this.ngxsFirestoreConnect.connect(RacesActions.CollectionGroup, {
+      to: () => this.racesFS.collectionGroup$((ref) => query(ref, where('subcollection', '==', 'subcollection')))
     });
   }
 
@@ -117,6 +121,12 @@ export class RacesState implements NgxsOnInit {
 
   @Action(StreamEmitted(RacesActions.GetAll))
   getAllEmitted(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
+    ctx.setState(patch({ races: payload }));
+  }
+
+  @Action(StreamEmitted(RacesActions.CollectionGroup))
+  CollectionGroup(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
+    debugger;
     ctx.setState(patch({ races: payload }));
   }
 

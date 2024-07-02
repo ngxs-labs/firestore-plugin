@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [18.0.2](https://github.com/ngxs-labs/firestore-plugin/compare/v18.0.1...v18.0.2) (2024-07-02)
+
+### [18.0.1](https://github.com/ngxs-labs/firestore-plugin/compare/v18.0.0...v18.0.1) (2024-07-02)
+
+## [18.0.0](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.11...v18.0.0) (2024-07-02)
+
+### [1.2.11](https://github.com/ngxs-labs/firestore-plugin/compare/v1.2.10...v1.2.11) (2024-07-02)
+
+### Features
+
+- collectionGroup support
+  ([ba369f2](https://github.com/ngxs-labs/firestore-plugin/commit/ba369f219190e692c65dd2ff5bd13e36b9e90621))
+
+### Bug Fixes
+
+- disconnect matching actions without specifying payload
+  ([b6e3bb4](https://github.com/ngxs-labs/firestore-plugin/commit/b6e3bb41f6a1343d89703c84f0aeb9af8967aa30))
+
 ### 1.2.10 (2024-04-15)
 
 ### Features

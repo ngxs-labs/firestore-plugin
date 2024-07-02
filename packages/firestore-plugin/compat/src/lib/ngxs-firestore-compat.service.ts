@@ -5,7 +5,8 @@ import {
   DocumentSnapshot,
   DocumentChangeAction,
   DocumentData,
-  DocumentReference
+  DocumentReference,
+  QueryGroupFn
 } from '@angular/fire/compat/firestore';
 import { Observable, from, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
@@ -101,6 +102,28 @@ export abstract class NgxsFirestore<T> {
           });
           return items;
         })
+      );
+  }
+
+  public collectionGroup$(queryFn: QueryGroupFn = (ref) => ref): Observable<T[]> {
+    return this.adapter.firestore
+      .collectionGroup<T>(this.path, (ref) => {
+        return queryFn(ref.withConverter(this.converter) as any) as any;
+      })
+      .snapshotChanges()
+      .pipe(
+        map((docSnapshots: DocumentChangeAction<T>[]) =>
+          docSnapshots.map((docSnapshot) => {
+            const doc = docSnapshot.payload.doc;
+            const data = doc.data();
+            const id = (data && (<any>data)[this.idField]) || doc.id;
+            if (this.metadataField) {
+              return ({ ...data, [this.idField]: id, [this.metadataField]: doc.metadata } as unknown) as T;
+            } else {
+              return ({ ...data, [this.idField]: id } as unknown) as T;
+            }
+          })
+        )
       );
   }
 

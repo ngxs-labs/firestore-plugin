@@ -181,12 +181,19 @@ export class NgxsFirestoreConnect implements OnDestroy {
                 if (!payload) {
                   return false;
                 }
-                const disconnectedStreamId = streamId({
-                  actionType: payload.constructor || payload,
+                const disconnectActionStreamId = streamId({
+                  actionType: payload.constructor?.type ? payload.constructor : payload,
                   action: disconnectAction.payload,
                   trackBy
                 });
-                if (disconnectedStreamId === streamId({ actionType, action, trackBy })) {
+                const connectedActionStreamId = streamId({ actionType, action, trackBy });
+                if (
+                  disconnectActionStreamId === connectedActionStreamId ||
+                  // will disconnect all matching actions
+                  // valid when we want to disconnect multiple actions that were
+                  // dispatched with a payload
+                  connectedActionStreamId.startsWith(disconnectActionStreamId)
+                ) {
                   return true;
                 }
 

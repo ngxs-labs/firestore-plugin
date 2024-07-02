@@ -366,6 +366,13 @@ describe('NgxsFirestoreConnect', () => {
       expect(events).toEqual(['connected', 'emitted', 'disconnected']);
     });
 
+    test('should disconnect with NO payload', () => {
+      store.dispatch(new TestActionWithPayload(payload));
+      expect(events).toEqual(['connected', 'emitted']);
+      store.dispatch(new Disconnect(TestActionWithPayload));
+      expect(events).toEqual(['connected', 'emitted', 'disconnected']);
+    });
+
     test('should NOT disconnect with other payload', () => {
       store.dispatch(new TestActionWithPayload(payload));
       expect(events).toEqual(['connected', 'emitted']);
@@ -591,7 +598,11 @@ describe('NgxsFirestoreConnect', () => {
             eventType: 'connected',
             actionPayload: undefined
           } as ActionEvent,
-          { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined } as ActionEvent,
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'emitted',
+            actionPayload: undefined
+          } as ActionEvent,
           {
             actionType: TestActionCancelPrevious.type,
             eventType: 'action-completed',
@@ -652,8 +663,16 @@ describe('NgxsFirestoreConnect', () => {
           { actionType: TestActionCancelPrevious.type, eventType: 'disconnected', actionPayload: undefined },
           { actionType: TestActionCancelPrevious.type, eventType: 'connected', actionPayload: undefined },
           { actionType: TestActionCancelPrevious.type, eventType: 'emitted', actionPayload: undefined },
-          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'firstDispatch' },
-          { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'secondDispatch' },
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'firstDispatch'
+          },
+          {
+            actionType: TestActionCancelPrevious.type,
+            eventType: 'action-completed',
+            actionPayload: 'secondDispatch'
+          },
           { actionType: TestActionCancelPrevious.type, eventType: 'action-completed', actionPayload: 'thirdDispatch' }
         ];
         expect(actionEvents).toEqual(firstExpect);

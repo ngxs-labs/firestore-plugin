@@ -5,6 +5,9 @@
   <button [disabled]="gettingSubCollection$ | async" class="btn btn-primary mr-1" (click)="getSubCollection()">
     Get SubCollection
   </button>
+  <button [disabled]="gettingSubCollection$ | async" class="btn btn-primary mr-1" (click)="getCollectionGroup()">
+    Get Collection Group
+  </button>
 </div>
 <div class="my-3">
   <button class="btn btn-primary mr-1" [disabled]="disconnecting$ | async" (click)="disconnect()">Disconnect</button>

@@ -1,6 +1,7 @@
 import {
   collection,
   collectionSnapshots,
+  collectionGroup,
   deleteDoc,
   doc,
   docSnapshots,
@@ -81,7 +82,22 @@ export abstract class NgxsFirestore<T> {
 
   public collection$(queryFn: QueryFn<T> = (ref) => ref): Observable<T[]> {
     return collectionSnapshots<T>(queryFn(this.collectionRef())).pipe(
-      map((docSnapshots) => docSnapshots.map((snapshot) => this.getDataWithId(snapshot)))
+      map((queryDocumentSnapshots) =>
+        queryDocumentSnapshots.map((queryDocumentSnapshot) => this.getDataWithId(queryDocumentSnapshot))
+      )
+    );
+  }
+
+  public collectionGroup$(queryFn: QueryFn<T> = (ref) => ref): Observable<T[]> {
+    const collectionGroupQuery = queryFn(collectionGroup(this.adapter.firestore, this.path) as any);
+    return from(getDocs(collectionGroupQuery)).pipe(
+      map((querySnapshot) => {
+        const docSnapshots = querySnapshot.docs;
+        const items = docSnapshots.map((docSnapshot) => {
+          return this.getDataWithId(docSnapshot) as T;
+        });
+        return items;
+      })
     );
   }
 

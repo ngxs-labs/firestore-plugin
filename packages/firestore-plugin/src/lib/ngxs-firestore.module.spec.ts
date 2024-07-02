@@ -6,7 +6,7 @@ describe('NgxsFirestoreModule', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [NgxsFirestoreModule]
-      }).compileComponents();
+      });
     })
   );
 
