@@ -14,8 +14,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(
-      provideFirebaseApp(() => initializeApp(environment.firebase)),
-      provideFirestore(() => getFirestore()),
       NgxsModule.forRoot([TestState], {
         developmentMode: !environment.production
       }),
@@ -23,6 +21,8 @@ export const appConfig: ApplicationConfig = {
         disabled: environment.production
       })
     ),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
     provideNgxsFirestore({
       developmentMode: true
     })

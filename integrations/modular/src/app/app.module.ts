@@ -37,8 +37,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       { path: 'other', component: OtherComponent },
       { path: '', redirectTo: '/list', pathMatch: 'full' }
     ]),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore()),
     NgxsModule.forRoot([RacesState, ClassificationsState, AttendeesState], {
       developmentMode: !environment.production
     }),
@@ -61,7 +59,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       registrationStrategy: 'registerWhenStable:30000'
     })
   ],
-  providers: [],
+  providers: [provideFirebaseApp(() => initializeApp(environment.firebase)), provideFirestore(() => getFirestore())],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
