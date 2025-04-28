@@ -3748,17 +3748,17 @@
   dependencies:
     tslib "^2.3.0"
 
-"@ngxs/logger-plugin@18.1.6":
-  version "18.1.6"
-  resolved "https://registry.yarnpkg.com/@ngxs/logger-plugin/-/logger-plugin-18.1.6.tgz#9add277bb0cd01109b434703de6f76c4bbfaf12a"
-  integrity sha512-hKjb/9+zH7s//kXhcdLdKe1uTBfTV2RQIQaLxe0WP7wvAcLjp+kXJyYeH6msDGQ82U4aowFv0PCou5GmVgXkqQ==
+"@ngxs/logger-plugin@18.0.0":
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/logger-plugin/-/logger-plugin-18.0.0.tgz#b9b2d8fdf527ae4937898cb1338256bc3c3f9509"
+  integrity sha512-2dtwwdO3QiUSSyRFBfuVwOzzyTzsIeFIDvd/bLD4ddbrrTRl4kwPgeqTuj7lWWCvXMUAQ9lMrlt051OGXrSPwQ==
   dependencies:
     tslib "^2.3.0"
 
-"@ngxs/store@18.1.6":
-  version "18.1.6"
-  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-18.1.6.tgz#dbb6a1e9d4f3f1c6a823c6a2f58a50441062956a"
-  integrity sha512-2CZC/v/S6MEwXmVB1w1cRbicrL26TI4QASRu6xXV+vK5gqFhEz3FzLG5ZvVMcH986Vhv/Mo0esAOABA2qWYJNA==
+"@ngxs/store@18.0.0":
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/@ngxs/store/-/store-18.0.0.tgz#4266659ff66bd7c845b3b04fb4e62dfd1e4d80f1"
+  integrity sha512-uYs7/KG0yBLS8Mxe87QVgknM950pRzDZ2iRqGaYDCB22NOQYf3sr+wJ3WdYTZnenTresc1njvUhJXzY7/UDdxA==
   dependencies:
     tslib "^2.3.0"
 
