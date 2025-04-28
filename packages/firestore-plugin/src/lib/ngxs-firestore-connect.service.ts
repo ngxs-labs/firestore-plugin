@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
-import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
+import { Store, ActionType, Actions, ofActionDispatched, ɵNgxsFeatureModule } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, share } from 'rxjs/operators';
 import { Observable, race, Subscription, Subject, defer, of } from 'rxjs';
 import { StreamConnected, StreamEmitted, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
@@ -113,6 +113,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
 
       return completed$;
     });
+
+    // HACK: This is a hack to force NGXS to add the attached action to the action registry
+    // ɵNgxsFeatureModule constructor runs `factory.addAndReturnDefaults`
+    new ɵNgxsFeatureModule();
 
     const actionDispatched$ = this.actions.pipe(
       ofActionDispatched(actionType),
