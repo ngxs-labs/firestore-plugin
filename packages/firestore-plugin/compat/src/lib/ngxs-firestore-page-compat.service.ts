@@ -21,7 +21,9 @@ export class NgxsFirestorePageIdService {
 
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageService {
-  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
+  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {
+    this.handlePageActions();
+  }
 
   private actionCompletedHandlerSubjects: { [key: string]: Subject<unknown> } = {};
   private attached = false;
@@ -48,8 +50,6 @@ export class NgxsFirestorePageService {
     size: number,
     orderBy: OrderBy[]
   ): Observable<{ results: T; pageId: string }> {
-    this.handlePageActions();
-
     return defer(() => {
       const pages: FirestorePage[] = [];
 
