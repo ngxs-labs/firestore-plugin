@@ -21,9 +21,7 @@ export class NgxsFirestorePageIdService {
 
 @Injectable({ providedIn: 'root' })
 export class NgxsFirestorePageService {
-  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {
-    this.handlePageActions();
-  }
+  constructor(private actions$: Actions, private pageId: NgxsFirestorePageIdService) {}
 
   private actionCompletedHandlerSubjects: { [key: string]: Subject<unknown> } = {};
   private attached = false;
@@ -33,13 +31,13 @@ export class NgxsFirestorePageService {
       attachAction(NgxsFirestoreState, GetNextPage, (_stateContext, action: any) => {
         const pageId = action.payload;
         const actionCompletedHandlerSubject = this.actionCompletedHandlerSubjects[pageId];
-        return actionCompletedHandlerSubject.asObservable().pipe(take(1));
+        return actionCompletedHandlerSubject?.asObservable().pipe(take(1));
       });
 
       attachAction(NgxsFirestoreState, GetLastPage, (_stateContext, action: any) => {
         const pageId = action.payload;
         const actionCompletedHandlerSubject = this.actionCompletedHandlerSubjects[pageId];
-        return actionCompletedHandlerSubject.asObservable().pipe(take(1));
+        return actionCompletedHandlerSubject?.asObservable().pipe(take(1));
       });
       this.attached = true;
     }
@@ -50,6 +48,8 @@ export class NgxsFirestorePageService {
     size: number,
     orderBy: OrderBy[]
   ): Observable<{ results: T; pageId: string }> {
+    this.handlePageActions();
+
     return defer(() => {
       const pages: FirestorePage[] = [];
 
