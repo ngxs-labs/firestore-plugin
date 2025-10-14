@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [18.0.6](https://github.com/ngxs-labs/firestore-plugin/compare/v18.0.5...v18.0.6) (2025-10-14)
+
+### Features
+
+- finish page action when results are emitted
+  ([b6849db](https://github.com/ngxs-labs/firestore-plugin/commit/b6849dbc88f1d87370581d78298460ef0c772cbd))
+
 ### [18.0.5](https://github.com/ngxs-labs/firestore-plugin/compare/v18.0.4...v18.0.5) (2025-04-28)
 
 ### Bug Fixes
