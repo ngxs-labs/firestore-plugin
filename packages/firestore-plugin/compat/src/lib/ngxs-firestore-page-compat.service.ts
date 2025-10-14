@@ -33,13 +33,13 @@ export class NgxsFirestorePageService {
       attachAction(NgxsFirestoreState, GetNextPage, (_stateContext, action: any) => {
         const pageId = action.payload;
         const actionCompletedHandlerSubject = this.actionCompletedHandlerSubjects[pageId];
-        return actionCompletedHandlerSubject.asObservable().pipe(take(1));
+        return actionCompletedHandlerSubject?.asObservable().pipe(take(1));
       });
 
       attachAction(NgxsFirestoreState, GetLastPage, (_stateContext, action: any) => {
         const pageId = action.payload;
         const actionCompletedHandlerSubject = this.actionCompletedHandlerSubjects[pageId];
-        return actionCompletedHandlerSubject.asObservable().pipe(take(1));
+        return actionCompletedHandlerSubject?.asObservable().pipe(take(1));
       });
       this.attached = true;
     }
