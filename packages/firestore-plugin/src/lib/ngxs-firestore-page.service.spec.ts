@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { doc, DocumentReference, Firestore } from '@angular/fire/firestore';
 import { Action, NgxsModule, NgxsOnInit, Selector, State, StateContext, Store } from '@ngxs/store';
 import { patch } from '@ngxs/store/operators';
-import { BehaviorSubject, delay } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { StreamEmitted } from './action-decorator-helpers';
 import { GetLastPage, GetNextPage } from './actions';
 import { NgxsFirestoreConnect } from './ngxs-firestore-connect.service';
@@ -11,6 +11,7 @@ import { NgxsFirestorePageService } from './ngxs-firestore-page.service';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { Emitted, Page } from './types';
 import { actionsExecuting, NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
+import { delay } from 'rxjs/operators';
 
 jest.mock('@angular/fire/firestore');
 
