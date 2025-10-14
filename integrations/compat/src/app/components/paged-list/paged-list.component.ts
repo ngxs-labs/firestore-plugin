@@ -6,6 +6,7 @@ import { AttendeesActions } from '../../states/attendees/attendees.actions';
 import { AttendeesState } from '../../states/attendees/attendees.state';
 import { RacesActions } from '../../states/races/races.actions';
 import { RacesState } from '../../states/races/races.state';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-paged-list',
@@ -17,6 +18,9 @@ export class PagedListComponent implements OnInit {
   attendees$ = this.store.select(AttendeesState.attendees);
   nextPageExecuting$ = this.store.select(actionsExecuting([GetNextPage]));
   lastPageExecuting$ = this.store.select(actionsExecuting([GetLastPage]));
+  loaded$ = this.store
+    .select(actionsExecuting([RacesActions.GetPages, AttendeesActions.GetPages]))
+    .pipe(map((loading) => !loading));
 
   constructor(private store: Store) {}
 

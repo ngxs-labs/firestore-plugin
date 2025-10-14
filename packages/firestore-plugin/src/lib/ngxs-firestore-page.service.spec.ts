@@ -3,13 +3,14 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { doc, DocumentReference, Firestore } from '@angular/fire/firestore';
 import { Action, NgxsModule, NgxsOnInit, Selector, State, StateContext, Store } from '@ngxs/store';
 import { patch } from '@ngxs/store/operators';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, delay } from 'rxjs';
 import { StreamEmitted } from './action-decorator-helpers';
 import { GetLastPage, GetNextPage } from './actions';
 import { NgxsFirestoreConnect } from './ngxs-firestore-connect.service';
 import { NgxsFirestorePageService } from './ngxs-firestore-page.service';
 import { NgxsFirestoreModule } from './ngxs-firestore.module';
 import { Emitted, Page } from './types';
+import { actionsExecuting, NgxsActionsExecutingModule } from '@ngxs-labs/actions-executing';
 
 jest.mock('@angular/fire/firestore');
 
@@ -168,7 +169,11 @@ describe('NgxsFirestorePage', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NgxsModule.forRoot([TestState, AnotherTestState, MaxPageSizeTestState]), NgxsFirestoreModule.forRoot()],
+      imports: [
+        NgxsModule.forRoot([TestState, AnotherTestState, MaxPageSizeTestState]),
+        NgxsFirestoreModule.forRoot(),
+        NgxsActionsExecutingModule.forRoot()
+      ],
       providers: [{ provide: Firestore, useValue: jest.fn() }]
     });
     store = TestBed.inject(Store);
@@ -296,5 +301,23 @@ describe('NgxsFirestorePage', () => {
     tick(1);
     expect(store.selectSnapshot(TestState.pageSize)).toEqual(10);
     expect(store.selectSnapshot(AnotherTestState.pageSize)).toEqual(10);
+  }));
+
+  test('should finish GetNextPage action after page results are emitted', fakeAsync(() => {
+    mockCreateId.mockReturnValueOnce('firstId');
+
+    const stream = new BehaviorSubject(page1);
+    mockFirestoreStream.mockReturnValue(stream.asObservable().pipe(delay(1)));
+
+    store.dispatch(new TestActionGetPages());
+    tick(1);
+    expect(store.selectSnapshot(TestState.pageId)).toEqual('firstId');
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(5);
+
+    store.dispatch(new GetNextPage('firstId'));
+    expect(store.selectSnapshot(actionsExecuting([GetNextPage]))).toEqual({ GetNextPage: 1 });
+    tick(1);
+    expect(store.selectSnapshot(actionsExecuting([GetNextPage]))).toEqual(null);
+    expect(store.selectSnapshot(TestState.pageSize)).toEqual(10);
   }));
 });

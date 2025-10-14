@@ -126,7 +126,6 @@ export class RacesState implements NgxsOnInit {
 
   @Action(StreamEmitted(RacesActions.CollectionGroup))
   CollectionGroup(ctx: StateContext<RacesStateModel>, { action, payload }: Emitted<RacesActions.Get, Race[]>) {
-    debugger;
     ctx.setState(patch({ races: payload }));
   }
 
