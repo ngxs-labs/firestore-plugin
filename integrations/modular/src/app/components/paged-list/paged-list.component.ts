@@ -11,7 +11,8 @@ import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-paged-list',
   templateUrl: './paged-list.component.html',
-  styleUrls: ['./paged-list.component.scss']
+  styleUrls: ['./paged-list.component.scss'],
+  standalone: false
 })
 export class PagedListComponent implements OnInit {
   races$ = this.store.select(RacesState.races);

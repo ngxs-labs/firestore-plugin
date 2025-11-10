@@ -6,7 +6,6 @@ import { GetAll } from './states/test.actions';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [AsyncPipe, JsonPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

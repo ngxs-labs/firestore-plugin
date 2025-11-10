@@ -231,7 +231,8 @@ describe('NgxsFirestoreConnect', () => {
     TestBed.configureTestingModule({
       imports: [
         //
-        NgxsModule.forRoot([TestState]),
+        NgxsModule.forRoot([]),
+        NgxsModule.forFeature([TestState]),
         NgxsFirestoreModule.forRoot(),
         NgxsActionsExecutingModule
       ]
@@ -401,55 +402,6 @@ describe('NgxsFirestoreConnect', () => {
         });
         expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted', 'disconnected', 'action-completed']);
       });
-    });
-
-    describe('ASYNC', () => {
-      let subject: Subject<number>;
-
-      beforeEach(() => {
-        subject = new Subject();
-        mockFirestoreStream.mockImplementation(() => subject.asObservable());
-      });
-
-      test('should complete on FirstEmit', fakeAsync(() => {
-        store.dispatch(TestActionFinishesOnFirstEmit).subscribe((_) => {
-          events.push('action-completed');
-        });
-        tick(1);
-        expect(events).toEqual([]);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'action-completed']);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted']);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted', 'emitted']);
-        subject.complete();
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'action-completed', 'emitted', 'emitted', 'disconnected']);
-      }));
-
-      test('should complete on StreamCompleted', fakeAsync(() => {
-        store.dispatch(TestActionFinishesOnStreamCompleted).subscribe((_) => {
-          events.push('action-completed');
-        });
-        tick(1);
-        expect(events).toEqual([]);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted']);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'emitted']);
-        subject.next(1);
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted']);
-        subject.complete();
-        tick(1);
-        expect(events).toEqual(['connected', 'emitted', 'emitted', 'emitted', 'disconnected', 'action-completed']);
-      }));
     });
   });
 

@@ -1,7 +1,9 @@
-import { State, StateContext, NgxsOnInit, Action } from '@ngxs/store';
+import { State, StateContext, NgxsOnInit, Action, StateToken } from '@ngxs/store';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { patch, insertItem, removeItem, updateItem } from '@ngxs/store/operators';
 import { Injectable } from '@angular/core';
+
+export const NGXS_FIRESTORE_STATE_TOKEN = new StateToken<string[]>('ngxs_firestore');
 
 export interface FirestoreConnection {
   id: string;
@@ -14,7 +16,7 @@ export interface NgxsFirestoreStateModel {
 }
 
 @State<NgxsFirestoreStateModel>({
-  name: 'ngxs_firestore',
+  name: NGXS_FIRESTORE_STATE_TOKEN,
   defaults: {
     connections: []
   }

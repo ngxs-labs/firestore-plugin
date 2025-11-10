@@ -8,7 +8,8 @@ import { actionsExecuting } from '@ngxs-labs/actions-executing';
 @Component({
   selector: 'app-list-once',
   templateUrl: './list-once.component.html',
-  styleUrls: ['./list-once.component.scss']
+  styleUrls: ['./list-once.component.scss'],
+  standalone: false
 })
 export class ListOnceComponent implements OnInit, OnDestroy {
   races$ = this.store.select(RacesState.races);

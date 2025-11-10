@@ -1,12 +1,11 @@
-import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
-import { Store, ActionType, Actions, ofActionDispatched } from '@ngxs/store';
+import { Inject, Injectable, Optional } from '@angular/core';
+import { Store, ActionType, Actions, ofActionDispatched, ActionDirector } from '@ngxs/store';
 import { tap, catchError, mergeMap, takeUntil, finalize, filter, take, share } from 'rxjs/operators';
-import { Observable, race, Subscription, Subject, defer, of } from 'rxjs';
+import { Observable, race, Subject, defer, of } from 'rxjs';
 import { StreamConnected, StreamEmitted, StreamDisconnected, StreamErrored } from './action-decorator-helpers';
 import { NgxsFirestoreConnectActions } from './ngxs-firestore-connect.actions';
 import { DisconnectAll, Disconnect } from './actions';
-import { attachAction } from './attach-action';
-import { NgxsFirestoreState } from './ngxs-firestore.state';
+import { NGXS_FIRESTORE_STATE_TOKEN } from './ngxs-firestore.state';
 import { NgxsFirestoreModuleOptions, NGXS_FIRESTORE_MODULE_OPTIONS } from './tokens';
 
 interface ActionTypeDef<T> {
@@ -42,14 +41,14 @@ function tapOnce<T>(fn: (value: any) => void) {
 }
 
 @Injectable({ providedIn: 'root' })
-export class NgxsFirestoreConnect implements OnDestroy {
-  private firestoreConnectionsSub: Subscription[] = [];
+export class NgxsFirestoreConnect {
   private activeFirestoreConnections: string[] = [];
   private actionsPending: string[] = [];
 
   constructor(
     private store: Store,
     private actions: Actions,
+    private actionDirector: ActionDirector,
     @Optional() @Inject(NGXS_FIRESTORE_MODULE_OPTIONS) private options: NgxsFirestoreModuleOptions
   ) {}
 
@@ -79,13 +78,13 @@ export class NgxsFirestoreConnect implements OnDestroy {
     const cancelPrevious = opts.cancelPrevious || false;
 
     interface CompletedHandler {
-      actionCompletedHandlerSubject: Subject<unknown>;
+      actionCompletedHandlerSubject: Subject<T>;
     }
 
     const subjects: { [key: string]: CompletedHandler } = {};
     function getSubjects(id: string): CompletedHandler {
       if (!subjects[id]) {
-        const actionCompletedHandlerSubject = new Subject();
+        const actionCompletedHandlerSubject = new Subject<T>();
         subjects[id] = {
           actionCompletedHandlerSubject
         };
@@ -94,10 +93,10 @@ export class NgxsFirestoreConnect implements OnDestroy {
       return subjects[id];
     }
 
-    attachAction(NgxsFirestoreState, actionType, (_stateContext, action) => {
+    this.actionDirector.attachAction(NGXS_FIRESTORE_STATE_TOKEN, actionType, (ctx, action) => {
       const { actionCompletedHandlerSubject } = getSubjects(streamId({ actionType, action, trackBy }));
 
-      const completed$ = actionCompletedHandlerSubject.asObservable().pipe(take(1));
+      const completed$: any = actionCompletedHandlerSubject.asObservable().pipe(take(1));
 
       if (cancelPrevious === true) {
         return completed$;
@@ -239,6 +238,7 @@ export class NgxsFirestoreConnect implements OnDestroy {
               new NgxsFirestoreConnectActions.StreamDisconnected(streamId({ actionType, action, trackBy }))
             );
           }
+
           this.activeFirestoreConnections.splice(
             this.activeFirestoreConnections.indexOf(streamId({ actionType, action, trackBy })),
             1
@@ -262,12 +262,6 @@ export class NgxsFirestoreConnect implements OnDestroy {
       );
     };
 
-    this.firestoreConnectionsSub.push(actionDispatched$.pipe(mergeMap(firestoreStreamHandler$)).subscribe());
-  }
-
-  ngOnDestroy() {
-    if (this.firestoreConnectionsSub) {
-      this.firestoreConnectionsSub.forEach((sub) => sub.unsubscribe());
-    }
+    actionDispatched$.pipe(mergeMap(firestoreStreamHandler$)).subscribe();
   }
 }
