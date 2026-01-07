@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. See
 [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [19.0.2](https://github.com/ngxs-labs/firestore-plugin/compare/v19.0.1...v19.0.2) (2026-01-07)
+
 ### [19.0.1](https://github.com/ngxs-labs/firestore-plugin/compare/v19.0.0...v19.0.1) (2025-12-03)
 
 ## [19.0.0](https://github.com/ngxs-labs/firestore-plugin/compare/v18.0.7...v19.0.0) (2025-11-10)
