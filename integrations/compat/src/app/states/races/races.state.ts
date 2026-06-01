@@ -1,6 +1,6 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { RacesActions } from './races.actions';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import {
   NgxsFirestoreConnect,
   Connected,
@@ -16,7 +16,8 @@ import { NgxsFirestorePageService } from '@ngxs-labs/firestore-plugin/compat';
 import { Race } from '../../models/race';
 import { RacesFirestore } from '../../services/races.firestore';
 import { patch, insertItem, iif, updateItem } from '@ngxs/store/operators';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 export interface RacesStateModel {
   races: Race[];
@@ -44,6 +45,8 @@ export class RacesState implements NgxsOnInit {
     return state.pageId;
   }
 
+  fs = inject(AngularFirestore);
+
   constructor(
     private racesFS: RacesFirestore,
     private ngxsFirestoreConnect: NgxsFirestoreConnect,
@@ -52,7 +55,15 @@ export class RacesState implements NgxsOnInit {
 
   ngxsOnInit(_ctx: StateContext<RacesStateModel>) {
     this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
-      to: () => this.racesFS.collection$(),
+      to: () =>
+        this.racesFS.collection$().pipe(
+          switchMap((races) => {
+            debugger;
+            const fs = inject(AngularFirestore);
+            debugger;
+            return fs.doc('races/a').get();
+          })
+        ),
       connectedActionFinishesOn: 'FirstEmit'
     });
 
