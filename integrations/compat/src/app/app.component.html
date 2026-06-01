@@ -1,4 +1,4 @@
-<nav class="navbar navbar-light navbar-expand-lg  bg-light">
+<nav class="navbar navbar-light navbar-expand-lg bg-light">
   <div class="collapse navbar-collapse">
     <div class="navbar-nav">
       <a class="nav-item nav-link">FIRESTORE COMPAT</a>
@@ -16,11 +16,9 @@
     </div>
   </div>
 </div>
-<div
-  *ngIf="ngxsFirestoreState$ | async; let ngxsFirestoreState"
-  class="fixed-bottom bg-info p-3"
-  style="max-height:200px;overflow-y:auto;"
->
-  <h2>NGXS Firestore:</h2>
-  <pre>{{ ngxsFirestoreState | json }}</pre>
-</div>
+@if (ngxsFirestoreState$ | async; as ngxsFirestoreState) {
+  <div class="fixed-bottom bg-info p-3" style="max-height: 200px; overflow-y: auto">
+    <h2>NGXS Firestore:</h2>
+    <pre>{{ ngxsFirestoreState | json }}</pre>
+  </div>
+}

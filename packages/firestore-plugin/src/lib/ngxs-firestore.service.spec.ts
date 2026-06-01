@@ -9,9 +9,7 @@ jest.mock('@angular/fire/firestore');
 describe('NgxsFirestore', () => {
   const createIdMock = jest.fn();
   const mockDoc = jest.mocked(doc);
-  mockDoc.mockImplementation(
-    () => (({ id: createIdMock(), withConverter: jest.fn() } as unknown) as DocumentReference)
-  );
+  mockDoc.mockImplementation(() => ({ id: createIdMock(), withConverter: jest.fn() }) as unknown as DocumentReference);
   jest.mocked(setDoc).mockResolvedValue();
 
   beforeEach(() => {
@@ -26,7 +24,9 @@ describe('NgxsFirestore', () => {
   it('cant be directly instantiated', () => {
     expect(() => {
       TestBed.inject(NgxsFirestore);
-    }).toThrowError('No provider for NgxsFirestore!');
+    }).toThrowError(
+      'NG0201: No provider found for `NgxsFirestore`. Find more at https://v20.angular.dev/errors/NG0201'
+    );
   });
 
   it('can be implemented and instantiated', () => {

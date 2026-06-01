@@ -1,6 +1,6 @@
 import { State, Action, StateContext, NgxsOnInit, Selector } from '@ngxs/store';
 import { RacesActions } from './races.actions';
-import { switchMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import {
   NgxsFirestoreConnect,
   Connected,
@@ -55,15 +55,7 @@ export class RacesState implements NgxsOnInit {
 
   ngxsOnInit(_ctx: StateContext<RacesStateModel>) {
     this.ngxsFirestoreConnect.connect(RacesActions.GetAll, {
-      to: () =>
-        this.racesFS.collection$().pipe(
-          switchMap((races) => {
-            debugger;
-            const fs = inject(AngularFirestore);
-            debugger;
-            return fs.doc('races/a').get();
-          })
-        ),
+      to: () => this.racesFS.collection$(),
       connectedActionFinishesOn: 'FirstEmit'
     });
 
@@ -84,13 +76,7 @@ export class RacesState implements NgxsOnInit {
     });
 
     this.ngxsFirestoreConnect.connect(RacesActions.Error, {
-      to: () =>
-        this.racesFS.collection$((ref) =>
-          ref
-            .where('aaa', '==', 0)
-            .where('bbb', '==', 0)
-            .orderBy('aaa')
-        )
+      to: () => this.racesFS.collection$((ref) => ref.where('aaa', '==', 0).where('bbb', '==', 0).orderBy('aaa'))
     });
   }
 
