@@ -25,7 +25,7 @@ describe('NgxsFirestore', () => {
     expect(() => {
       TestBed.inject(NgxsFirestore);
     }).toThrowError(
-      'NG0201: No provider found for `NgxsFirestore`. Find more at https://v20.angular.dev/errors/NG0201'
+      'NG0201: No provider found for `NgxsFirestore`. Find more at https://v21.angular.dev/errors/NG0201'
     );
   });
 
